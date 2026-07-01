@@ -1,5 +1,5 @@
-﻿import 'package:lawyer_app/core/constants/app_assets.dart';
-import 'package:lawyer_app/features/lawyer/data/models/profile_model/lawyer_self_profile_model.dart';
+﻿import 'package:lex_core/core/constants/app_assets.dart';
+import 'package:lex_core/features/lawyer/data/models/profile_model/lawyer_self_profile_model.dart';
 
 final LawyerSelfProfileModel mockLawyerSelfProfile = LawyerSelfProfileModel(
   fullName: 'Adv. Zayahan Hasan Shah',

@@ -1,25 +1,29 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/shared/widgets/custom_button.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/core/constants/app_typography.dart';
+import 'package:lex_core/shared/widgets/lex_button.dart';
 import 'package:sizer/sizer.dart';
 
 class RoleCard extends StatelessWidget {
   final String title;
   final String description;
-  final String imagePath;
+  final IconData icon;
   final String buttonText;
   final VoidCallback onGetStarted;
+  final Color color;
+  final String imageAsset;
   final bool isComingSoon;
 
   const RoleCard({
     super.key,
     required this.title,
     required this.description,
-    required this.imagePath,
+    required this.icon,
     required this.buttonText,
     required this.onGetStarted,
+    required this.color,
+    required this.imageAsset,
     this.isComingSoon = false,
   });
 
@@ -28,17 +32,22 @@ class RoleCard extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 2.h),
       decoration: BoxDecoration(
-        color: AppColors.kSurface,
+        color: AppColors.kBgElevated,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color: AppColors.kGold.withOpacity(0.3),
+          color: color.withValues(alpha: 0.2),
           width: 1.5,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.5),
+            color: Colors.black.withValues(alpha: 0.5),
             blurRadius: 24,
             offset: const Offset(0, 8),
+          ),
+          BoxShadow(
+            color: color.withValues(alpha: 0.05),
+            blurRadius: 24,
+            spreadRadius: 2,
           ),
         ],
       ),
@@ -49,14 +58,51 @@ class RoleCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Image Section
+              // Image Header Section
               Container(
-                height: 25.h,
+                height: 16.h, // Slightly taller for a premium feel
                 decoration: BoxDecoration(
-                  color: AppColors.kSurfaceElevated,
                   image: DecorationImage(
-                    image: AssetImage(imagePath),
+                    image: AssetImage(imageAsset),
                     fit: BoxFit.cover,
+                  ),
+                ),
+                child: Container(
+                  // Gradient overlay to blend into the card and tint it
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        color.withValues(alpha: 0.3), // Top tint
+                        color.withValues(alpha: 0.1),
+                        AppColors.kBgElevated, // Blends perfectly into the content section
+                      ],
+                      stops: const [0.0, 0.6, 1.0],
+                    ),
+                  ),
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: color.withValues(alpha: 0.25), // Soft glow matching the role color
+                            blurRadius: 24,
+                            spreadRadius: 4,
+                            offset: const Offset(0, 8),
+                          ),
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.08), // Subtle depth shadow
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Icon(icon, color: color, size: 36),
+                    ),
                   ),
                 ),
               ),
@@ -67,19 +113,16 @@ class RoleCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomText(
-                      title: title,
-                      fontSize: 22.sp,
-                      weight: FontWeight.w800,
-                      color: AppColors.kGoldLight,
+                    Text(
+                      title,
+                      style: AppTypography.h2.copyWith(color: color),
                     ),
                     SizedBox(height: 1.h),
-                    CustomText(
-                      title: description,
-                      fontSize: 15.sp,
+                    Text(
+                      description,
+                      style: AppTypography.bodySm,
                       maxLines: 3,
-                      color: AppColors.kTextSecondary,
-                      textHeight: 1.4,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     SizedBox(height: 3.h),
                     
@@ -88,23 +131,20 @@ class RoleCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             alignment: Alignment.center,
                             decoration: BoxDecoration(
-                              color: AppColors.kSurfaceElevated,
+                              color: AppColors.kBgSurface,
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: AppColors.kBorderSubtle),
+                              border: Border.all(color: AppColors.kBorder),
                             ),
-                            child: CustomText(
-                              title: "Coming Soon",
-                              color: AppColors.kTextSecondary,
-                              weight: FontWeight.w600,
-                              fontSize: 16.sp,
+                            child: Text(
+                              "Coming Soon",
+                              style: AppTypography.button.copyWith(color: AppColors.kTextSecondary),
                             ),
                           )
-                        : CustomButton(
-                            text: buttonText,
+                        : LexButton(
+                            label: buttonText,
                             onPressed: onGetStarted,
-                            gradient: AppColors.goldGradient,
-                            width: double.infinity,
-                            textColor: Colors.black,
+                            style: LexButtonStyle.primary,
+                            fullWidth: true,
                           ),
                   ],
                 ),

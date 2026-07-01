@@ -1,6 +1,6 @@
 ﻿import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart'; // â† assuming your new emerald palette is here
+import 'package:lex_core/core/constants/app_colors.dart'; // â† assuming your new emerald palette is here
 
 class CustomDropdown extends StatefulWidget {
   final List<String> items;

@@ -1,5 +1,5 @@
-import 'package:lawyer_app/features/auth/data/datasources/auth_remote_datasource.dart';
-import 'package:lawyer_app/features/auth/domain/repositories/auth_repository.dart';
+import 'package:lex_core/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:lex_core/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;

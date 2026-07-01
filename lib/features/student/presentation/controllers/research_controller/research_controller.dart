@@ -1,33 +1,25 @@
-﻿import 'dart:developer';
+import 'dart:developer';
 
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:lawyer_app/core/mock_data/student_research_data.dart';
-import 'package:lawyer_app/features/student/data/models/research_model.dart';
-import 'package:lawyer_app/features/student/presentation/states/research_states.dart';
+import 'package:lex_core/di/injection_container.dart';
+import 'package:lex_core/features/student/data/models/research_model.dart';
+import 'package:lex_core/features/student/domain/usecases/student_usecases.dart';
+import 'package:lex_core/features/student/presentation/states/research_states.dart';
 
 class ResearchController extends StateNotifier<ResearchStates> {
-  ResearchController() : super(ResearchInitialState());
+  final GetResearchUseCase _getResearchUseCase;
+
+  ResearchController({GetResearchUseCase? getResearchUseCase})
+      : _getResearchUseCase = getResearchUseCase ?? sl<GetResearchUseCase>(),
+        super(ResearchInitialState());
 
   Future<void> getAllResearch() async {
     state = ResearchLoadingState();
     try {
-      await Future.delayed(const Duration(seconds: 1));
+      final researchList = await _getResearchUseCase.execute();
 
-      final response = mockStudentResearchData;
-      if (response['status'] != 200) {
-        state = ResearchFailureState(error: 'Failed to load research topics');
-        return;
-      }
-
-      final data = response['data'] as Map<String, dynamic>;
-
-      final currentList = (data['current_research'] as List)
-          .map((e) => ResearchModel.fromJson(e as Map<String, dynamic>))
-          .toList();
-
-      final availableList = (data['available_research'] as List)
-          .map((e) => ResearchModel.fromJson(e as Map<String, dynamic>))
-          .toList();
+      final currentList = researchList.where((r) => r.status == 'active').toList();
+      final availableList = researchList.where((r) => r.status != 'active').toList();
 
       final allResearch = AllResearchResponse(
         currentResearch: currentList,
@@ -36,7 +28,7 @@ class ResearchController extends StateNotifier<ResearchStates> {
 
       state = ResearchSuccessState(data: allResearch);
     } catch (e, stack) {
-      log('Get All Research â†’ Error: $e\n$stack');
+      log('Get All Research -> Error: $e\n$stack');
       state = ResearchFailureState(error: 'Unable to load research data');
     }
   }

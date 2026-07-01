@@ -1,605 +1,200 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lawyer_app/core/constants/app_assets.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/features/student/data/models/student_model.dart';
-import 'package:lawyer_app/features/student/data/models/certification_model.dart';
-import 'package:lawyer_app/features/student/data/models/task_model.dart';
-import 'package:lawyer_app/features/student/data/models/research_model.dart';
-import 'package:lawyer_app/features/student/presentation/providers/tasks_provider/task_provider.dart';
-import 'package:lawyer_app/features/student/presentation/providers/research_provider/research_provider.dart';
-import 'package:lawyer_app/features/student/presentation/providers/certifications_provider/certification_provider.dart';
-import 'package:lawyer_app/shared/widgets/custom_appbar.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
-import 'package:lawyer_app/shared/widgets/failed_widget.dart';
-import 'package:lawyer_app/features/client/presentation/widgets/tabs/cases_tab_button.dart';
-import 'package:lawyer_app/features/student/presentation/widgets/empty_state_widget.dart';
-import 'package:sizer/sizer.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/core/constants/app_typography.dart';
+import 'package:lex_core/core/database/hive_service.dart';
+import 'package:lex_core/features/student/presentation/widgets/student_portal_header.dart';
+import 'dart:ui';
 
-class StudentDashboardScreen extends ConsumerStatefulWidget {
+class StudentDashboardScreen extends StatelessWidget {
   const StudentDashboardScreen({super.key});
 
   @override
-  ConsumerState<StudentDashboardScreen> createState() =>
-      _StudentDashboardScreenState();
-}
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF1F5F9), // Slightly deeper cool grey for better contrast with white cards
+      body: Column(
+        children: [
+          const StudentPortalHeader(),
+          
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Premium Certification Banner
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF0F172A), Color(0xFF1E293B)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(28),
+                      boxShadow: [
+                        BoxShadow(color: const Color(0xFF0F172A).withOpacity(0.3), blurRadius: 24, offset: const Offset(0, 12)),
+                      ],
+                    ),
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Positioned(
+                          right: -20,
+                          top: -20,
+                          child: Icon(Icons.shield_rounded, size: 120, color: Colors.white.withOpacity(0.05)),
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.15),
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(color: Colors.white.withOpacity(0.1)),
+                                    ),
+                                    child: const Text('NEW MODULE',
+                                        style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Colors.white, letterSpacing: 1.0)),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  const Text('Cybercrime &\nDigital Evidence',
+                                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.w800, color: Colors.white, height: 1.2, letterSpacing: -0.5)),
+                                  const SizedBox(height: 8),
+                                  Text('Earn your LexCore specialisation certificate.',
+                                      style: TextStyle(fontSize: 13, color: Colors.white.withOpacity(0.7))),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 20),
+                            Container(
+                              width: 64,
+                              height: 64,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFF3B82F6),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(color: const Color(0xFF3B82F6).withOpacity(0.4), blurRadius: 20, offset: const Offset(0, 8)),
+                                ],
+                              ),
+                              child: const Icon(Icons.play_arrow_rounded, color: Colors.white, size: 32),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ).animate(delay: 100.ms).fadeIn().slideY(begin: 0.1),
+                  const SizedBox(height: 24),
 
-class _StudentDashboardScreenState
-    extends ConsumerState<StudentDashboardScreen> {
-  int selectedTab = 0;
+                  // Progress Stats
+                  Row(
+                    children: [
+                      _statCard('Modules', '4/12', const Color(0xFFF0FDF4), const Color(0xFF22C55E), Icons.task_alt_rounded),
+                      const SizedBox(width: 16),
+                      _statCard('Research', '28h', const Color(0xFFEFF6FF), const Color(0xFF3B82F6), Icons.menu_book_rounded),
+                    ],
+                  ).animate(delay: 200.ms).fadeIn().slideY(begin: 0.1),
+                  const SizedBox(height: 32),
 
-  // Mock student data
-  final StudentModel student = StudentModel(
-    id: '1',
-    fullName: 'John Doe',
-    university: 'Harvard University',
-    studyYear: '3rd Year',
-    currentProgram: 'Computer Science',
-    email: 'john.doe@harvard.edu',
-    profileImage: '',
-  );
-
-  // Mock certification data
-  final List<CertificationModel> certifications = [
-    CertificationModel(
-      id: '1',
-      title: 'Web Development Fundamentals',
-      description: 'Learn the basics of HTML, CSS, and JavaScript',
-      startDate: '2024-01-15',
-      endDate: '2024-03-15',
-      certificateImage: '',
-      isCompleted: true,
-      duration: '2 months',
-      instructor: 'John Smith',
-      level: 'Beginner',
-      skills: ['HTML', 'CSS', 'JavaScript'],
-    ),
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    Future.microtask(() {
-      ref.read(taskControllerProvider.notifier).getAllTasks();
-      ref.read(researchControllerProvider.notifier).getAllResearch();
-      ref.read(certificationControllerProvider.notifier).getAllCertifications();
-    });
+                  const Text('Quick Tools', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: Color(0xFF0F172A), letterSpacing: -0.5)),
+                  const SizedBox(height: 12),
+                  
+                  // Grid
+                  GridView.count(
+                    padding: EdgeInsets.zero,
+                    crossAxisCount: 2,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    mainAxisSpacing: 16,
+                    crossAxisSpacing: 16,
+                    childAspectRatio: 0.95,
+                    children: [
+                      _gridAction('Legal Research', 'Access 100k+ cases', Icons.library_books_rounded, const Color(0xFFEFF6FF), const Color(0xFF3B82F6)),
+                      _gridAction('Mock Trials', 'Practice scenarios', Icons.gavel_rounded, const Color(0xFFFFF7ED), const Color(0xFFF97316)),
+                      _gridAction('Certifications', 'View your progress', Icons.workspace_premium_rounded, const Color(0xFFF0FDF4), const Color(0xFF22C55E)),
+                      _gridAction('AI Tutor', 'Ask legal questions', Icons.psychology_rounded, const Color(0xFFFEF2F2), const Color(0xFFEF4444)),
+                    ],
+                  ).animate(delay: 300.ms).fadeIn().slideY(begin: 0.1),
+                  const SizedBox(height: 120),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final taskState = ref.watch(taskControllerProvider);
-    final researchState = ref.watch(researchControllerProvider);
-
-    final tasks = taskState.when(
-      initial: () => <TaskModel>[],
-      loading: () => <TaskModel>[],
-      failure: (error) => <TaskModel>[],
-      success: (data) => data.activeTasks.take(3).toList(),
-    );
-
-    final researchTopics = researchState.when(
-      initial: () => <ResearchModel>[],
-      loading: () => <ResearchModel>[],
-      failure: (error) => <ResearchModel>[],
-      success: (data) => data.currentResearch,
-    );
-
-    return Container(
-      color: AppColors.kBgDark,
-      child: SafeArea(
+  Widget _statCard(String label, String value, Color bgColor, Color iconColor, IconData icon) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF0F172A).withOpacity(0.04),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
+          ],
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CustomAppbar(
-              logoImage: AppAssets.logoImage,
-              backgroundColor: Colors.transparent,
-            ),
-
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 2.h),
-
-                    // Header + Tabs
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 6.w),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CustomText(
-                            title: "Student Dashboard",
-                            color: AppColors.kTextPrimary,
-                            fontSize: 26.sp,
-                            weight: FontWeight.w800,
-                          ),
-                          SizedBox(height: 0.4.h),
-                          CustomText(
-                            title: "Manage your academic progress",
-                            color: AppColors.kTextSecondary,
-                            fontSize: 15.sp,
-                          ),
-                          SizedBox(height: 2.5.h),
-
-                          SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
-                              children: [
-                                CasesTabButton(
-                                  title: 'Details',
-                                  index: 0,
-                                  selectedTab: selectedTab,
-                                  onTap: _onTabChanged,
-                                ),
-                                SizedBox(width: 4.w),
-                                CasesTabButton(
-                                  title: 'Certification',
-                                  index: 1,
-                                  selectedTab: selectedTab,
-                                  onTap: _onTabChanged,
-                                ),
-                                SizedBox(width: 4.w),
-                                CasesTabButton(
-                                  title: 'Task',
-                                  index: 2,
-                                  selectedTab: selectedTab,
-                                  onTap: _onTabChanged,
-                                ),
-                                SizedBox(width: 4.w),
-                                CasesTabButton(
-                                  title: 'Research',
-                                  index: 3,
-                                  selectedTab: selectedTab,
-                                  onTap: _onTabChanged,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    SizedBox(height: 3.h),
-
-                    // Content Area
-                    _buildTabContent(selectedTab),
-                    SizedBox(height: 8.h),
-                  ],
-                ),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: bgColor,
+                borderRadius: BorderRadius.circular(14),
               ),
+              child: Icon(icon, color: iconColor, size: 24),
             ),
+            const SizedBox(height: 16),
+            Text(value, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w800, color: Color(0xFF0F172A), letterSpacing: -1.0)),
+            const SizedBox(height: 4),
+            Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF64748B))),
           ],
         ),
       ),
     );
   }
 
-  void _onTabChanged(int index) {
-    setState(() => selectedTab = index);
-  }
-
-  Widget _buildTabContent(int tabIndex) {
-    switch (tabIndex) {
-      case 0:
-        return _buildDetailsTab();
-      case 1:
-        return _buildCertificationTab();
-      case 2:
-        return _buildTaskTab();
-      case 3:
-        return _buildResearchTab();
-      default:
-        return _buildDetailsTab();
-    }
-  }
-
-  Widget _buildDetailsTab() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 6.w),
+  Widget _gridAction(String title, String subtitle, IconData icon, Color bgColor, Color iconColor) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0F172A).withOpacity(0.04),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            padding: EdgeInsets.all(5.w),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppColors.kSurface.withOpacity(0.8),
-                  AppColors.kSurfaceElevated.withOpacity(0.6),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: AppColors.kEmerald.withOpacity(0.3),
-                width: 1,
-              ),
+              color: bgColor,
+              borderRadius: BorderRadius.circular(14),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 8.w,
-                      backgroundColor: AppColors.kEmerald.withOpacity(0.2),
-                      child: Icon(
-                        Icons.person,
-                        size: 6.w,
-                        color: AppColors.kEmerald,
-                      ),
-                    ),
-                    SizedBox(width: 4.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CustomText(
-                            title: student.fullName,
-                            fontSize: 20.sp,
-                            weight: FontWeight.w700,
-                            color: AppColors.kTextPrimary,
-                          ),
-                          CustomText(
-                            title: student.email,
-                            fontSize: 16.sp,
-                            color: AppColors.kTextSecondary,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 1.5.h),
-                _buildDetailRow('University', student.university),
-                _buildDetailRow('Study Year', student.studyYear),
-                _buildDetailRow('Current Program', student.currentProgram),
-              ],
-            ),
+            child: Icon(icon, color: iconColor, size: 24),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDetailRow(String label, String value) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 2.h),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CustomText(
-            title: label,
-            fontSize: 16.sp,
-            color: AppColors.kTextSecondary,
-            weight: FontWeight.w500,
-          ),
-          SizedBox(height: 0.25.h),
-          CustomText(
-            title: value,
-            fontSize: 16.sp,
-            color: AppColors.kTextPrimary,
-            weight: FontWeight.w600,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCertificationTab() {
-    final certificationState = ref.watch(certificationControllerProvider);
-
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 6.w),
-      child: certificationState.when(
-        initial: () => const SizedBox(),
-        loading: () => Center(
-          child: CircularProgressIndicator(
-            color: AppColors.kEmerald,
-            strokeWidth: 4,
-          ),
-        ),
-        failure: (error) => Center(
-          child: FailedWidget(
-            title: "Failed to load certifications",
-            text: error,
-            icon: Icons.error_outline_rounded,
-            onRetry: () => ref
-                .read(certificationControllerProvider.notifier)
-                .getAllCertifications(),
-          ),
-        ),
-        success: (data) {
-          final completedCertifications = data.completedCertifications;
-          if (completedCertifications.isEmpty) {
-            return EmptyStateWidget(
-              icon: Icons.school_outlined,
-              title: "No Certifications Yet",
-              subtitle: "Start learning and earn your first certification",
-              buttonText: "Browse Certifications",
-              onButtonPressed: () {
-                // Navigate to certification screen (index 1 in bottom nav)
-              },
-            );
-          }
-          return Column(
-            children: completedCertifications
-                .map((certification) => _buildCertificationCard(certification))
-                .toList(),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildCertificationCard(CertificationModel cert) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 2.h),
-      padding: EdgeInsets.all(4.w),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppColors.kSurface.withOpacity(0.8),
-            AppColors.kSurfaceElevated.withOpacity(0.6),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.kEmerald.withOpacity(0.3),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CustomText(
-            title: cert.title,
-            fontSize: 16.sp,
-            weight: FontWeight.w600,
-            color: AppColors.kTextPrimary,
-          ),
-          SizedBox(height: 1.h),
-          CustomText(
-            title: cert.description,
-            fontSize: 14.sp,
-            color: AppColors.kTextSecondary,
-          ),
-          SizedBox(height: 1.h),
-          Row(
-            children: [
-              Icon(Icons.calendar_today, size: 14, color: AppColors.kEmerald),
-              SizedBox(width: 1.w),
-              CustomText(
-                title: "${cert.startDate} - ${cert.endDate}",
-                fontSize: 12.sp,
-                color: AppColors.kTextSecondary,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTaskTab() {
-    final taskState = ref.watch(taskControllerProvider);
-
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 6.w),
-      child: taskState.when(
-        initial: () => const SizedBox(),
-        loading: () => Center(
-          child: CircularProgressIndicator(
-            color: AppColors.kEmerald,
-            strokeWidth: 4,
-          ),
-        ),
-        failure: (error) => Center(
-          child: FailedWidget(
-            title: "Failed to load active tasks",
-            text: error,
-            icon: Icons.error_outline_rounded,
-            onRetry: () => ref.read(taskControllerProvider.notifier).getAllTasks(),
-          ),
-        ),
-        success: (data) {
-          final activeTasks = data.activeTasks.take(3).toList();
-          if (activeTasks.isEmpty) {
-            return EmptyStateWidget(
-              icon: Icons.inbox_outlined,
-              title: "No active tasks",
-              subtitle: "All tasks are up to date!",
-            );
-          }
-          return Column(
-            children: activeTasks.map((task) => _buildTaskCard(task)).toList(),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildTaskCard(TaskModel task) {
-    final priorityColor = task.priority == 'high'
-        ? Colors.redAccent
-        : task.priority == 'medium'
-        ? Colors.orangeAccent
-        : Colors.greenAccent;
-
-    return Container(
-      margin: EdgeInsets.only(bottom: 2.h),
-      padding: EdgeInsets.all(4.w),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppColors.kSurface.withOpacity(0.8),
-            AppColors.kSurfaceElevated.withOpacity(0.6),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.kEmerald.withOpacity(0.3),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: CustomText(
-                  title: task.title,
-                  fontSize: 16.sp,
-                  weight: FontWeight.w600,
-                  color: AppColors.kTextPrimary,
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
-                decoration: BoxDecoration(
-                  color: priorityColor.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: CustomText(
-                  title: task.priority.toUpperCase(),
-                  fontSize: 10.sp,
-                  color: priorityColor,
-                  weight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 1.h),
-          CustomText(
-            title: task.description,
-            fontSize: 14.sp,
-            color: AppColors.kTextSecondary,
-          ),
-          SizedBox(height: 1.h),
-          Row(
-            children: [
-              Icon(Icons.category, size: 14, color: AppColors.kEmerald),
-              SizedBox(width: 1.w),
-              CustomText(
-                title: task.category,
-                fontSize: 12.sp,
-                color: AppColors.kTextSecondary,
-              ),
-              SizedBox(width: 4.w),
-              Icon(Icons.calendar_today, size: 14, color: AppColors.kEmerald),
-              SizedBox(width: 1.w),
-              CustomText(
-                title: task.dueDate,
-                fontSize: 12.sp,
-                color: AppColors.kTextSecondary,
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildResearchTab() {
-    final researchState = ref.watch(researchControllerProvider);
-
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 6.w),
-      child: researchState.when(
-        initial: () => const SizedBox(),
-        loading: () => Center(
-          child: CircularProgressIndicator(
-            color: AppColors.kEmerald,
-            strokeWidth: 4,
-          ),
-        ),
-        failure: (error) => Center(
-          child: FailedWidget(
-            title: "Failed to load research topics",
-            text: error,
-            icon: Icons.error_outline_rounded,
-            onRetry: () => ref
-                .read(researchControllerProvider.notifier)
-                .getAllResearch(),
-          ),
-        ),
-        success: (data) {
-          if (data.currentResearch.isEmpty) {
-            return EmptyStateWidget(
-              icon: Icons.science_outlined,
-              title: "No Research Topics Yet",
-              subtitle: "Start exploring research areas",
-              buttonText: "Select Research Topics",
-              onButtonPressed: () {
-                // Navigate to research screen (index 3 in bottom nav)
-              },
-            );
-          }
-          return Column(
-            children: data.currentResearch
-                .map((research) => _buildResearchCard(research))
-                .toList(),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildResearchCard(ResearchModel research) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 2.h),
-      padding: EdgeInsets.all(4.w),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppColors.kSurface.withOpacity(0.8),
-            AppColors.kSurfaceElevated.withOpacity(0.6),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.kEmerald.withOpacity(0.3),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          CustomText(
-            title: research.title,
-            fontSize: 16.sp,
-            weight: FontWeight.w600,
-            color: AppColors.kTextPrimary,
-          ),
-          SizedBox(height: 1.h),
-          CustomText(
-            title: research.description,
-            fontSize: 14.sp,
-            color: AppColors.kTextSecondary,
-          ),
-          SizedBox(height: 1.h),
-          Row(
-            children: [
-              Icon(Icons.person, size: 14, color: AppColors.kEmerald),
-              SizedBox(width: 1.w),
-              CustomText(
-                title: research.supervisor,
-                fontSize: 12.sp,
-                color: AppColors.kTextSecondary,
-              ),
-              SizedBox(width: 4.w),
-              Icon(Icons.calendar_today, size: 14, color: AppColors.kEmerald),
-              SizedBox(width: 1.w),
-              CustomText(
-                title: research.startDate,
-                fontSize: 12.sp,
-                color: AppColors.kTextSecondary,
-              ),
-            ],
-          ),
+          const Spacer(),
+          Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF0F172A), letterSpacing: -0.5)),
+          const SizedBox(height: 4),
+          Text(subtitle, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: Color(0xFF64748B))),
         ],
       ),
     );

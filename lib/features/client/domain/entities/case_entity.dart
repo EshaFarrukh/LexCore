@@ -1,5 +1,5 @@
 class CaseNoteEntity {
-  final int id;
+  final String id;
   final String caseId;
   final DateTime date;
   final String notes;
@@ -21,7 +21,7 @@ class CaseNoteEntity {
 }
 
 class CaseEntity {
-  final int id;
+  final String id;
   final String caseNo;
   final String title;
   final String court;

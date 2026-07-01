@@ -1,7 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lawyer_app/app/router/route_names.dart';
+import 'package:lex_core/app/router/route_names.dart';
 
 List<Map<String, dynamic>> incomingUserData = [
   {

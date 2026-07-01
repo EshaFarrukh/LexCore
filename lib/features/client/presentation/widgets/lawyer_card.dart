@@ -1,7 +1,7 @@
-﻿import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/shared/widgets/custom_text.dart';
 import 'package:sizer/sizer.dart';
 
 class LawyerCard extends StatelessWidget {
@@ -41,127 +41,93 @@ class LawyerCard extends StatelessWidget {
         margin: EdgeInsets.only(bottom: 2.h),
         padding: EdgeInsets.all(4.w),
         decoration: BoxDecoration(
-          color: AppColors.kSurface.withOpacity(0.92),
+          color: Colors.white,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: AppColors.kEmerald.withOpacity(0.18),
-            width: 1.2,
+            color: const Color(0xFFE2E8F0),
+            width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.35),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-            ),
-            BoxShadow(
-              color: AppColors.kEmerald.withOpacity(0.08),
-              blurRadius: 30,
-              spreadRadius: 2,
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
           ],
         ),
         child: Row(
           children: [
-            // Profile Image (with glassmorphic ring)
+            // Profile Image
             Container(
+              padding: const EdgeInsets.all(3),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: AppColors.kEmerald.withOpacity(0.4),
-                  width: 2.5,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.kEmerald.withOpacity(0.25),
-                    blurRadius: 16,
-                    spreadRadius: 2,
-                  ),
-                ],
+                border: Border.all(color: const Color(0xFFF1F5F9), width: 2),
               ),
-              child: ClipOval(
-                child: SizedBox(
-                  width: 72,
-                  height: 72,
-                  child:
-                      profileImage != null &&
-                          profileImage!.trim().isNotEmpty &&
-                          Uri.tryParse(profileImage!.trim())?.hasScheme == true
-                      ? CachedNetworkImage(
-                          imageUrl: profileImage!.trim(),
-                          fit: BoxFit.cover,
-                          placeholder: (context, url) => Container(
-                            color: AppColors.kSurface,
-                            child: Center(
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.5,
-                                color: AppColors.kEmerald.withOpacity(0.6),
-                              ),
-                            ),
-                          ),
-                          errorWidget: (context, url, error) => Container(
-                            color: AppColors.kSurface,
-                            child: const Icon(
-                              Icons.person_rounded,
-                              size: 40,
-                              color: AppColors.kTextSecondary,
-                            ),
-                          ),
-                        )
-                      : Container(
-                          color: AppColors.kSurface,
-                          child: const Icon(
-                            Icons.person_rounded,
-                            size: 40,
-                            color: AppColors.kTextSecondary,
-                          ),
-                        ),
-                ),
+              child: CircleAvatar(
+                radius: 36,
+                backgroundColor: const Color(0xFFE2E8F0),
+                backgroundImage: profileImage != null &&
+                        profileImage!.trim().isNotEmpty &&
+                        Uri.tryParse(profileImage!.trim())?.hasScheme == true
+                    ? CachedNetworkImageProvider(profileImage!.trim())
+                    : null,
+                child: (profileImage == null || profileImage!.trim().isEmpty)
+                    ? const Icon(Icons.person_rounded, size: 36, color: Color(0xFF94A3B8))
+                    : null,
               ),
             ),
 
-            SizedBox(width: 5.w),
+            SizedBox(width: 4.w),
 
             // Name & rating
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CustomText(
-                    title: safeName,
-                    fontSize: 18.sp,
-                    weight: FontWeight.w700,
-                    color: AppColors.kTextPrimary,
+                  Text(
+                    safeName,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF0F172A),
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(height: 0.6.h),
+                  const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.star_rounded,
-                        color: AppColors.kEmerald,
-                        size: 20,
+                        color: Color(0xFFF59E0B),
+                        size: 18,
                       ),
-                      SizedBox(width: 1.5.w),
-                      CustomText(
-                        title: safeRating.toStringAsFixed(1),
-                        fontSize: 15.5.sp,
-                        weight: FontWeight.w600,
-                        color: AppColors.kEmerald,
+                      const SizedBox(width: 4),
+                      Text(
+                        safeRating.toStringAsFixed(1),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF475569),
+                        ),
                       ),
-                      SizedBox(width: 1.w),
-                      CustomText(
-                        title: "â€¢ Available",
-                        fontSize: 13.5.sp,
-                        color: AppColors.kTextSecondary,
+                      const SizedBox(width: 8),
+                      Text(
+                        "•  Available",
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFF10B981),
+                        ),
                       ),
                     ],
                   ),
                 ],
               ),
             ),
-
             
+            const Icon(Icons.chevron_right_rounded, color: Color(0xFF94A3B8)),
           ],
         ),
       ),

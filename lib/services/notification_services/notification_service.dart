@@ -28,9 +28,17 @@ class NotificationService {
           requestSoundPermission: true,
         );
 
+    const DarwinInitializationSettings macOSSettings =
+        DarwinInitializationSettings(
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+        );
+
     const InitializationSettings initSettings = InitializationSettings(
       android: androidSettings,
       iOS: iOSSettings,
+      macOS: macOSSettings,
     );
 
     await _notificationsPlugin.initialize(
@@ -64,6 +72,12 @@ class NotificationService {
             AndroidFlutterLocalNotificationsPlugin
           >()
           ?.requestNotificationsPermission();
+    } else if (Platform.isMacOS) {
+      await _notificationsPlugin
+          .resolvePlatformSpecificImplementation<
+            MacOSFlutterLocalNotificationsPlugin
+          >()
+          ?.requestPermissions(alert: true, badge: true, sound: true);
     }
   }
 
@@ -86,9 +100,16 @@ class NotificationService {
       presentSound: true,
     );
 
+    const DarwinNotificationDetails macOSDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
     const NotificationDetails platformDetails = NotificationDetails(
       android: androidDetails,
       iOS: iOSDetails,
+      macOS: macOSDetails,
     );
 
     await _notificationsPlugin.show(

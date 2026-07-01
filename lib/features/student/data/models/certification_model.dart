@@ -27,19 +27,20 @@ class CertificationModel {
 
   factory CertificationModel.fromJson(Map<String, dynamic> json) {
     return CertificationModel(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      description: json['description'] as String,
-      startDate: json['startDate'] as String,
-      endDate: json['endDate'] as String,
-      certificateImage: json['certificateImage'] as String,
-      isCompleted: json['isCompleted'] as bool,
-      duration: json['duration'] as String,
-      instructor: json['instructor'] as String,
-      level: json['level'] as String,
-      skills: (json['skills'] as List<dynamic>)
-          .map((e) => e.toString())
-          .toList(),
+      id: json['id'] as String? ?? '',
+      title: json['title'] as String? ?? 'Untitled',
+      description: json['description'] as String? ?? '',
+      startDate: json['startDate'] as String? ?? '',
+      endDate: json['endDate'] as String? ?? '',
+      certificateImage: json['certificateImage'] as String? ?? '',
+      isCompleted: json['isCompleted'] as bool? ?? false,
+      duration: json['duration'] as String? ?? '',
+      instructor: json['instructor'] as String? ?? '',
+      level: json['level'] as String? ?? '',
+      skills: (json['skills'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
     );
   }
 

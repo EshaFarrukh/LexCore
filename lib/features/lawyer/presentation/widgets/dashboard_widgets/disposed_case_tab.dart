@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/features/lawyer/domain/entities/lawyer_case_entity.dart';
-import 'package:lawyer_app/shared/widgets/custom_button.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
-import 'package:sizer/sizer.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/core/constants/app_dimensions.dart';
+import 'package:lex_core/core/constants/app_typography.dart';
+import 'package:lex_core/features/lawyer/domain/entities/lawyer_case_entity.dart';
+import 'package:lex_core/shared/widgets/lex_button.dart';
+import 'package:lex_core/shared/widgets/lex_empty_state.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class DisposedLawyerCasesTab extends StatelessWidget {
   final List<LawyerCaseEntity> cases;
@@ -14,39 +16,15 @@ class DisposedLawyerCasesTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (cases.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.check_circle_outline_rounded,
-              size: 80,
-              color: AppColors.kEmerald,
-            ),
-            SizedBox(height: 2.h),
-            Text(
-              'No disposed cases yet',
-              style: TextStyle(
-                color: AppColors.kTextPrimary,
-                fontSize: 20.sp,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            SizedBox(height: 1.h),
-            Text(
-              'Completed matters will appear here',
-              style: TextStyle(
-                color: AppColors.kTextSecondary,
-                fontSize: 15.sp,
-              ),
-            ),
-          ],
-        ),
+      return const LexEmptyState(
+        icon: Icons.check_circle_outline_rounded,
+        title: 'No disposed cases yet',
+        subtitle: 'Completed matters will appear here',
       );
     }
 
     return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
+      padding: const EdgeInsets.symmetric(horizontal: AppDimensions.lg, vertical: AppDimensions.sm),
       itemCount: cases.length,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -54,115 +32,123 @@ class DisposedLawyerCasesTab extends StatelessWidget {
         final c = cases[i];
 
         return Padding(
-          padding: EdgeInsets.only(bottom: 2.4.h),
+          padding: const EdgeInsets.only(bottom: 20),
           child: Container(
             decoration: BoxDecoration(
-              color: AppColors.kSurface.withOpacity(0.92),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppColors.kEmerald.withOpacity(0.15)),
+              color: const Color(0xFFF8FAFC), // Very soft slate
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: const Color(0xFFE2E8F0)),
             ),
-            child: InkWell(
-              onTap: () => _showCaseDetails(context, c),
-              borderRadius: BorderRadius.circular(20),
-              child: Padding(
-                padding: EdgeInsets.all(4.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: AppColors.kEmerald.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(16),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => _showCaseDetails(context, c),
+                borderRadius: BorderRadius.circular(24),
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                            ),
+                            child: Text(
+                              c.caseNo.split('/').last,
+                              style: const TextStyle(
+                                color: Color(0xFF94A3B8),
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
+                              ),
+                            ),
                           ),
-                          child: Icon(
-                            Icons.gavel_rounded,
-                            size: 3.h,
-                            color: AppColors.kEmerald,
+                          const Spacer(),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFDCFCE7),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.check_circle_rounded, size: 14, color: Color(0xFF16A34A)),
+                                const SizedBox(width: 4),
+                                const Text(
+                                  'Disposed',
+                                  style: TextStyle(
+                                    color: Color(0xFF16A34A),
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        c.title,
+                        style: const TextStyle(
+                          color: Color(0xFF475569),
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                          decoration: TextDecoration.lineThrough,
+                          decorationColor: Color(0xFFCBD5E1),
                         ),
-                        SizedBox(width: 4.w),
-
-                        Expanded(
-                          child: CustomText(
-                            title: c.category,
-                            color: AppColors.kEmerald,
-                            fontSize: 16.sp,
-                            weight: FontWeight.w700,
-                          ),
-                        ),
-
-                        // Optional: small icon depending on category
-                        if (c.category.toLowerCase().contains('criminal'))
-                          Icon(
-                            Icons.warning_amber_rounded,
-                            color: AppColors.kEmerald,
-                            size: 3.h,
-                          )
-                        else if (c.category.toLowerCase().contains('civil'))
-                          Icon(
-                            Icons.balance_rounded,
-                            color: AppColors.kEmerald,
-                            size: 3.h,
-                          )
-                        else
-                          Icon(
-                            Icons.circle_rounded,
-                            color: AppColors.kTextSecondary,
-                            size: 20,
-                          ),
-                      ],
-                    ),
-
-                    SizedBox(height: 2.h),
-
-                    // Main content column
-                    CustomText(
-                      title: c.title,
-                      color: AppColors.kTextPrimary,
-                      fontSize: 17.sp,
-                      weight: FontWeight.w700,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-
-                    SizedBox(height: 0.5.h),
-
-                    CustomText(
-                      title: '${c.client} • ${c.court}',
-                      color: AppColors.kTextSecondary,
-                      fontSize: 14.5.sp,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-
-                    SizedBox(height: 0.5.h),
-
-                    CustomText(
-                      title: 'Disposed: ${c.disposedDate != null ? _formatDateOnly(c.disposedDate!) : '-'}',
-                      color: AppColors.kEmerald.withOpacity(0.9),
-                      fontSize: 15.sp,
-                      weight: FontWeight.w600,
-                    ),
-
-                    if (c.outcomeSummary != null) ...[
-                      SizedBox(height: 0.5.h),
-                      CustomText(
-                        title: c.outcomeSummary!,
-                        color: AppColors.kTextSecondary,
-                        fontSize: 14.sp,
-                        textHeight: 1.4,
-                        maxLines: 3,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          const Icon(Icons.person_outline_rounded, size: 16, color: Color(0xFF94A3B8)),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              c.client,
+                              style: const TextStyle(
+                                color: Color(0xFF64748B),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        child: Divider(color: Color(0xFFE2E8F0), height: 1),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Closed on: ${c.disposedDate != null ? _formatDateOnly(c.disposedDate!) : '-'}',
+                            style: const TextStyle(
+                              color: Color(0xFF94A3B8),
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Color(0xFFCBD5E1)),
+                        ],
+                      ),
                     ],
-                  ],
+                  ),
                 ),
               ),
             ),
-          ),
+          ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1),
         );
       },
     );
@@ -196,25 +182,27 @@ class DisposedLawyerCasesTab extends StatelessWidget {
   }) {
     return TableRow(
       decoration: BoxDecoration(
-        color: isHeader ? AppColors.kEmerald.withOpacity(0.12) : null,
+        color: isHeader ? AppColors.kEmerald.withValues(alpha: 0.12) : null,
       ),
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.4.h),
-          child: CustomText(
-            title: label,
-            color: isHeader ? AppColors.kEmerald : AppColors.kTextSecondary,
-            weight: isHeader ? FontWeight.w700 : FontWeight.w500,
-            fontSize: 13.sp,
+          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.md, vertical: AppDimensions.md),
+          child: Text(
+            label,
+            style: AppTypography.caption.copyWith(
+              color: isHeader ? AppColors.kEmerald : AppColors.kTextSecondary,
+              fontWeight: isHeader ? FontWeight.w700 : FontWeight.w500,
+            ),
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.4.h),
-          child: CustomText(
-            title: value,
-            color: valueColor ?? AppColors.kTextPrimary,
-            weight: FontWeight.w600,
-            fontSize: 13.sp,
+          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.md, vertical: AppDimensions.md),
+          child: Text(
+            value,
+            style: AppTypography.body.copyWith(
+              color: valueColor ?? AppColors.kTextPrimary,
+              fontWeight: FontWeight.w600,
+            ),
             maxLines: maxLines,
             overflow: maxLines != null ? TextOverflow.ellipsis : null,
           ),
@@ -234,73 +222,72 @@ class DisposedLawyerCasesTab extends StatelessWidget {
         maxChildSize: 0.95,
         builder: (_, ctrl) => Container(
           decoration: BoxDecoration(
-            color: AppColors.kSurface.withOpacity(0.97),
+            color: AppColors.kSurface.withValues(alpha: 0.97),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-            border: Border.all(color: AppColors.kEmerald.withOpacity(0.18)),
+            border: Border.all(color: AppColors.kEmerald.withValues(alpha: 0.18)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.45),
+                color: Colors.black.withValues(alpha: 0.45),
                 blurRadius: 32,
                 offset: const Offset(0, -8),
               ),
             ],
           ),
-          padding: EdgeInsets.fromLTRB(6.w, 1.5.h, 6.w, 4.h),
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               // Drag handle
               Container(
-                width: 12.w,
+                width: 48,
                 height: 5,
                 decoration: BoxDecoration(
-                  color: AppColors.kEmerald.withOpacity(0.35),
+                  color: AppColors.kEmerald.withValues(alpha: 0.35),
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              SizedBox(height: 2.5.h),
+              const SizedBox(height: AppDimensions.xl),
 
               Expanded(
                 child: ListView(
                   controller: ctrl,
                   children: [
                     // Title
-                    CustomText(
-                      title: c.title,
-                      fontSize: 21.sp,
-                      weight: FontWeight.w800,
-                      color: AppColors.kTextPrimary,
+                    Text(
+                      c.title,
+                      style: AppTypography.h2,
                       maxLines: 2,
                     ),
-                    SizedBox(height: 0.5.h),
+                    const SizedBox(height: AppDimensions.xs),
 
-                    CustomText(
-                      title: "Client: ${c.client}",
-                      fontSize: 15.sp,
-                      color: AppColors.kTextSecondary,
+                    Text(
+                      "Client: ${c.client}",
+                      style: AppTypography.body.copyWith(
+                        color: AppColors.kTextSecondary,
+                      ),
                     ),
-                    SizedBox(height: 3.h),
+                    const SizedBox(height: AppDimensions.xxl),
 
                     // ── Case Details Section ──
-                    CustomText(
-                      title: "Case Details",
-                      fontSize: 17.sp,
-                      weight: FontWeight.w700,
-                      color: AppColors.kEmerald,
+                    Text(
+                      "Case Details",
+                      style: AppTypography.h3.copyWith(
+                        color: AppColors.kEmerald,
+                      ),
                     ),
-                    SizedBox(height: 1.5.h),
+                    const SizedBox(height: AppDimensions.md),
 
                     Container(
                       decoration: BoxDecoration(
-                        color: AppColors.kInputBg.withOpacity(0.85),
+                        color: AppColors.kInputBg.withValues(alpha: 0.85),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: AppColors.kEmerald.withOpacity(0.2)),
+                        border: Border.all(color: AppColors.kEmerald.withValues(alpha: 0.2)),
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16),
                         child: Table(
                           border: TableBorder.all(
-                            color: AppColors.kEmerald.withOpacity(0.12),
+                            color: AppColors.kEmerald.withValues(alpha: 0.12),
                             width: 1,
                           ),
                           columnWidths: const {
@@ -331,42 +318,43 @@ class DisposedLawyerCasesTab extends StatelessWidget {
                       ),
                     ),
 
-                    SizedBox(height: 3.h),
+                    const SizedBox(height: AppDimensions.xxxl),
 
                     // ── Documents Section ──
-                    CustomText(
-                      title: "Documents",
-                      fontSize: 17.sp,
-                      weight: FontWeight.w700,
-                      color: AppColors.kEmerald,
+                    Text(
+                      "Documents",
+                      style: AppTypography.h3.copyWith(
+                        color: AppColors.kEmerald,
+                      ),
                     ),
-                    SizedBox(height: 1.5.h),
+                    const SizedBox(height: AppDimensions.md),
 
                     c.documents.isEmpty
                         ? Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 2.h, horizontal: 4.w),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: AppDimensions.lg, horizontal: AppDimensions.lg),
                             decoration: BoxDecoration(
-                              color: AppColors.kInputBg.withOpacity(0.6),
+                              color: AppColors.kInputBg.withValues(alpha: 0.6),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
                                   color: AppColors.kEmerald
-                                      .withOpacity(0.15)),
+                                      .withValues(alpha: 0.15)),
                             ),
                             child: Row(
                               children: [
                                 Icon(
                                   Icons.description_rounded,
                                   color: AppColors.kEmerald
-                                      .withOpacity(0.5),
+                                      .withValues(alpha: 0.5),
                                   size: 22,
                                 ),
-                                SizedBox(width: 3.w),
+                                const SizedBox(width: AppDimensions.md),
                                 Expanded(
-                                  child: CustomText(
-                                    title: "No documents uploaded",
-                                    color: AppColors.kTextSecondary,
-                                    fontSize: 14.sp,
+                                  child: Text(
+                                    "No documents uploaded",
+                                    style: AppTypography.body.copyWith(
+                                      color: AppColors.kTextSecondary,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -375,34 +363,35 @@ class DisposedLawyerCasesTab extends StatelessWidget {
                         : Column(
                             children: c.documents.map((doc) {
                               return Padding(
-                                padding: EdgeInsets.only(bottom: 1.2.h),
+                                padding: const EdgeInsets.only(bottom: AppDimensions.sm),
                                 child: Container(
-                                  padding: EdgeInsets.all(3.5.w),
+                                  padding: const EdgeInsets.all(AppDimensions.md),
                                   decoration: BoxDecoration(
-                                    color: AppColors.kInputBg.withOpacity(0.85),
+                                    color: AppColors.kInputBg.withValues(alpha: 0.85),
                                     borderRadius: BorderRadius.circular(16),
                                     border: Border.all(
-                                      color: AppColors.kEmerald.withOpacity(0.2),
+                                      color: AppColors.kEmerald.withValues(alpha: 0.2),
                                     ),
                                   ),
                                   child: Row(
                                     children: [
-                                      Icon(
+                                      const Icon(
                                         Icons.insert_drive_file_rounded,
                                         color: AppColors.kTextSecondary,
                                         size: 24,
                                       ),
-                                      SizedBox(width: 4.w),
+                                      const SizedBox(width: AppDimensions.md),
                                       Expanded(
-                                        child: CustomText(
-                                          title: doc,
-                                          color: AppColors.kTextPrimary,
-                                          fontSize: 15.sp,
+                                        child: Text(
+                                          doc,
+                                          style: AppTypography.body.copyWith(
+                                            color: AppColors.kTextPrimary,
+                                          ),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
-                                      Icon(
+                                      const Icon(
                                         Icons.visibility_rounded,
                                         color: AppColors.kEmerald,
                                         size: 22,
@@ -414,42 +403,43 @@ class DisposedLawyerCasesTab extends StatelessWidget {
                             }).toList(),
                           ),
 
-                    SizedBox(height: 3.h),
+                    const SizedBox(height: AppDimensions.xxxl),
 
                     // ── Notes Section ──
-                    CustomText(
-                      title: "Notes",
-                      fontSize: 17.sp,
-                      weight: FontWeight.w700,
-                      color: AppColors.kEmerald,
+                    Text(
+                      "Notes",
+                      style: AppTypography.h3.copyWith(
+                        color: AppColors.kEmerald,
+                      ),
                     ),
-                    SizedBox(height: 1.5.h),
+                    const SizedBox(height: AppDimensions.md),
 
                     c.notes.isEmpty
                         ? Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 2.5.h, horizontal: 5.w),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: AppDimensions.lg, horizontal: AppDimensions.lg),
                             decoration: BoxDecoration(
-                              color: AppColors.kInputBg.withOpacity(0.6),
+                              color: AppColors.kInputBg.withValues(alpha: 0.6),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
                                   color: AppColors.kEmerald
-                                      .withOpacity(0.15)),
+                                      .withValues(alpha: 0.15)),
                             ),
                             child: Row(
                               children: [
                                 Icon(
                                   Icons.notes_rounded,
                                   color: AppColors.kEmerald
-                                      .withOpacity(0.5),
+                                      .withValues(alpha: 0.5),
                                   size: 22,
                                 ),
-                                SizedBox(width: 3.w),
+                                const SizedBox(width: AppDimensions.md),
                                 Expanded(
-                                  child: CustomText(
-                                    title: "No notes added yet",
-                                    color: AppColors.kTextSecondary,
-                                    fontSize: 14.sp,
+                                  child: Text(
+                                    "No notes added yet",
+                                    style: AppTypography.body.copyWith(
+                                      color: AppColors.kTextSecondary,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -460,17 +450,17 @@ class DisposedLawyerCasesTab extends StatelessWidget {
                               final idx = entry.key;
                               final note = entry.value;
                               return Container(
-                                margin: EdgeInsets.only(bottom: idx < c.notes.length - 1 ? 1.5.h : 0),
+                                margin: EdgeInsets.only(bottom: idx < c.notes.length - 1 ? AppDimensions.lg : 0),
                                 decoration: BoxDecoration(
-                                  color: AppColors.kInputBg.withOpacity(0.85),
+                                  color: AppColors.kInputBg.withValues(alpha: 0.85),
                                   borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: AppColors.kEmerald.withOpacity(0.2)),
+                                  border: Border.all(color: AppColors.kEmerald.withValues(alpha: 0.2)),
                                 ),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(16),
                                   child: Table(
                                     border: TableBorder.all(
-                                      color: AppColors.kEmerald.withOpacity(0.12),
+                                      color: AppColors.kEmerald.withValues(alpha: 0.12),
                                       width: 1,
                                     ),
                                     columnWidths: const {
@@ -489,22 +479,15 @@ class DisposedLawyerCasesTab extends StatelessWidget {
                             }).toList(),
                           ),
 
-                    SizedBox(height: 4.h),
+                    const SizedBox(height: AppDimensions.huge),
 
                     // Close Button
-                    CustomButton(
-                      text: "Close",
+                    LexButton(
+                      label: "Close",
                       onPressed: () => Navigator.pop(context),
-                      gradient: LinearGradient(
-                        colors: [AppColors.kEmerald, AppColors.kEmeraldDark],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      textColor: Colors.white,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w700,
-                      borderRadius: 16,
+                      style: LexButtonStyle.primary,
                     ),
+                    const SizedBox(height: AppDimensions.xxxl),
                   ],
                 ),
               ),

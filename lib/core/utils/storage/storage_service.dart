@@ -1,6 +1,7 @@
 import 'dart:developer';
 
-import 'package:lawyer_app/core/constants/app_keys.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:lex_core/core/constants/app_keys.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StorageService {
@@ -34,6 +35,7 @@ class StorageService {
   // Clear all auth data (useful for logout)
   Future<void> clearAllAuthData() async {
     try {
+      await FirebaseAuth.instance.signOut();
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(AppKeys.forgotEmailKey);
       await prefs.remove(AppKeys.accessTokenKey);

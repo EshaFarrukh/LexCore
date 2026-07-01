@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/features/client/presentation/states/category_state/category_state.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
-import 'package:lawyer_app/shared/widgets/failed_widget.dart';
-import 'package:lawyer_app/shared/widgets/loading_indicator.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/features/client/presentation/states/category_state/category_state.dart';
+import 'package:lex_core/shared/widgets/custom_text.dart';
+import 'package:lex_core/shared/widgets/failed_widget.dart';
+import 'package:lex_core/shared/widgets/loading_indicator.dart';
 import 'package:sizer/sizer.dart';
 
 class CategoryStep extends StatelessWidget {

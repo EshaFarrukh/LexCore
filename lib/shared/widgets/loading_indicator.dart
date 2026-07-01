@@ -1,7 +1,6 @@
-﻿// core/widgets/loading_indicator.dart
 import 'package:flutter/material.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/core/constants/app_typography.dart';
 
 class LoadingIndicator extends StatelessWidget {
   final Color? color;
@@ -21,24 +20,27 @@ class LoadingIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           SizedBox(
             width: size,
             height: size,
             child: CircularProgressIndicator(
               valueColor: AlwaysStoppedAnimation<Color>(
-                color ?? Theme.of(context).primaryColor,
+                color ?? AppColors.kBrandLight,
               ),
               strokeWidth: 2.0,
             ),
           ),
-          CustomText(
-            title: text ?? "Loading",
-            color: textColor ?? AppColors.lightDescriptionTextColor,
-          ),
+          if (text != null) ...[
+            const SizedBox(height: 12),
+            Text(
+              text!,
+              style: AppTypography.body.copyWith(color: textColor ?? AppColors.kTextSecondary),
+            ),
+          ]
         ],
       ),
     );
   }
 }
-

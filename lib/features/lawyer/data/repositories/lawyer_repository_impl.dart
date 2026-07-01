@@ -1,7 +1,8 @@
-import 'package:lawyer_app/features/lawyer/data/datasources/lawyer_remote_datasource.dart';
-import 'package:lawyer_app/features/lawyer/data/models/lawyer_model.dart';
-import 'package:lawyer_app/features/lawyer/domain/entities/lawyer_entity.dart';
-import 'package:lawyer_app/features/lawyer/domain/repositories/lawyer_repository.dart';
+import 'package:lex_core/features/lawyer/data/datasources/lawyer_remote_datasource.dart';
+import 'package:lex_core/features/lawyer/data/models/lawyer_model.dart';
+import 'package:lex_core/features/lawyer/data/models/profile_model/lawyer_self_profile_model.dart';
+import 'package:lex_core/features/lawyer/domain/entities/lawyer_entity.dart';
+import 'package:lex_core/features/lawyer/domain/repositories/lawyer_repository.dart';
 
 class LawyerRepositoryImpl implements LawyerRepository {
   final LawyerRemoteDataSource remoteDataSource;
@@ -25,5 +26,11 @@ class LawyerRepositoryImpl implements LawyerRepository {
       totalPages: totalPages,
       hasMore: pageNumber < totalPages,
     );
+  }
+
+  @override
+  Future<LawyerSelfProfileModel> getLawyerProfile(String userId) async {
+    final data = await remoteDataSource.getLawyerProfile(userId);
+    return LawyerSelfProfileModel.fromJson(data);
   }
 }

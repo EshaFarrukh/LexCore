@@ -1,34 +1,29 @@
-﻿import 'dart:developer';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lawyer_app/core/constants/app_assets.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/core/constants/app_keys.dart';
-import 'package:lawyer_app/core/utils/storage/storage_service.dart';
-import 'package:lawyer_app/core/validation/app_validation.dart';
-import 'package:lawyer_app/features/auth/presentation/providers/forgot_password_provider.dart';
-import 'package:lawyer_app/app/router/route_names.dart';
-import 'package:lawyer_app/features/auth/presentation/states/forogot_password_State.dart';
-import 'package:lawyer_app/shared/widgets/custom_appbar.dart';
-import 'package:lawyer_app/shared/widgets/custom_button.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
-import 'package:lawyer_app/shared/widgets/custom_text_field.dart';
-import 'package:lawyer_app/shared/widgets/loading_indicator.dart';
-import 'package:sizer/sizer.dart';
+import 'package:lex_core/app/router/route_names.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/core/constants/app_typography.dart';
+import 'package:lex_core/core/constants/app_keys.dart';
+import 'package:lex_core/core/utils/storage/storage_service.dart';
+import 'package:lex_core/core/validation/app_validation.dart';
+import 'package:lex_core/features/auth/presentation/providers/forgot_password_provider.dart';
+import 'package:lex_core/features/auth/presentation/states/forogot_password_State.dart';
+import 'package:lex_core/shared/widgets/lex_button.dart';
+import 'package:lex_core/shared/widgets/lex_text_field.dart';
 
 class ForgotPasswordScreen extends ConsumerStatefulWidget {
   const ForgotPasswordScreen({super.key});
 
   @override
-  ConsumerState<ForgotPasswordScreen> createState() =>
-      _ForgotPasswordScreenState();
+  ConsumerState<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
 class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _emailController = TextEditingController();
-  final StorageService _storageService = StorageService.instance;
 
   @override
   void dispose() {
@@ -40,19 +35,20 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
     if (_formKey.currentState?.validate() ?? false) {
       final email = _emailController.text.trim();
       try {
-        final response = await ref
-            .read(forgotPasswordProvider.notifier)
-            .forgotPassword(email: email);
+        final response = await ref.read(forgotPasswordProvider.notifier).forgotPassword(email: email);
         if (response.isEmpty) {
-          log("ForgotPasswordScreen â†’ ForgotPassword response: $response");
-          await _storageService.write(AppKeys.forgotEmailKey, email);
-          log("Saving forgot email: $email");
+          log("ForgotPasswordScreen -> ForgotPassword response: $response");
+          await StorageService.instance.write(AppKeys.forgotEmailKey, email);
           context.pushNamed(RouteNames.otpScreen);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(response), backgroundColor: AppColors.kError),
+          );
         }
-        log("ForgotPasswordScreen â†’ ForgotPassword failed, response is null");
       } catch (e, st) {
-        log(
-          "ForgotPasswordScreen â†’ Exception during ForgotPassword: $e\n$st",
+        log("ForgotPasswordScreen -> Exception: $e\n$st");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to process request.'), backgroundColor: AppColors.kError),
         );
       }
     }
@@ -60,102 +56,66 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(forgotPasswordProvider) is ForgotPasswordLoading;
+
     return Scaffold(
-      backgroundColor: AppColors.kBgDark,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight),
-        child: CustomAppbar(title: '', isBack: true),
+      backgroundColor: AppColors.kBgDeep,
+      appBar: AppBar(
+        backgroundColor: AppColors.kBgDeep,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.kTextPrimary, size: 20),
+          onPressed: () => context.pop(),
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 4.h),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
           child: Form(
             key: _formKey,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Center(
-                  child: Column(
-                    children: [
-                      Container(
-                        height: 14.h,
-                        width: 38.w,
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.kEmerald.withValues(alpha: 0.18),
-                              blurRadius: 32,
-                              spreadRadius: 4,
-                            ),
-                          ],
-                        ),
-                        child: Image.asset(
-                          AppAssets.logoImage,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                      SizedBox(height: 3.h),
-                      CustomText(
-                        title: "Forgot Password!",
-                        fontSize: 24.sp,
-                        color: AppColors.whiteColor,
-                        weight: FontWeight.bold,
-                      ),
-                      SizedBox(height: 2.h),
-                      CustomText(
-                        title: "Enter email address to get a verification code",
-                        fontSize: 15.sp,
-                        color: AppColors.lightDescriptionTextColor,
-                        weight: FontWeight.bold,
-                      ),
-                    ],
+                Container(
+                  width: 64, height: 64,
+                  decoration: BoxDecoration(
+                    color: AppColors.kBrand.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: AppColors.kBrand.withValues(alpha: 0.3)),
                   ),
-                ),
+                  child: const Icon(Icons.lock_reset_rounded, color: AppColors.kBrand, size: 32),
+                ).animate().scaleXY(curve: Curves.easeOutBack, duration: 600.ms),
+                const SizedBox(height: 32),
+                
+                Text('Reset Password', style: AppTypography.h1)
+                    .animate(delay: 100.ms).fadeIn().slideY(begin: 0.1),
+                const SizedBox(height: 8),
+                Text('Enter your email to receive a password reset code.', style: AppTypography.body)
+                    .animate(delay: 200.ms).fadeIn().slideY(begin: 0.1),
+                const SizedBox(height: 48),
 
-                SizedBox(height: 2.h),
-                _builEmailTextField(),
-                SizedBox(height: 2.h),
-                _buildSignupButton(),
+                LexTextField(
+                  controller: _emailController,
+                  hintText: 'Email Address',
+                  prefixIcon: Icons.email_rounded,
+                  keyboardType: TextInputType.emailAddress,
+                  validator: AppValidation.validateEmail,
+                ).animate(delay: 300.ms).fadeIn().slideY(begin: 0.1),
+                
+                const SizedBox(height: 48),
+
+                LexButton(
+                  label: 'Send Code',
+                  style: LexButtonStyle.primary,
+                  fullWidth: true,
+                  isLoading: isLoading,
+                  onPressed: _forgotPassword,
+                ).animate(delay: 400.ms).fadeIn().slideY(begin: 0.1),
               ],
             ),
           ),
         ),
       ),
-    );
-  }
-
-  Widget _builEmailTextField() {
-    return CustomTextField(
-      controller: _emailController,
-      hintText: "Email Address",
-      prefixIcon: Icon(Icons.mail_rounded, color: AppColors.kEmerald, size: 22),
-      validator: AppValidation.validateEmail,
-      keyboardType: TextInputType.emailAddress,
-      textColor: AppColors.kTextPrimary,
-      hintTextColor: AppColors.kTextSecondary,
-    );
-  }
-
-  Widget _buildSignupButton() {
-    final forgotState = ref.watch(forgotPasswordProvider);
-    return SizedBox(
-      width: double.infinity,
-      height: 14.w,
-      child: forgotState is ForgotPasswordLoading
-          ? const Center(child: LoadingIndicator())
-          : CustomButton(
-              text: 'Continue',
-              fontSize: 16.sp,
-              onPressed: _forgotPassword,
-              textColor: AppColors.blackColor,
-              gradient: LinearGradient(
-                colors: [AppColors.kEmerald, AppColors.kEmeraldDark],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              fontWeight: FontWeight.w700,
-              borderRadius: 16,
-            ),
     );
   }
 }

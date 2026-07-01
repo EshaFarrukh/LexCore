@@ -1,4 +1,4 @@
-﻿import 'package:lawyer_app/features/client/data/models/cases_categories_model/case_categories_model.dart';
+﻿import 'package:lex_core/features/client/data/models/cases_categories_model/case_categories_model.dart';
 
 sealed class CategoryState {
   R when<R>({

@@ -1,33 +1,33 @@
-﻿import 'dart:developer';
+import 'dart:developer';
 
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:lawyer_app/core/mock_data/student_tasks_data.dart';
-import 'package:lawyer_app/features/student/data/models/task_model.dart';
-import 'package:lawyer_app/features/student/presentation/states/task_states.dart';
+import 'package:lex_core/core/constants/app_keys.dart';
+import 'package:lex_core/core/utils/storage/storage_service.dart';
+import 'package:lex_core/di/injection_container.dart';
+import 'package:lex_core/features/student/data/models/task_model.dart';
+import 'package:lex_core/features/student/domain/usecases/student_usecases.dart';
+import 'package:lex_core/features/student/presentation/states/task_states.dart';
 
 class TaskController extends StateNotifier<TaskStates> {
-  TaskController() : super(TaskInitialState());
+  final GetTasksUseCase _getTasksUseCase;
+
+  TaskController({GetTasksUseCase? getTasksUseCase})
+      : _getTasksUseCase = getTasksUseCase ?? sl<GetTasksUseCase>(),
+        super(TaskInitialState());
 
   Future<void> getAllTasks() async {
     state = TaskLoadingState();
     try {
-      await Future.delayed(const Duration(seconds: 1));
-
-      final response = mockStudentTasksData;
-      if (response['status'] != 200) {
-        state = TaskFailureState(error: 'Failed to load tasks');
+      final String? userId = await StorageService.instance.read(AppKeys.userIdKey);
+      if (userId == null || userId.isEmpty) {
+        state = TaskFailureState(error: "User not logged in");
         return;
       }
 
-      final data = response['data'] as Map<String, dynamic>;
+      final tasks = await _getTasksUseCase.execute(userId);
 
-      final activeList = (data['active_tasks'] as List)
-          .map((e) => TaskModel.fromJson(e as Map<String, dynamic>))
-          .toList();
-
-      final completedList = (data['completed_tasks'] as List)
-          .map((e) => TaskModel.fromJson(e as Map<String, dynamic>))
-          .toList();
+      final activeList = tasks.where((t) => !t.isCompleted).toList();
+      final completedList = tasks.where((t) => t.isCompleted).toList();
 
       final allTasks = AllTasksResponse(
         activeTasks: activeList,
@@ -36,7 +36,7 @@ class TaskController extends StateNotifier<TaskStates> {
 
       state = TaskSuccessState(data: allTasks);
     } catch (e, stack) {
-      log('Get All Tasks â†’ Error: $e\n$stack');
+      log('Get All Tasks -> Error: $e\n$stack');
       state = TaskFailureState(error: 'Unable to load tasks data');
     }
   }

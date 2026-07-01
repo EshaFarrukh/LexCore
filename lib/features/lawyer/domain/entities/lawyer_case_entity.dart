@@ -1,7 +1,7 @@
-import 'package:lawyer_app/features/client/domain/entities/case_entity.dart';
+import 'package:lex_core/features/client/domain/entities/case_entity.dart';
 
 class LawyerCaseEntity {
-  final int id;
+  final String id;
   final String caseNo;
   final String title;
   final String court;

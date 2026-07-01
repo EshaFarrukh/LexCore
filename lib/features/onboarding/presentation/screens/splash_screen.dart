@@ -1,12 +1,15 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lawyer_app/core/constants/app_assets.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/core/constants/app_keys.dart';
-import 'package:lawyer_app/core/utils/app_launcher_manager.dart';
-import 'package:lawyer_app/core/utils/storage/storage_service.dart';
-import 'package:lawyer_app/app/router/route_names.dart';
-import 'dart:developer';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:lex_core/app/router/route_names.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/core/database/hive_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:lex_core/core/utils/storage/storage_service.dart';
+import 'package:lex_core/core/constants/app_keys.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,114 +18,113 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with TickerProviderStateMixin {
-  late AnimationController _controller;
-
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2200),
-    );
-
-    _controller.forward();
-    _decideNextRoute();
+    _checkStatus();
   }
 
-  Future<void> _decideNextRoute() async {
+  void _checkStatus() async {
     await Future.delayed(const Duration(seconds: 3));
+    
     if (!mounted) return;
 
-    try {
-      final bool isFirstLaunch = await AppLaunchManager.isFirstLaunch();
-      if (isFirstLaunch) {
-        context.go(RouteNames.onboardingScreen);
-        return;
-      }
-
-      final String? token = await StorageService.instance.read(AppKeys.accessTokenKey);
-      if (token != null && token.isNotEmpty) {
-        final String? userType = await StorageService.instance.read(AppKeys.userTypeKey);
-        log("Splash → Already logged in → userType: $userType");
-
-        if (userType == "Lawyer") {
-          context.go(RouteNames.lawyerBottomNavigationScreen);
-        } else if (userType == "Student") {
-          context.go(RouteNames.studentBottomNavigationScreen);
-        } else {
-          // Default to Client dashboard if type is Client, null or unrecognized
-          context.go(RouteNames.bottomNavigationScreen);
-        }
-      } else {
-        log("Splash → No token → Role overview");
-        context.go(RouteNames.onboardingScreen);
-      }
-    } catch (e) {
-      log("Splash navigation error: $e");
-      context.go(RouteNames.roleOverviewScreen);
+    final onboardingComplete = HiveService.getSetting<bool>(HiveService.kOnboardingComplete) ?? false;
+    
+    if (!onboardingComplete) {
+      context.go(RouteNames.onboardingScreen);
+      return;
     }
-  }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      context.go(RouteNames.incomingUserScreen);
+      return;
+    }
+
+    // Attempt to get role from SharedPreferences (StorageService)
+    String? role = await StorageService.instance.read(AppKeys.userTypeKey);
+
+    if (role == null || role.isEmpty) {
+      try {
+        final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        if (doc.exists) {
+          role = doc.data()?['role'] as String?;
+          if (role != null && role.isNotEmpty) {
+            await StorageService.instance.write(AppKeys.userTypeKey, role);
+            await StorageService.instance.write(AppKeys.userIdKey, user.uid);
+            await StorageService.instance.write(AppKeys.fullNameKey, doc.data()?['fullName'] ?? '');
+            
+            await HiveService.saveUserInfo(
+              userId: user.uid,
+              role: role,
+              name: doc.data()?['fullName'] ?? '',
+            );
+          }
+        }
+      } catch (_) {}
+    }
+
+    if (!mounted) return;
+
+    // Route based on role
+    if (role == 'lawyer') {
+      context.go(RouteNames.lawyerBottomNavigationScreen);
+    } else if (role == 'student') {
+      context.go(RouteNames.studentBottomNavigationScreen);
+    } else {
+      context.go(RouteNames.bottomNavigationScreen);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.kBg,
+      backgroundColor: AppColors.kBgDeep,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(28),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [Color(0xFF2A2114), Color(0xFF140F0A)], // Dark gold tones
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.kGold.withOpacity(0.2),
-                    blurRadius: 40,
-                    spreadRadius: 5,
-                  ),
+              // Logo
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Lex',
+                      style: GoogleFonts.plusJakartaSans(
+                          fontSize: 48, fontWeight: FontWeight.w800, color: AppColors.kTextPrimary, letterSpacing: -1.5)),
+                  Text('Core',
+                      style: GoogleFonts.plusJakartaSans(
+                          fontSize: 48, fontWeight: FontWeight.w800, color: AppColors.kBrand, letterSpacing: -1.5)),
                 ],
-              ),
-              child: Image.asset(AppAssets.logoImage, width: 180, height: 180),
-            ),
+              ).animate().fadeIn(duration: 800.ms).scale(begin: const Offset(0.8, 0.8), curve: Curves.easeOutBack),
+            const SizedBox(height: 12),
+            
+            // Subtitle
+            Text('Smart Global Legal Connections',
+                style: GoogleFonts.plusJakartaSans(
+                    fontSize: 14, color: AppColors.kTextSecondary, letterSpacing: 0.5, fontWeight: FontWeight.w500))
+                .animate(delay: 400.ms)
+                .fadeIn(duration: 600.ms)
+                .slideY(begin: 0.2),
+            
             const SizedBox(height: 60),
-            Text(
-              "JUSTICE",
-              style: TextStyle(
-                fontSize: 38,
-                fontWeight: FontWeight.w900,
-                letterSpacing: 8,
-                color: AppColors.kGoldLight,
+            
+            // Loading indicator
+            SizedBox(
+              width: 200,
+              height: 3,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(2),
+                child: LinearProgressIndicator(
+                  backgroundColor: AppColors.kBorder,
+                  valueColor: const AlwaysStoppedAnimation(AppColors.kBrand),
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "SIMPLIFIED",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w300,
-                letterSpacing: 4,
-                color: Colors.white.withOpacity(0.65),
-              ),
-            ),
+            ).animate(delay: 800.ms).fadeIn(duration: 400.ms),
           ],
         ),
       ),
     );
   }
 }
-

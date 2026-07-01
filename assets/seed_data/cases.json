@@ -1,0 +1,50 @@
+{
+  "case_1": {
+    "caseId": "case_1",
+    "caseNo": "CIVIL-112/2026",
+    "title": "Property Dispute in DHA",
+    "category": "Property Law",
+    "status": "Active",
+    "lawyerId": "lw_3",
+    "lawyerName": "Hamza Malik",
+    "clientId": "client_1",
+    "client": "Amit Sharma",
+    "nextHearing": "2026-10-24T00:00:00Z",
+    "court": "Sessions Court Lahore",
+    "progress": 0.6,
+    "notes": [],
+    "documents": []
+  },
+  "case_2": {
+    "caseId": "case_2",
+    "caseNo": "CORP-456/2026",
+    "title": "Corporate Registration (Pvt) Ltd",
+    "category": "Corporate Law",
+    "status": "Pending Review",
+    "lawyerId": "lw_2",
+    "lawyerName": "Ali Raza",
+    "clientId": "client_1",
+    "client": "Amit Sharma",
+    "nextHearing": null,
+    "court": "SECP Lahore",
+    "progress": 0.3,
+    "notes": [],
+    "documents": []
+  },
+  "case_3": {
+    "caseId": "case_3",
+    "caseNo": "FAM-89/2026",
+    "title": "Family Court Matter - Gulberg",
+    "category": "Family Law",
+    "status": "Hearing Scheduled",
+    "lawyerId": "lw_1",
+    "lawyerName": "Ayesha Khan",
+    "clientId": "client_1",
+    "client": "Amit Sharma",
+    "nextHearing": "2026-10-30T00:00:00Z",
+    "court": "District Court Lahore",
+    "progress": 0.4,
+    "notes": [],
+    "documents": []
+  }
+}

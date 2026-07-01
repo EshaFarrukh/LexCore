@@ -1,10 +1,10 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/features/client/presentation/providers/case_category_provider/case_category_provider.dart';
-import 'package:lawyer_app/shared/widgets/custom_button.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
-import 'package:lawyer_app/features/client/presentation/widgets/new_case_widgets/new_case_stepper_modal.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/features/client/presentation/providers/case_category_provider/case_category_provider.dart';
+import 'package:lex_core/shared/widgets/custom_button.dart';
+import 'package:lex_core/shared/widgets/custom_text.dart';
+import 'package:lex_core/features/client/presentation/widgets/new_case_widgets/new_case_stepper_modal.dart';
 import 'package:sizer/sizer.dart';
 
 class NewCaseTab extends ConsumerWidget {

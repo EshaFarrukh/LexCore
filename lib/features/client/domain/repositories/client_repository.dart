@@ -1,11 +1,11 @@
-import 'package:lawyer_app/features/client/domain/entities/case_entity.dart';
+import 'package:lex_core/features/client/domain/entities/case_entity.dart';
 
 class CreateCaseParams {
   final String caseType;
   final String appointmentType;
   final String appointmentDate;
   final String? createdBy;
-  final int? userId;
+  final String? userId;
   final String submissionMethod;
   final String? filePath;
 
@@ -22,5 +22,5 @@ class CreateCaseParams {
 
 abstract class ClientRepository {
   Future<CaseEntity> createCase(CreateCaseParams params);
-  Future<List<CaseEntity>> getCasesByUserId(int userId);
+  Future<List<CaseEntity>> getCasesByUserId(String userId);
 }

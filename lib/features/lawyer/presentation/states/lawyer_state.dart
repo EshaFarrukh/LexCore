@@ -1,5 +1,5 @@
 // lawyer_state.dart
-import 'package:lawyer_app/features/lawyer/domain/entities/lawyer_entity.dart';
+import 'package:lex_core/features/lawyer/domain/entities/lawyer_entity.dart';
 
 sealed class LawyerState {
   const LawyerState();

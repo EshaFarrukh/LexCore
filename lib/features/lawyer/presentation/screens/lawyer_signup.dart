@@ -2,17 +2,17 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lawyer_app/core/constants/app_assets.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/core/validation/app_validation.dart';
-import 'package:lawyer_app/features/lawyer/presentation/providers/lawyer_auth_provider/lawyer_signup_provider.dart';
-import 'package:lawyer_app/app/router/route_names.dart';
-import 'package:lawyer_app/features/lawyer/presentation/states/lawyer_auth_state/lawyer_signup_state.dart';
-import 'package:lawyer_app/shared/widgets/custom_button.dart';
-import 'package:lawyer_app/shared/widgets/custom_dialog.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
-import 'package:lawyer_app/shared/widgets/custom_text_field.dart';
-import 'package:lawyer_app/shared/widgets/loading_indicator.dart';
+import 'package:lex_core/core/constants/app_assets.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/core/validation/app_validation.dart';
+import 'package:lex_core/features/lawyer/presentation/providers/lawyer_auth_provider/lawyer_signup_provider.dart';
+import 'package:lex_core/app/router/route_names.dart';
+import 'package:lex_core/features/lawyer/presentation/states/lawyer_auth_state/lawyer_signup_state.dart';
+import 'package:lex_core/shared/widgets/custom_button.dart';
+import 'package:lex_core/shared/widgets/custom_dialog.dart';
+import 'package:lex_core/shared/widgets/custom_text.dart';
+import 'package:lex_core/shared/widgets/custom_text_field.dart';
+import 'package:lex_core/shared/widgets/loading_indicator.dart';
 import 'package:sizer/sizer.dart';
 
 class LawyerSignup extends ConsumerStatefulWidget {
@@ -124,97 +124,122 @@ class _LawyerSignupState extends ConsumerState<LawyerSignup> {
     final isLoading = ref.watch(lawyerSignupProvider) is LawyerSignupLoading;
 
     return Scaffold(
-      backgroundColor: AppColors.kBgDark,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 3.h),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Logo + Title
-                Center(
-                  child: Row(
-                    children: [
-                      Container(
-                        height: 14.h,
-                        width: 40.w,
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.kEmerald.withOpacity(0.2),
-                              blurRadius: 20,
-                              spreadRadius: 2,
-                            ),
-                          ],
-                        ),
-                        child: Image.asset(
-                          AppAssets.logoImage,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                      SizedBox(width: 4.w),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CustomText(
-                            title: "Lawyer\nRegistration",
-                            color: AppColors.kTextPrimary,
-                            fontSize: 20.sp,
-                            weight: FontWeight.w800,
-                            maxLines: 2,
-                          ),
-                          CustomText(
-                            title: "Join the professional\nlegal network",
-                            color: AppColors.kTextSecondary,
-                            fontSize: 16.sp,
-                            maxLines: 2,
-                          ),
-                        ],
-                      ),
-                    ],
+      backgroundColor: AppColors.kBgDeep, // Updated to match premium UI
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: IconButton(
+            icon: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.9),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
                   ),
-                ),
-                SizedBox(height: 4.h),
-                // Fields with better spacing
-                _buildField(
-                  "Full Name",
-                  _fullNameController,
-                  Icons.person,
-                  AppValidation.checkText,
-                ),
-                SizedBox(height: 2.h),
-                _buildField(
-                  "Email Address",
-                  _emailController,
-                  Icons.mail,
-                  AppValidation.validateEmail,
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                SizedBox(height: 2.h),
-                _buildField(
-                  "Phone Number",
-                  _phoneNumberController,
-                  Icons.phone,
-                  AppValidation.validatePhoneNumber,
-                  keyboardType: TextInputType.phone,
-                ),
-                SizedBox(height: 2.h),
-                _buildPasswordField(),
-                SizedBox(height: 3.h),
-                // Button
-                _buildLawyerSignupButton(isLoading),
-                SizedBox(height: 1.5.h),
-                // Login link
-                Center(child: _loginTagLine()),
-                SizedBox(height: 2.h),
-                // Back
-                Center(child: _buildBackButton()),
-              ],
+                ],
+              ),
+              child: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.kTextPrimary, size: 18),
             ),
+            onPressed: () => context.go(RouteNames.incomingUserScreen),
           ),
         ),
+      ),
+      body: Stack(
+        children: [
+          // Beautiful Premium Header Image
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: MediaQuery.of(context).size.height * 0.35,
+            child: Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/signup_bg.jpg'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      AppColors.kBgDeep.withValues(alpha: 0.7),
+                      AppColors.kBgDeep,
+                    ],
+                    stops: const [0.3, 0.8, 1.0],
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // Scrollable Form Content
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.12),
+
+                    // Icon instead of circle
+                    const Icon(Icons.gavel_rounded, color: AppColors.kBrand, size: 64),
+                    const SizedBox(height: 16),
+
+                    Text('Lawyer Registration', style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppColors.kTextPrimary)),
+                    const SizedBox(height: 8),
+                    Text('Join the professional legal network', textAlign: TextAlign.center, style: const TextStyle(fontSize: 16, color: AppColors.kTextSecondary)),
+                    const SizedBox(height: 40),
+
+                    _buildField(
+                      "Full Name",
+                      _fullNameController,
+                      Icons.person,
+                      AppValidation.checkText,
+                    ),
+                    SizedBox(height: 16),
+                    _buildField(
+                      "Email Address",
+                      _emailController,
+                      Icons.mail,
+                      AppValidation.validateEmail,
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    SizedBox(height: 16),
+                    _buildField(
+                      "Phone Number",
+                      _phoneNumberController,
+                      Icons.phone,
+                      AppValidation.validatePhoneNumber,
+                      keyboardType: TextInputType.phone,
+                    ),
+                    SizedBox(height: 16),
+                    _buildPasswordField(),
+                    SizedBox(height: 32),
+                    
+                    _buildLawyerSignupButton(isLoading),
+                    SizedBox(height: 24),
+                    
+                    Center(child: _loginTagLine()),
+                    SizedBox(height: 40),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

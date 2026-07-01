@@ -1,6 +1,6 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lawyer_app/core/constants/app_assets.dart';
+import 'package:lex_core/core/constants/app_assets.dart';
 
 List<Map<String, dynamic>> homeScreenData = [
   {

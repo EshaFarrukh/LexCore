@@ -1,50 +1,60 @@
 import 'package:go_router/go_router.dart';
-import 'package:lawyer_app/features/client/presentation/screens/chat/chat_screen.dart';
-import 'package:lawyer_app/features/lawyer/domain/entities/lawyer_entity.dart';
-import 'package:lawyer_app/features/student/data/models/certification_model.dart';
-import 'package:lawyer_app/features/student/data/models/internship_model/internship_model.dart';
-import 'package:lawyer_app/app/router/route_names.dart';
-import 'package:lawyer_app/features/auth/presentation/screens/forgot_password_screen.dart';
-import 'package:lawyer_app/features/auth/presentation/screens/incoming_user_type_screen.dart';
-import 'package:lawyer_app/features/auth/presentation/screens/login_screen.dart';
-import 'package:lawyer_app/features/auth/presentation/screens/otp_screen.dart';
-import 'package:lawyer_app/features/auth/presentation/screens/reset_password_screen.dart';
-import 'package:lawyer_app/features/auth/presentation/screens/signup_screen.dart';
-import 'package:lawyer_app/features/client/presentation/screens/bottom_navigation_screen.dart';
-import 'package:lawyer_app/features/client/presentation/screens/video/video_screen.dart';
-import 'package:lawyer_app/features/client/presentation/screens/home/court_info_screen.dart';
-import 'package:lawyer_app/features/client/presentation/screens/support/support_form_screen.dart';
-import 'package:lawyer_app/features/client/presentation/screens/home/home_screen.dart';
-import 'package:lawyer_app/features/client/presentation/screens/notifications/notification_screen.dart';
-import 'package:lawyer_app/features/client/presentation/screens/search/search_screen.dart';
-import 'package:lawyer_app/features/chat/presentation/screens/video_list_screen.dart';
-import 'package:lawyer_app/features/chat/presentation/screens/video_call_screen.dart';
-import 'package:lawyer_app/features/chat/presentation/screens/chat_list_screen.dart';
-import 'package:lawyer_app/features/chat/presentation/screens/chat_detail_screen.dart' as shared_chat;
-import 'package:lawyer_app/features/lawyer/presentation/screens/settings/lawyer_settings_screen.dart';
-import 'package:lawyer_app/features/lawyer/presentation/screens/lawyer_login.dart';
-import 'package:lawyer_app/features/lawyer/presentation/screens/lawyer_signup.dart';
-import 'package:lawyer_app/features/lawyer/presentation/screens/lawyer_bottom_navigation_screen.dart';
-import 'package:lawyer_app/features/onboarding/presentation/screens/on_boarding_screen.dart';
-import 'package:lawyer_app/features/onboarding/presentation/screens/role_overview_screen.dart';
-import 'package:lawyer_app/features/onboarding/presentation/screens/splash_screen.dart';
-import 'package:lawyer_app/features/profile/presentation/screens/lawyer_profile_screen.dart';
-import 'package:lawyer_app/features/lawyer/presentation/screens/lawyer_profile_screen.dart'
+import 'package:lex_core/features/client/presentation/screens/chat/chat_screen.dart';
+import 'package:lex_core/features/lawyer/domain/entities/lawyer_entity.dart';
+import 'package:lex_core/features/student/data/models/certification_model.dart';
+import 'package:lex_core/features/student/data/models/internship_model/internship_model.dart';
+import 'package:lex_core/app/router/route_names.dart';
+import 'package:lex_core/features/auth/presentation/screens/forgot_password_screen.dart';
+import 'package:lex_core/features/auth/presentation/screens/incoming_user_type_screen.dart';
+import 'package:lex_core/features/auth/presentation/screens/login_screen.dart';
+import 'package:lex_core/features/auth/presentation/screens/otp_screen.dart';
+import 'package:lex_core/features/auth/presentation/screens/reset_password_screen.dart';
+import 'package:lex_core/features/auth/presentation/screens/signup_screen.dart';
+import 'package:lex_core/features/client/presentation/screens/bottom_navigation_screen.dart';
+import 'package:lex_core/features/client/presentation/screens/video/video_screen.dart';
+import 'package:lex_core/features/client/presentation/screens/home/court_info_screen.dart';
+import 'package:lex_core/features/client/presentation/screens/support/support_form_screen.dart';
+import 'package:lex_core/features/client/presentation/screens/home/home_screen.dart';
+import 'package:lex_core/features/client/presentation/screens/notifications/notification_screen.dart';
+import 'package:lex_core/features/client/presentation/screens/search/search_screen.dart';
+import 'package:lex_core/features/chat/presentation/screens/video_list_screen.dart';
+import 'package:lex_core/features/chat/presentation/screens/video_call_screen.dart';
+import 'package:lex_core/features/chat/presentation/screens/chat_list_screen.dart';
+import 'package:lex_core/features/chat/presentation/screens/chat_detail_screen.dart' as shared_chat;
+import 'package:lex_core/features/lawyer/presentation/screens/settings/lawyer_settings_screen.dart';
+import 'package:lex_core/features/lawyer/presentation/screens/lawyer_login.dart';
+import 'package:lex_core/features/lawyer/presentation/screens/lawyer_signup.dart';
+import 'package:lex_core/features/lawyer/presentation/screens/lawyer_bottom_navigation_screen.dart';
+import 'package:lex_core/features/onboarding/presentation/screens/on_boarding_screen.dart';
+import 'package:lex_core/features/onboarding/presentation/screens/role_overview_screen.dart';
+import 'package:lex_core/features/onboarding/presentation/screens/splash_screen.dart';
+import 'package:lex_core/features/profile/presentation/screens/lawyer_profile_screen.dart';
+import 'package:lex_core/features/lawyer/presentation/screens/lawyer_profile_screen.dart'
     as self_profile;
-import 'package:lawyer_app/features/student/presentation/screens/student_login_screen.dart';
-import 'package:lawyer_app/features/student/presentation/screens/student_signup_screen.dart';
-import 'package:lawyer_app/features/student/presentation/screens/certification_screens/certification_detail_screen.dart';
-import 'package:lawyer_app/features/student/presentation/screens/internship_screens/internship_detail_screen.dart';
-import 'package:lawyer_app/features/student/presentation/screens/student_bottom_navigation_screen.dart';
-import 'package:lawyer_app/features/student/presentation/screens/student_dashboard_screen.dart';
-import 'package:lawyer_app/features/student/presentation/screens/certification_screens/certification_screen.dart';
-import 'package:lawyer_app/features/student/presentation/screens/tasks_screen.dart';
-import 'package:lawyer_app/features/student/presentation/screens/research_screen.dart';
-import 'package:lawyer_app/features/student/presentation/screens/student_profile_screen.dart';
-import 'package:lawyer_app/features/student/presentation/screens/internship_screens/internship_screen.dart';
-import 'package:lawyer_app/features/student/presentation/screens/programs_screen.dart';
-import 'package:lawyer_app/features/student/presentation/screens/settings/student_settings_screen.dart';
-import 'package:lawyer_app/shared/screens/help_support_screen.dart';
+import 'package:lex_core/features/student/presentation/screens/student_login_screen.dart';
+import 'package:lex_core/features/student/presentation/screens/student_signup_screen.dart';
+import 'package:lex_core/features/student/presentation/screens/certification_screens/certification_detail_screen.dart';
+import 'package:lex_core/features/student/presentation/screens/internship_screens/internship_detail_screen.dart';
+import 'package:lex_core/features/student/presentation/screens/student_bottom_navigation_screen.dart';
+import 'package:lex_core/features/student/presentation/screens/student_dashboard_screen.dart';
+import 'package:lex_core/features/student/presentation/screens/certification_screens/certification_screen.dart';
+import 'package:lex_core/features/student/presentation/screens/tasks_screen.dart';
+import 'package:lex_core/features/student/presentation/screens/research_screen.dart';
+import 'package:lex_core/features/student/presentation/screens/student_profile_screen.dart';
+import 'package:lex_core/features/student/presentation/screens/internship_screens/internship_screen.dart';
+import 'package:lex_core/features/student/presentation/screens/programs_screen.dart';
+import 'package:lex_core/features/student/presentation/screens/settings/student_settings_screen.dart';
+import 'package:lex_core/shared/screens/help_support_screen.dart';
+
+// Newly added screens
+import 'package:lex_core/features/client/presentation/screens/home/appointment_booking_screen.dart';
+import 'package:lex_core/features/client/presentation/screens/home/appointment_confirmed_screen.dart';
+import 'package:lex_core/features/client/presentation/screens/home/lawyer_profile_screen.dart' as client_lawyer_profile;
+import 'package:lex_core/features/lawyer/presentation/screens/lawyer_appointments_screen.dart';
+import 'package:lex_core/features/lawyer/presentation/screens/lawyer_client_list_screen.dart';
+import 'package:lex_core/features/lawyer/presentation/screens/lawyer_reviews_screen.dart';
+import 'package:lex_core/features/student/presentation/screens/student_ai_assistant_screen.dart';
+import 'package:lex_core/features/student/presentation/screens/certificate_viewer_screen.dart';
 
 class AppRouter {
   static final router = GoRouter(
@@ -153,15 +163,25 @@ class AppRouter {
         builder: (context, state) => const NotificationScreen(),
       ),
       GoRoute(
-        path: RouteNames.lawyerScreen,
-        name: RouteNames.lawyerScreen,
+        path: RouteNames.lawyerProfileScreen,
+        name: RouteNames.lawyerProfileScreen,
         builder: (context, state) {
-          // 1. Grab the lawyer that was passed via `extra`
-          final lawyer = state.extra as LawyerEntity;
-
-          // 2. Return the screen with the required (non-nullable) lawyer
-          return LawyerProfileScreen(lawyer: lawyer);
+          final id = state.extra as String?;
+          return client_lawyer_profile.LawyerProfileScreen(lawyerId: id ?? 'l1');
         },
+      ),
+      GoRoute(
+        path: RouteNames.appointmentBookingScreen,
+        name: RouteNames.appointmentBookingScreen,
+        builder: (context, state) {
+          final id = state.extra as String?;
+          return AppointmentBookingScreen(lawyerId: id ?? 'l1');
+        },
+      ),
+      GoRoute(
+        path: RouteNames.appointmentConfirmedScreen,
+        name: RouteNames.appointmentConfirmedScreen,
+        builder: (context, state) => const AppointmentConfirmedScreen(),
       ),
 
       // Lawyer's Screens
@@ -179,6 +199,20 @@ class AppRouter {
         path: RouteNames.lawyerBottomNavigationScreen,
         name: RouteNames.lawyerBottomNavigationScreen,
         builder: (context, state) => const LawyerBottomNavigationScreen(),
+      ),
+      GoRoute(
+        path: '/lawyer/appointments',
+        builder: (context, state) => const LawyerAppointmentsScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.lawyerClientListScreen,
+        name: RouteNames.lawyerClientListScreen,
+        builder: (context, state) => const LawyerClientListScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.lawyerReviewsScreen,
+        name: RouteNames.lawyerReviewsScreen,
+        builder: (context, state) => const LawyerReviewsScreen(),
       ),
       GoRoute(
         path: RouteNames.lawyerPrfoileScreen,
@@ -229,6 +263,16 @@ class AppRouter {
         path: RouteNames.tasksScreen,
         name: RouteNames.tasksScreen,
         builder: (context, state) => const TasksScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.studentAiAssistantScreen,
+        name: RouteNames.studentAiAssistantScreen,
+        builder: (context, state) => const StudentAiAssistantScreen(),
+      ),
+      GoRoute(
+        path: RouteNames.certificateViewerScreen,
+        name: RouteNames.certificateViewerScreen,
+        builder: (context, state) => const CertificateViewerScreen(),
       ),
       GoRoute(
         path: RouteNames.researchScreen,

@@ -1,12 +1,13 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/features/lawyer/domain/entities/lawyer_case_entity.dart';
-import 'package:lawyer_app/shared/widgets/custom_button.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
-import 'package:sizer/sizer.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/core/constants/app_dimensions.dart';
+import 'package:lex_core/core/constants/app_typography.dart';
+import 'package:lex_core/features/lawyer/domain/entities/lawyer_case_entity.dart';
+import 'package:lex_core/shared/widgets/lex_button.dart';
+import 'package:lex_core/shared/widgets/lex_empty_state.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class PendingLawyerCasesTab extends StatelessWidget {
   final List<LawyerCaseEntity> cases;
@@ -16,39 +17,15 @@ class PendingLawyerCasesTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (cases.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.hourglass_empty_rounded,
-              size: 80,
-              color: AppColors.kTextSecondary,
-            ),
-            SizedBox(height: 2.h),
-            Text(
-              'No pending cases',
-              style: TextStyle(
-                color: AppColors.kTextPrimary,
-                fontSize: 20.sp,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            SizedBox(height: 1.h),
-            Text(
-              'New matters will appear here',
-              style: TextStyle(
-                color: AppColors.kTextSecondary,
-                fontSize: 15.sp,
-              ),
-            ),
-          ],
-        ),
+      return const LexEmptyState(
+        icon: Icons.hourglass_empty_rounded,
+        title: 'No pending cases',
+        subtitle: 'New matters will appear here',
       );
     }
 
     return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.h),
+      padding: const EdgeInsets.symmetric(horizontal: AppDimensions.lg, vertical: AppDimensions.sm),
       itemCount: cases.length,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -56,147 +33,148 @@ class PendingLawyerCasesTab extends StatelessWidget {
         final c = cases[i];
 
         return Padding(
-          padding: EdgeInsets.only(bottom: 1.h),
+          padding: const EdgeInsets.only(bottom: 24),
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: AppColors.kEmerald.withOpacity(0.18),
-                width: 1,
-              ),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF0F172A).withOpacity(0.04),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                child: InkWell(
-                  onTap: () => _showCaseDetails(context, c),
-                  borderRadius: BorderRadius.circular(20),
-                  child: Padding(
-                    padding: EdgeInsets.all(4.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              width: 6.h,
-                              height: 6.h,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    AppColors.kEmerald,
-                                    AppColors.kEmeraldDark,
-                                  ],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
-                                ),
-                                borderRadius: BorderRadius.circular(16),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: AppColors.kEmerald.withOpacity(0.35),
-                                    blurRadius: 4,
-                                  ),
-                                ],
-                              ),
-                              child: Center(
-                                child: CustomText(
-                                  title: c.caseNo.split('/').last,
-                                  color: Colors.white,
-                                  fontSize: 15.sp,
-                                  weight: FontWeight.w800,
-                                ),
-                              ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => _showCaseDetails(context, c),
+                borderRadius: BorderRadius.circular(24),
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF1F5F9),
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                            SizedBox(width: 4.w),
-                            Expanded(
-                              child: CustomText(
-                                title: c.title,
-                                color: AppColors.kTextPrimary,
-                                fontSize: 17.sp,
-                                weight: FontWeight.w700,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
+                            child: Text(
+                              c.caseNo.split('/').last,
+                              style: const TextStyle(
+                                color: Color(0xFF64748B),
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
                               ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(height: 0.5.h),
-                                  CustomText(
-                                    title: '${c.client} • ${c.court}',
-                                    color: AppColors.kTextSecondary,
-                                    fontSize: 16.sp,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  SizedBox(height: 1.2.h),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 3.w,
-                                      vertical: 0.8.h,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.kEmerald.withOpacity(0.15),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          c.appointmentType == 'Video'
-                                              ? Icons.videocam_rounded
-                                              : Icons.meeting_room_rounded,
-                                          size: 2.5.h,
-                                          color: AppColors.kEmerald,
-                                        ),
-                                        SizedBox(width: 2.w),
-                                        CustomText(
-                                          title:
-                                              '${c.appointmentType} • Next: ${c.hearingDate != null ? _formatDateOnly(c.hearingDate!) : '-'}',
-                                          color: AppColors.kEmerald,
-                                          fontSize: 14.sp,
-                                          weight: FontWeight.w600,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 0.5.h),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: TextButton.icon(
-                            onPressed: () => _showCaseDetails(context, c),
-                            icon: Icon(
-                              Icons.info_outline_rounded,
-                              color: AppColors.kEmerald,
-                              size: 2.5.h,
-                            ),
-                            label: CustomText(
-                              title: 'View Details',
-                              color: AppColors.kEmerald,
-                              fontSize: 14.sp,
-                              weight: FontWeight.w600,
                             ),
                           ),
+                          const Spacer(),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFEF3C7),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Text(
+                              'Pending',
+                              style: TextStyle(
+                                color: Color(0xFFD97706),
+                                fontWeight: FontWeight.w700,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        c.title,
+                        style: const TextStyle(
+                          color: Color(0xFF0F172A),
+                          fontWeight: FontWeight.w800,
+                          fontSize: 18,
                         ),
-                      ],
-                    ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          const Icon(Icons.person_outline_rounded, size: 16, color: Color(0xFF64748B)),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              c.client,
+                              style: const TextStyle(
+                                color: Color(0xFF64748B),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(Icons.gavel_rounded, size: 16, color: Color(0xFF64748B)),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              c.court,
+                              style: const TextStyle(
+                                color: Color(0xFF64748B),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 16),
+                        child: Divider(color: Color(0xFFE2E8F0), height: 1),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                c.appointmentType == 'Video' ? Icons.videocam_rounded : Icons.meeting_room_rounded,
+                                size: 16,
+                                color: const Color(0xFF94A3B8),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                c.hearingDate != null ? _formatDateOnly(c.hearingDate!) : 'No hearing',
+                                style: const TextStyle(
+                                  color: Color(0xFF64748B),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Color(0xFFCBD5E1)),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
-          ),
+          ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1),
         );
       },
     );
@@ -230,25 +208,27 @@ class PendingLawyerCasesTab extends StatelessWidget {
   }) {
     return TableRow(
       decoration: BoxDecoration(
-        color: isHeader ? AppColors.kEmerald.withOpacity(0.12) : null,
+        color: isHeader ? AppColors.kEmerald.withValues(alpha: 0.12) : null,
       ),
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.4.h),
-          child: CustomText(
-            title: label,
-            color: isHeader ? AppColors.kEmerald : AppColors.kTextSecondary,
-            weight: isHeader ? FontWeight.w700 : FontWeight.w500,
-            fontSize: 13.sp,
+          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.md, vertical: AppDimensions.md),
+          child: Text(
+            label,
+            style: AppTypography.caption.copyWith(
+              color: isHeader ? AppColors.kEmerald : AppColors.kTextSecondary,
+              fontWeight: isHeader ? FontWeight.w700 : FontWeight.w500,
+            ),
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.4.h),
-          child: CustomText(
-            title: value,
-            color: valueColor ?? AppColors.kTextPrimary,
-            weight: FontWeight.w600,
-            fontSize: 13.sp,
+          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.md, vertical: AppDimensions.md),
+          child: Text(
+            value,
+            style: AppTypography.body.copyWith(
+              color: valueColor ?? AppColors.kTextPrimary,
+              fontWeight: FontWeight.w600,
+            ),
             maxLines: maxLines,
             overflow: maxLines != null ? TextOverflow.ellipsis : null,
           ),
@@ -268,73 +248,72 @@ class PendingLawyerCasesTab extends StatelessWidget {
         maxChildSize: 0.95,
         builder: (_, ctrl) => Container(
           decoration: BoxDecoration(
-            color: AppColors.kSurface.withOpacity(0.97),
+            color: AppColors.kSurface.withValues(alpha: 0.97),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-            border: Border.all(color: AppColors.kEmerald.withOpacity(0.18)),
+            border: Border.all(color: AppColors.kEmerald.withValues(alpha: 0.18)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.45),
+                color: Colors.black.withValues(alpha: 0.45),
                 blurRadius: 32,
                 offset: const Offset(0, -8),
               ),
             ],
           ),
-          padding: EdgeInsets.fromLTRB(6.w, 1.5.h, 6.w, 4.h),
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               // Drag handle
               Container(
-                width: 12.w,
+                width: 48,
                 height: 5,
                 decoration: BoxDecoration(
-                  color: AppColors.kEmerald.withOpacity(0.35),
+                  color: AppColors.kEmerald.withValues(alpha: 0.35),
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              SizedBox(height: 2.5.h),
+              const SizedBox(height: AppDimensions.xl),
 
               Expanded(
                 child: ListView(
                   controller: ctrl,
                   children: [
                     // Title
-                    CustomText(
-                      title: c.title,
-                      fontSize: 21.sp,
-                      weight: FontWeight.w800,
-                      color: AppColors.kTextPrimary,
+                    Text(
+                      c.title,
+                      style: AppTypography.h2,
                       maxLines: 2,
                     ),
-                    SizedBox(height: 0.5.h),
+                    const SizedBox(height: AppDimensions.xs),
 
-                    CustomText(
-                      title: "Client: ${c.client}",
-                      fontSize: 15.sp,
-                      color: AppColors.kTextSecondary,
+                    Text(
+                      "Client: ${c.client}",
+                      style: AppTypography.body.copyWith(
+                        color: AppColors.kTextSecondary,
+                      ),
                     ),
-                    SizedBox(height: 3.h),
+                    const SizedBox(height: AppDimensions.xxl),
 
                     // ── Case Details Section ──
-                    CustomText(
-                      title: "Case Details",
-                      fontSize: 17.sp,
-                      weight: FontWeight.w700,
-                      color: AppColors.kEmerald,
+                    Text(
+                      "Case Details",
+                      style: AppTypography.h3.copyWith(
+                        color: AppColors.kEmerald,
+                      ),
                     ),
-                    SizedBox(height: 1.5.h),
+                    const SizedBox(height: AppDimensions.md),
 
                     Container(
                       decoration: BoxDecoration(
-                        color: AppColors.kInputBg.withOpacity(0.85),
+                        color: AppColors.kInputBg.withValues(alpha: 0.85),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: AppColors.kEmerald.withOpacity(0.2)),
+                        border: Border.all(color: AppColors.kEmerald.withValues(alpha: 0.2)),
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(16),
                         child: Table(
                           border: TableBorder.all(
-                            color: AppColors.kEmerald.withOpacity(0.12),
+                            color: AppColors.kEmerald.withValues(alpha: 0.12),
                             width: 1,
                           ),
                           columnWidths: const {
@@ -364,42 +343,43 @@ class PendingLawyerCasesTab extends StatelessWidget {
                       ),
                     ),
 
-                    SizedBox(height: 3.h),
+                    const SizedBox(height: AppDimensions.xxxl),
 
                     // ── Documents Section ──
-                    CustomText(
-                      title: "Documents",
-                      fontSize: 17.sp,
-                      weight: FontWeight.w700,
-                      color: AppColors.kEmerald,
+                    Text(
+                      "Documents",
+                      style: AppTypography.h3.copyWith(
+                        color: AppColors.kEmerald,
+                      ),
                     ),
-                    SizedBox(height: 1.5.h),
+                    const SizedBox(height: AppDimensions.md),
 
                     c.documents.isEmpty
                         ? Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 2.h, horizontal: 4.w),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: AppDimensions.lg, horizontal: AppDimensions.lg),
                             decoration: BoxDecoration(
-                              color: AppColors.kInputBg.withOpacity(0.6),
+                              color: AppColors.kInputBg.withValues(alpha: 0.6),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
                                   color: AppColors.kEmerald
-                                      .withOpacity(0.15)),
+                                      .withValues(alpha: 0.15)),
                             ),
                             child: Row(
                               children: [
                                 Icon(
                                   Icons.description_rounded,
                                   color: AppColors.kEmerald
-                                      .withOpacity(0.5),
+                                      .withValues(alpha: 0.5),
                                   size: 22,
                                 ),
-                                SizedBox(width: 3.w),
+                                const SizedBox(width: AppDimensions.md),
                                 Expanded(
-                                  child: CustomText(
-                                    title: "No documents uploaded",
-                                    color: AppColors.kTextSecondary,
-                                    fontSize: 14.sp,
+                                  child: Text(
+                                    "No documents uploaded",
+                                    style: AppTypography.body.copyWith(
+                                      color: AppColors.kTextSecondary,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -408,34 +388,35 @@ class PendingLawyerCasesTab extends StatelessWidget {
                         : Column(
                             children: c.documents.map((doc) {
                               return Padding(
-                                padding: EdgeInsets.only(bottom: 1.2.h),
+                                padding: const EdgeInsets.only(bottom: AppDimensions.sm),
                                 child: Container(
-                                  padding: EdgeInsets.all(3.5.w),
+                                  padding: const EdgeInsets.all(AppDimensions.md),
                                   decoration: BoxDecoration(
-                                    color: AppColors.kInputBg.withOpacity(0.85),
+                                    color: AppColors.kInputBg.withValues(alpha: 0.85),
                                     borderRadius: BorderRadius.circular(16),
                                     border: Border.all(
-                                      color: AppColors.kEmerald.withOpacity(0.2),
+                                      color: AppColors.kEmerald.withValues(alpha: 0.2),
                                     ),
                                   ),
                                   child: Row(
                                     children: [
-                                      Icon(
+                                      const Icon(
                                         Icons.insert_drive_file_rounded,
                                         color: AppColors.kTextSecondary,
                                         size: 24,
                                       ),
-                                      SizedBox(width: 4.w),
+                                      const SizedBox(width: AppDimensions.md),
                                       Expanded(
-                                        child: CustomText(
-                                          title: doc,
-                                          color: AppColors.kTextPrimary,
-                                          fontSize: 15.sp,
+                                        child: Text(
+                                          doc,
+                                          style: AppTypography.body.copyWith(
+                                            color: AppColors.kTextPrimary,
+                                          ),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
-                                      Icon(
+                                      const Icon(
                                         Icons.visibility_rounded,
                                         color: AppColors.kEmerald,
                                         size: 22,
@@ -447,42 +428,43 @@ class PendingLawyerCasesTab extends StatelessWidget {
                             }).toList(),
                           ),
 
-                    SizedBox(height: 3.h),
+                    const SizedBox(height: AppDimensions.xxxl),
 
                     // ── Notes Section ──
-                    CustomText(
-                      title: "Notes",
-                      fontSize: 17.sp,
-                      weight: FontWeight.w700,
-                      color: AppColors.kEmerald,
+                    Text(
+                      "Notes",
+                      style: AppTypography.h3.copyWith(
+                        color: AppColors.kEmerald,
+                      ),
                     ),
-                    SizedBox(height: 1.5.h),
+                    const SizedBox(height: AppDimensions.md),
 
                     c.notes.isEmpty
                         ? Container(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 2.5.h, horizontal: 5.w),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: AppDimensions.lg, horizontal: AppDimensions.lg),
                             decoration: BoxDecoration(
-                              color: AppColors.kInputBg.withOpacity(0.6),
+                              color: AppColors.kInputBg.withValues(alpha: 0.6),
                               borderRadius: BorderRadius.circular(16),
                               border: Border.all(
                                   color: AppColors.kEmerald
-                                      .withOpacity(0.15)),
+                                      .withValues(alpha: 0.15)),
                             ),
                             child: Row(
                               children: [
                                 Icon(
                                   Icons.notes_rounded,
                                   color: AppColors.kEmerald
-                                      .withOpacity(0.5),
+                                      .withValues(alpha: 0.5),
                                   size: 22,
                                 ),
-                                SizedBox(width: 3.w),
+                                const SizedBox(width: AppDimensions.md),
                                 Expanded(
-                                  child: CustomText(
-                                    title: "No notes added yet",
-                                    color: AppColors.kTextSecondary,
-                                    fontSize: 14.sp,
+                                  child: Text(
+                                    "No notes added yet",
+                                    style: AppTypography.body.copyWith(
+                                      color: AppColors.kTextSecondary,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -493,17 +475,17 @@ class PendingLawyerCasesTab extends StatelessWidget {
                               final idx = entry.key;
                               final note = entry.value;
                               return Container(
-                                margin: EdgeInsets.only(bottom: idx < c.notes.length - 1 ? 1.5.h : 0),
+                                margin: EdgeInsets.only(bottom: idx < c.notes.length - 1 ? AppDimensions.lg : 0),
                                 decoration: BoxDecoration(
-                                  color: AppColors.kInputBg.withOpacity(0.85),
+                                  color: AppColors.kInputBg.withValues(alpha: 0.85),
                                   borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: AppColors.kEmerald.withOpacity(0.2)),
+                                  border: Border.all(color: AppColors.kEmerald.withValues(alpha: 0.2)),
                                 ),
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(16),
                                   child: Table(
                                     border: TableBorder.all(
-                                      color: AppColors.kEmerald.withOpacity(0.12),
+                                      color: AppColors.kEmerald.withValues(alpha: 0.12),
                                       width: 1,
                                     ),
                                     columnWidths: const {
@@ -522,22 +504,15 @@ class PendingLawyerCasesTab extends StatelessWidget {
                             }).toList(),
                           ),
 
-                    SizedBox(height: 4.h),
+                    const SizedBox(height: AppDimensions.huge),
 
                     // Close Button
-                    CustomButton(
-                      text: "Close",
+                    LexButton(
+                      label: "Close",
                       onPressed: () => Navigator.pop(context),
-                      gradient: LinearGradient(
-                        colors: [AppColors.kEmerald, AppColors.kEmeraldDark],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      textColor: Colors.white,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w700,
-                      borderRadius: 16,
+                      style: LexButtonStyle.primary,
                     ),
+                    const SizedBox(height: AppDimensions.xxxl),
                   ],
                 ),
               ),

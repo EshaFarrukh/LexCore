@@ -1,8 +1,8 @@
 ﻿import 'package:flutter/material.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/features/student/data/models/research_model.dart';
-import 'package:lawyer_app/shared/widgets/custom_button.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/features/student/data/models/research_model.dart';
+import 'package:lex_core/shared/widgets/custom_button.dart';
+import 'package:lex_core/shared/widgets/custom_text.dart';
 import 'package:sizer/sizer.dart';
 
 class ResearchItemWidget extends StatelessWidget {

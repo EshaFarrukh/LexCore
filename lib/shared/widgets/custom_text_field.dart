@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:sizer/sizer.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/core/constants/app_dimensions.dart';
+import 'package:lex_core/core/constants/app_typography.dart';
 
 class CustomTextField extends StatelessWidget {
   final TextEditingController? controller;
@@ -42,6 +43,21 @@ class CustomTextField extends StatelessWidget {
     this.onFieldSubmitted,
   });
 
+  static final OutlineInputBorder _defaultBorder = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12),
+    borderSide: const BorderSide(color: AppColors.kBorder, width: 1.0),
+  );
+
+  static final OutlineInputBorder _focusedBorder = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12),
+    borderSide: const BorderSide(color: AppColors.kBrand, width: 2.0),
+  );
+
+  static final OutlineInputBorder _errorBorder = OutlineInputBorder(
+    borderRadius: BorderRadius.circular(12),
+    borderSide: const BorderSide(color: AppColors.kError, width: 1.5),
+  );
+
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -50,31 +66,44 @@ class CustomTextField extends StatelessWidget {
       keyboardType: keyboardType ?? TextInputType.text,
       validator: validator,
       onChanged: onChanged,
-      maxLines: maxLines,
+      maxLines: obscureText ? 1 : maxLines,
       readOnly: readOnly,
       onTap: onTap,
       textInputAction: textInputAction,
       onFieldSubmitted: onFieldSubmitted ?? (v) => FocusScope.of(context).unfocus(),
-      style: TextStyle(
-        color: textColor ?? AppColors.kTextPrimary, 
-        fontSize: 14.sp
+      style: AppTypography.body.copyWith(
+        color: textColor ?? AppColors.kTextPrimary,
       ),
+      cursorColor: AppColors.kBrand,
       decoration: InputDecoration(
         hintText: hintText,
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
-        filled: fillColor != null,
-        fillColor: fillColor,
-        border: borderRadius != null 
-          ? OutlineInputBorder(
-              borderRadius: BorderRadius.circular(borderRadius!),
-              borderSide: BorderSide.none,
-            )
-          : null,
-        hintStyle: TextStyle(
-          color: hintTextColor ?? AppColors.hintTextColor,
-          fontSize: 14.sp,
+        filled: true,
+        fillColor: fillColor ?? AppColors.kBgElevated,
+        enabledBorder: borderRadius != null
+            ? OutlineInputBorder(
+                borderRadius: BorderRadius.circular(borderRadius!),
+                borderSide: const BorderSide(color: AppColors.kBorder, width: 1.0),
+              )
+            : _defaultBorder,
+        focusedBorder: borderRadius != null
+            ? OutlineInputBorder(
+                borderRadius: BorderRadius.circular(borderRadius!),
+                borderSide: const BorderSide(color: AppColors.kBrand, width: 2.0),
+              )
+            : _focusedBorder,
+        errorBorder: _errorBorder,
+        focusedErrorBorder: _errorBorder,
+        disabledBorder: _defaultBorder,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppDimensions.lg,
+          vertical: AppDimensions.md + 4,
         ),
+        hintStyle: AppTypography.body.copyWith(
+          color: hintTextColor ?? AppColors.kTextSecondary.withValues(alpha: 0.7),
+        ),
+        errorStyle: AppTypography.captionError,
       ),
     );
   }

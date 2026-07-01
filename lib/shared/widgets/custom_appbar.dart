@@ -1,9 +1,9 @@
-﻿import 'dart:ui';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/shared/widgets/custom_text.dart';
 import 'package:sizer/sizer.dart';
 
 class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
@@ -57,6 +57,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
               ? ImageFilter.blur(sigmaX: 0, sigmaY: 0)
               : ImageFilter.blur(sigmaX: 10, sigmaY: 10),
           child: AppBar(
+            automaticallyImplyLeading: false,
             backgroundColor: Colors.transparent,
             elevation: 0,
             centerTitle: true,

@@ -1,23 +1,19 @@
-﻿import 'dart:developer';
-
+import 'dart:developer';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lawyer_app/core/constants/app_assets.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/core/constants/app_keys.dart';
-import 'package:lawyer_app/core/utils/storage/storage_service.dart';
-import 'package:lawyer_app/features/auth/presentation/providers/forgot_password_provider.dart';
-import 'package:lawyer_app/features/auth/presentation/providers/otp_provider.dart';
-import 'package:lawyer_app/app/router/route_names.dart';
-import 'package:lawyer_app/features/auth/presentation/states/otp_state.dart';
-import 'package:lawyer_app/shared/widgets/custom_appbar.dart';
-import 'package:lawyer_app/shared/widgets/custom_button.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
-import 'package:lawyer_app/shared/widgets/loading_indicator.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:sizer/sizer.dart';
+import 'package:lex_core/app/router/route_names.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/core/constants/app_typography.dart';
+import 'package:lex_core/core/constants/app_keys.dart';
+import 'package:lex_core/core/utils/storage/storage_service.dart';
+import 'package:lex_core/features/auth/presentation/providers/forgot_password_provider.dart';
+import 'package:lex_core/features/auth/presentation/providers/otp_provider.dart';
+import 'package:lex_core/features/auth/presentation/states/otp_state.dart';
+import 'package:lex_core/shared/widgets/lex_button.dart';
+import 'package:lex_core/shared/widgets/lex_text_field.dart';
 
 class OtpScreen extends ConsumerStatefulWidget {
   const OtpScreen({super.key});
@@ -32,76 +28,110 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
 
   Future<void> _verifyOtp() async {
     if (_formKey.currentState?.validate() ?? false) {
+      if (_pin.length != 6) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please enter 6-digit OTP'), backgroundColor: AppColors.kError),
+        );
+        return;
+      }
       try {
         final response = await ref.read(otpProvider.notifier).verifyOtp(_pin);
         if (response.isEmpty) {
-          log("OTPScreen â†’ OTP response: $response");
-          context.pushNamed(RouteNames.loginScreen);
+          log("OTPScreen -> OTP response: $response");
+          context.go(RouteNames.resetPasswordScreen);
         }
-        log("OTPScreen â†’ OTP responsefailed, response is null");
       } catch (e, st) {
-        log("OTPScreen â†’ Exception during OTP: $e\n$st");
+        log("OTPScreen -> Exception during OTP: $e\n$st");
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Invalid OTP or Verification Failed'), backgroundColor: AppColors.kError),
+        );
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = ref.watch(otpProvider) is OtpStateLoading;
+
     return Scaffold(
-      backgroundColor: AppColors.kBgDark,
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(kToolbarHeight),
-        child: CustomAppbar(title: '', isBack: true),
+      backgroundColor: AppColors.kBgDeep,
+      appBar: AppBar(
+        backgroundColor: AppColors.kBgDeep,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.kTextPrimary, size: 20),
+          onPressed: () => context.pop(),
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.all(2.h),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
           child: Form(
             key: _formKey,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Center(
-                  child: Column(
-                    children: [
-                      Container(
-                        height: 14.h,
-                        width: 38.w,
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.kEmerald.withValues(alpha: 0.18),
-                              blurRadius: 32,
-                              spreadRadius: 4,
-                            ),
-                          ],
-                        ),
-                        child: Image.asset(
-                          AppAssets.logoImage,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                      SizedBox(height: 3.5.h),
-                      CustomText(
-                        title: "OTP",
-                        fontSize: 20.sp,
-                        color: AppColors.kTextPrimary,
-                      ),
-                      SizedBox(height: 0.8.h),
-                      CustomText(
-                        title: "Enter the otp we have sent to you",
-                        color: AppColors.kTextSecondary,
-                        fontSize: 16.sp,
-                      ),
-                    ],
+                Container(
+                  width: 64, height: 64,
+                  decoration: BoxDecoration(
+                    color: AppColors.kBrand.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: AppColors.kBrand.withValues(alpha: 0.3)),
                   ),
-                ),
-                SizedBox(height: 2.h),
-                _buildOtpField(),
-                SizedBox(height: 4.h),
-                _buildSignupButton(),
-                SizedBox(height: 9.h),
-                _buildResendOtpText(),
+                  child: const Icon(Icons.security_rounded, color: AppColors.kBrand, size: 32),
+                ).animate().scaleXY(curve: Curves.easeOutBack, duration: 600.ms),
+                const SizedBox(height: 32),
+                
+                Text('Verification Code', style: AppTypography.h1)
+                    .animate(delay: 100.ms).fadeIn().slideY(begin: 0.1),
+                const SizedBox(height: 8),
+                Text('Enter the 6-digit code we sent to your email address.', style: AppTypography.body)
+                    .animate(delay: 200.ms).fadeIn().slideY(begin: 0.1),
+                const SizedBox(height: 48),
+
+                LexTextField(
+                  controller: TextEditingController(text: _pin),
+                  hintText: '• • • • • •',
+                  keyboardType: TextInputType.number,
+                  maxLength: 6,
+                  textAlign: TextAlign.center,
+                  onChanged: (val) => _pin = val,
+                ).animate(delay: 300.ms).fadeIn().slideY(begin: 0.1),
+                
+                const SizedBox(height: 48),
+
+                LexButton(
+                  label: 'Verify OTP',
+                  style: LexButtonStyle.primary,
+                  fullWidth: true,
+                  isLoading: isLoading,
+                  onPressed: _verifyOtp,
+                ).animate(delay: 400.ms).fadeIn().slideY(begin: 0.1),
+
+                const SizedBox(height: 48),
+                Center(
+                  child: RichText(
+                    text: TextSpan(
+                      text: "Didn't receive the code? ",
+                      style: AppTypography.body,
+                      children: [
+                        TextSpan(
+                          text: 'Resend',
+                          style: AppTypography.button.copyWith(color: AppColors.kBrandLight),
+                          recognizer: TapGestureRecognizer()..onTap = () async {
+                            final email = await StorageService.instance.read(AppKeys.forgotEmailKey);
+                            if (email != null) {
+                              ref.read(forgotPasswordProvider.notifier).forgotPassword(email: email);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('OTP Resent!'), backgroundColor: AppColors.kSuccess),
+                              );
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ).animate(delay: 500.ms).fadeIn(),
               ],
             ),
           ),
@@ -109,82 +139,4 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
       ),
     );
   }
-
-  Widget _buildOtpField() {
-    return PinCodeTextField(
-      enableActiveFill: true,
-      appContext: context,
-      length: 6,
-      keyboardType: TextInputType.number,
-      cursorColor: AppColors.whiteColor,
-      obscureText: false,
-      textStyle: TextStyle(
-        fontSize: 22,
-        fontWeight: FontWeight.bold,
-        color: AppColors.kInputBg,
-      ),
-      pinTheme: PinTheme(
-        shape: PinCodeFieldShape.box,
-        borderRadius: BorderRadius.circular(12),
-        fieldHeight: 55,
-        fieldWidth: 55,
-        activeColor: AppColors.kEmerald,
-        inactiveColor: AppColors.kSurfaceElevated,
-        selectedColor: AppColors.kSilver,
-        activeFillColor: AppColors.inputBackgroundColor,
-        inactiveFillColor: AppColors.inputBackgroundColor,
-        selectedFillColor: AppColors.inputBackgroundColor,
-        borderWidth: 2,
-      ),
-      animationType: AnimationType.scale,
-      animationDuration: const Duration(milliseconds: 250),
-      onChanged: (value) => _pin = value,
-      onCompleted: (val) {},
-    );
-  }
-
-  Widget _buildSignupButton() {
-    final loginState = ref.watch(otpProvider);
-    return SizedBox(
-      width: double.infinity,
-      height: 14.w,
-      child: loginState is OtpStateLoading
-          ? const Center(child: LoadingIndicator())
-          : CustomButton(
-              text: 'Continue',
-              fontSize: 16.sp,
-              onPressed: _verifyOtp,
-              textColor: AppColors.blackColor,
-              gradient: AppColors.buttonGradientColor,
-              fontWeight: FontWeight.w600,
-              borderRadius: 30,
-            ),
-    );
-  }
-
-  Widget _buildResendOtpText() {
-    return Center(
-      child: RichText(
-        text: TextSpan(
-          text: "Don't receice code?",
-          style: TextStyle(color: AppColors.hintTextColor, fontSize: 16.sp),
-          children: [
-            TextSpan(
-              text: ' Resend',
-              style: TextStyle(color: AppColors.iconColor),
-              recognizer: TapGestureRecognizer()
-                ..onTap = () async {
-                  final email = await StorageService.instance.read(AppKeys.forgotEmailKey);
-                  log("Resend OTP tapped.");
-                  ref
-                      .read(forgotPasswordProvider.notifier)
-                      .forgotPassword(email: email!);
-                },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
-

@@ -1,12 +1,12 @@
 import 'dart:developer';
 
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:lawyer_app/core/constants/app_keys.dart';
-import 'package:lawyer_app/core/network/api_exceptions.dart';
-import 'package:lawyer_app/core/utils/storage/storage_service.dart';
-import 'package:lawyer_app/di/injection_container.dart';
-import 'package:lawyer_app/features/auth/domain/usecases/auth_usecases.dart';
-import 'package:lawyer_app/features/lawyer/presentation/states/lawyer_auth_state/lawyer_login_state.dart';
+import 'package:lex_core/core/constants/app_keys.dart';
+import 'package:lex_core/core/network/api_exceptions.dart';
+import 'package:lex_core/core/utils/storage/storage_service.dart';
+import 'package:lex_core/di/injection_container.dart';
+import 'package:lex_core/features/auth/domain/usecases/auth_usecases.dart';
+import 'package:lex_core/features/lawyer/presentation/states/lawyer_auth_state/lawyer_login_state.dart';
 
 class LawyerLoginController extends StateNotifier<LawyerLoginState> {
   final LoginUseCase _loginUseCase;
@@ -22,52 +22,28 @@ class LawyerLoginController extends StateNotifier<LawyerLoginState> {
     state = LawyerLoginLoading(); // ← Show loading
 
     try {
-      // Mock successful login bypass:
-      if (email == "zayahan@gmail.com" && password == "123qwe") {
-        final mockResponse = {
-          "fullName": "Zayahan Hasan Shah",
-          "accessToken": "abc1234",
-          "message": "Login Successful",
-        };
-
-        await StorageService.instance.write(AppKeys.accessTokenKey, "abc1234");
-        await StorageService.instance.write(AppKeys.userIdKey, "24");
-        await StorageService.instance.write(AppKeys.userTypeKey, "Lawyer");
-        await StorageService.instance.write(AppKeys.fullNameKey, "Zayahan Hasan Shah");
-
-        state = LawyerLoginSuccess(
-          fullName: mockResponse["fullName"]!,
-          token: mockResponse["accessToken"]!,
-          message: mockResponse["message"]!,
-        );
-
-        return {
-          'fullName': mockResponse["fullName"],
-          'token': mockResponse["accessToken"],
-        };
-      }
-
       final responseData = await _loginUseCase.execute(email, password);
 
-      if (responseData['status'] == 'success') {
+      if (responseData['statusCode'] == 200 || responseData['statusCode'] == 201) {
         final data = responseData['data'] as Map<String, dynamic>;
-        final int userId = data['userId'] as int;
-        final String? userType = data['userType'] as String?;
-        final String fullName = data['fullName'] as String;
-        final String token = data['token'] as String;
-        final String expiresUtc = data['expiresUtc'] as String;
-        final String expiresLocal = data['expiresLocal'] as String;
+        final user = data['user'] as Map<String, dynamic>;
+        
+        final String userId = user['id'] as String;
+        final String userType = user['role'] as String;
+        final String fullName = user['name'] as String;
 
-        await StorageService.instance.write(AppKeys.accessTokenKey, token);
-        await StorageService.instance.write(AppKeys.userIdKey, userId.toString());
-        await StorageService.instance.write(AppKeys.userTypeKey, userType ?? '');
+        if (userType != 'lawyer') {
+          state = LawyerLoginFailure("You do not have permission to access this profile.");
+          return null;
+        }
+
+        await StorageService.instance.write(AppKeys.userIdKey, userId);
+        await StorageService.instance.write(AppKeys.userTypeKey, userType);
         await StorageService.instance.write(AppKeys.fullNameKey, fullName);
-        await StorageService.instance.write(AppKeys.expiresUtcKey, expiresUtc);
-        await StorageService.instance.write(AppKeys.expiresLocalKey, expiresLocal);
 
         state = LawyerLoginSuccess(
           fullName: fullName,
-          token: token,
+          token: "firebase_managed_token",
           message: responseData['message'] ?? 'Login Successful',
         );
 
@@ -75,21 +51,18 @@ class LawyerLoginController extends StateNotifier<LawyerLoginState> {
           'userId': userId,
           'userType': userType,
           'fullName': fullName,
-          'token': token,
-          'expiresUtc': expiresUtc,
-          'expiresLocal': expiresLocal,
         };
       } else {
-        state = LawyerLoginFailure(responseData['errorMessage'] ?? 'Login Failed');
+        state = LawyerLoginFailure(responseData['message'] ?? 'Login Failed');
         return null;
       }
     } on ApiException catch (e) {
       state = LawyerLoginFailure(e.message);
       return null;
     } catch (e, stackTrace) {
-      log("LoginController → Error: $e");
+      log("LoginController -> Error: $e");
       log(stackTrace.toString());
-      state = const LawyerLoginFailure("Network error. Please try again.");
+      state = LawyerLoginFailure(e.toString().replaceAll('Exception: ', ''));
       return null;
     }
   }

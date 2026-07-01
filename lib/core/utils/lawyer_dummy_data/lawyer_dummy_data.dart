@@ -1,8 +1,8 @@
-﻿import 'package:lawyer_app/features/lawyer/data/models/lawyer_model.dart';
+﻿import 'package:lex_core/features/lawyer/data/models/lawyer_model.dart';
 
 final List<LawyerModel> dummyLawyers = [
   LawyerModel(
-    id: 1,
+    id: "1",
     firstName: "Sarah",
     lastName: "Khan",
     category: "Criminal Law",
@@ -17,7 +17,7 @@ final List<LawyerModel> dummyLawyers = [
     profilePhoto: "https://randomuser.me/api/portraits/women/44.jpg",
   ),
   LawyerModel(
-    id: 2,
+    id: "2",
     firstName: "Ali",
     lastName: "Raza",
     category: "Corporate Law",
@@ -31,7 +31,7 @@ final List<LawyerModel> dummyLawyers = [
     profilePhoto: "https://randomuser.me/api/portraits/men/32.jpg",
   ),
   LawyerModel(
-    id: 3,
+    id: "3",
     firstName: "Hina",
     lastName: "Malik",
     category: "Family Law",
@@ -45,7 +45,7 @@ final List<LawyerModel> dummyLawyers = [
     profilePhoto: "https://randomuser.me/api/portraits/women/65.jpg",
   ),
   LawyerModel(
-    id: 4,
+    id: "4",
     firstName: "Ahmed",
     lastName: "Butt",
     category: "Immigration Law",
@@ -59,7 +59,7 @@ final List<LawyerModel> dummyLawyers = [
     profilePhoto: "https://randomuser.me/api/portraits/men/41.jpg",
   ),
   LawyerModel(
-    id: 5,
+    id: "5",
     firstName: "Nimra",
     lastName: "Ali",
     category: "Intellectual Property",
@@ -73,7 +73,7 @@ final List<LawyerModel> dummyLawyers = [
     profilePhoto: "https://randomuser.me/api/portraits/women/33.jpg",
   ),
   LawyerModel(
-    id: 6,
+    id: "6",
     firstName: "Bilal",
     lastName: "Sheikh",
     category: "Civil Law",
@@ -87,7 +87,7 @@ final List<LawyerModel> dummyLawyers = [
     profilePhoto: "https://randomuser.me/api/portraits/men/27.jpg",
   ),
   LawyerModel(
-    id: 7,
+    id: "7",
     firstName: "Mehwish",
     lastName: "Zafar",
     category: "Corporate Law",
@@ -101,7 +101,7 @@ final List<LawyerModel> dummyLawyers = [
     profilePhoto: "https://randomuser.me/api/portraits/women/56.jpg",
   ),
   LawyerModel(
-    id: 8,
+    id: "8",
     firstName: "Hassan",
     lastName: "Iqbal",
     category: "Cyber Law",
@@ -115,7 +115,7 @@ final List<LawyerModel> dummyLawyers = [
     profilePhoto: "https://randomuser.me/api/portraits/men/37.jpg",
   ),
   LawyerModel(
-    id: 9,
+    id: "9",
     firstName: "Ayesha",
     lastName: "Tariq",
     category: "Environmental Law",
@@ -129,7 +129,7 @@ final List<LawyerModel> dummyLawyers = [
     profilePhoto: "https://randomuser.me/api/portraits/women/26.jpg",
   ),
   LawyerModel(
-    id: 10,
+    id: "10",
     firstName: "Usman",
     lastName: "Farooq",
     category: "Tax Law",
@@ -143,7 +143,7 @@ final List<LawyerModel> dummyLawyers = [
     profilePhoto: "https://randomuser.me/api/portraits/men/12.jpg",
   ),
   LawyerModel(
-    id: 11,
+    id: "11",
     firstName: "Fatima",
     lastName: "Javed",
     category: "Criminal Law",
@@ -157,7 +157,7 @@ final List<LawyerModel> dummyLawyers = [
     profilePhoto: "https://randomuser.me/api/portraits/women/22.jpg",
   ),
   LawyerModel(
-    id: 12,
+    id: "12",
     firstName: "Zain",
     lastName: "Haider",
     category: "Corporate Law",
@@ -171,7 +171,7 @@ final List<LawyerModel> dummyLawyers = [
     profilePhoto: "https://randomuser.me/api/portraits/men/44.jpg",
   ),
   LawyerModel(
-    id: 13,
+    id: "13",
     firstName: "Amna",
     lastName: "Qureshi",
     category: "Intellectual Property",
@@ -185,7 +185,7 @@ final List<LawyerModel> dummyLawyers = [
     profilePhoto: "https://randomuser.me/api/portraits/women/61.jpg",
   ),
   LawyerModel(
-    id: 14,
+    id: "14",
     firstName: "Rehan",
     lastName: "Anwar",
     category: "Labor Law",
@@ -199,7 +199,7 @@ final List<LawyerModel> dummyLawyers = [
     profilePhoto: "https://randomuser.me/api/portraits/men/21.jpg",
   ),
   LawyerModel(
-    id: 15,
+    id: "15",
     firstName: "Maria",
     lastName: "Saeed",
     category: "Family Law",
@@ -213,7 +213,7 @@ final List<LawyerModel> dummyLawyers = [
     profilePhoto: "https://randomuser.me/api/portraits/women/39.jpg",
   ),
   LawyerModel(
-    id: 16,
+    id: "16",
     firstName: "Taimoor",
     lastName: "Hassan",
     category: "Criminal Law",
@@ -227,7 +227,7 @@ final List<LawyerModel> dummyLawyers = [
     profilePhoto: "https://randomuser.me/api/portraits/men/18.jpg",
   ),
   LawyerModel(
-    id: 17,
+    id: "17",
     firstName: "Sana",
     lastName: "Nawaz",
     category: "Corporate Law",
@@ -241,7 +241,7 @@ final List<LawyerModel> dummyLawyers = [
     profilePhoto: "https://randomuser.me/api/portraits/women/11.jpg",
   ),
   LawyerModel(
-    id: 18,
+    id: "18",
     firstName: "Hamza",
     lastName: "Rashid",
     category: "Civil Law",
@@ -255,7 +255,7 @@ final List<LawyerModel> dummyLawyers = [
     profilePhoto: "https://randomuser.me/api/portraits/men/16.jpg",
   ),
   LawyerModel(
-    id: 19,
+    id: "19",
     firstName: "Areeba",
     lastName: "Shahid",
     category: "Immigration Law",
@@ -269,7 +269,7 @@ final List<LawyerModel> dummyLawyers = [
     profilePhoto: "https://randomuser.me/api/portraits/women/25.jpg",
   ),
   LawyerModel(
-    id: 20,
+    id: "20",
     firstName: "Rizwan",
     lastName: "Aslam",
     category: "Cyber Law",

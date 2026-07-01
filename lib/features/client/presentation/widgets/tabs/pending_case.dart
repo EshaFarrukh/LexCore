@@ -2,11 +2,13 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/features/client/domain/entities/case_entity.dart';
-import 'package:lawyer_app/shared/widgets/custom_button.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
-import 'package:sizer/sizer.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/core/constants/app_dimensions.dart';
+import 'package:lex_core/core/constants/app_typography.dart';
+import 'package:lex_core/features/client/domain/entities/case_entity.dart';
+import 'package:lex_core/shared/widgets/lex_button.dart';
+import 'package:lex_core/shared/widgets/lex_empty_state.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class PendingCasesTab extends StatelessWidget {
   final List<CaseEntity> cases;
@@ -65,44 +67,43 @@ class PendingCasesTab extends StatelessWidget {
               ),
             ],
           ),
-          padding: EdgeInsets.fromLTRB(6.w, 1.5.h, 6.w, 4.h),
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               // Drag handle
               Container(
-                width: 12.w,
+                width: 48,
                 height: 5,
                 decoration: BoxDecoration(
                   color: AppColors.kEmerald.withValues(alpha: 0.35),
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              SizedBox(height: 2.5.h),
+              const SizedBox(height: AppDimensions.xl),
 
               Expanded(
                 child: ListView(
                   controller: ctrl,
                   children: [
                     // Title
-                    CustomText(
-                      title: c.title,
-                      fontSize: 21.sp,
-                      weight: FontWeight.w800,
-                      color: AppColors.kTextPrimary,
+                    Text(
+                      c.title,
+                      style: AppTypography.h2,
                       maxLines: 2,
                     ),
-                    SizedBox(height: 0.5.h),
+                    const SizedBox(height: AppDimensions.xs),
 
-                    CustomText(
-                      title: "Client: ${c.client}",
-                      fontSize: 15.sp,
-                      color: AppColors.kTextSecondary,
+                    Text(
+                      "Client: ${c.client}",
+                      style: AppTypography.body.copyWith(
+                        color: AppColors.kTextSecondary,
+                      ),
                     ),
 
                     if (c.lawyerName != null &&
                         c.lawyerName != 'Not Assigned') ...[
-                      SizedBox(height: 0.5.h),
+                      const SizedBox(height: AppDimensions.xs),
                       Row(
                         children: [
                           const Icon(
@@ -110,30 +111,30 @@ class PendingCasesTab extends StatelessWidget {
                             color: AppColors.kGold,
                             size: 18,
                           ),
-                          SizedBox(width: 2.w),
+                          const SizedBox(width: AppDimensions.xs),
                           Expanded(
-                            child: CustomText(
-                              title:
-                                  "Lawyer: ${c.lawyerName}${c.lawyerId != null ? ' (${c.lawyerId})' : ''}",
-                              fontSize: 14.sp,
-                              weight: FontWeight.w600,
-                              color: AppColors.kGoldLight,
+                            child: Text(
+                              "Lawyer: ${c.lawyerName}${c.lawyerId != null ? ' (${c.lawyerId})' : ''}",
+                              style: AppTypography.body.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.kGoldLight,
+                              ),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ],
                       ),
                     ],
-                    SizedBox(height: 3.h),
+                    const SizedBox(height: AppDimensions.xxl),
 
                     // ── Case Details Section ──
-                    CustomText(
-                      title: "Case Details",
-                      fontSize: 17.sp,
-                      weight: FontWeight.w700,
-                      color: AppColors.kEmerald,
+                    Text(
+                      "Case Details",
+                      style: AppTypography.h3.copyWith(
+                        color: AppColors.kEmerald,
+                      ),
                     ),
-                    SizedBox(height: 1.5.h),
+                    const SizedBox(height: AppDimensions.md),
 
                     Container(
                       decoration: BoxDecoration(
@@ -187,22 +188,22 @@ class PendingCasesTab extends StatelessWidget {
                       ),
                     ),
 
-                    SizedBox(height: 3.h),
+                    const SizedBox(height: AppDimensions.xxxl),
 
                     // ── Notes Section ──
-                    CustomText(
-                      title: "Notes",
-                      fontSize: 17.sp,
-                      weight: FontWeight.w700,
-                      color: AppColors.kEmerald,
+                    Text(
+                      "Notes",
+                      style: AppTypography.h3.copyWith(
+                        color: AppColors.kEmerald,
+                      ),
                     ),
-                    SizedBox(height: 1.5.h),
+                    const SizedBox(height: AppDimensions.md),
 
                     c.notes.isEmpty
                         ? Container(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 2.5.h,
-                              horizontal: 5.w,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: AppDimensions.lg,
+                              horizontal: AppDimensions.lg,
                             ),
                             decoration: BoxDecoration(
                               color: AppColors.kInputBg.withValues(alpha: 0.6),
@@ -222,12 +223,13 @@ class PendingCasesTab extends StatelessWidget {
                                   ),
                                   size: 22,
                                 ),
-                                SizedBox(width: 3.w),
+                                const SizedBox(width: AppDimensions.md),
                                 Expanded(
-                                  child: CustomText(
-                                    title: "No notes added yet",
-                                    color: AppColors.kTextSecondary,
-                                    fontSize: 14.sp,
+                                  child: Text(
+                                    "No notes added yet",
+                                    style: AppTypography.body.copyWith(
+                                      color: AppColors.kTextSecondary,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -239,7 +241,7 @@ class PendingCasesTab extends StatelessWidget {
                               final note = entry.value;
                               return Container(
                                 margin: EdgeInsets.only(
-                                  bottom: idx < c.notes.length - 1 ? 1.5.h : 0,
+                                  bottom: idx < c.notes.length - 1 ? AppDimensions.lg : 0,
                                 ),
                                 decoration: BoxDecoration(
                                   color: AppColors.kInputBg.withValues(
@@ -284,22 +286,15 @@ class PendingCasesTab extends StatelessWidget {
                             }).toList(),
                           ),
 
-                    SizedBox(height: 4.h),
+                    const SizedBox(height: AppDimensions.huge),
 
                     // Close Button
-                    CustomButton(
-                      text: "Close",
+                    LexButton(
+                      label: "Close",
                       onPressed: () => context.pop(),
-                      gradient: const LinearGradient(
-                        colors: [AppColors.kEmerald, AppColors.kEmeraldDark],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      textColor: Colors.white,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w700,
-                      borderRadius: 16,
+                      style: LexButtonStyle.primary,
                     ),
+                    const SizedBox(height: AppDimensions.xxxl),
                   ],
                 ),
               ),
@@ -323,21 +318,23 @@ class PendingCasesTab extends StatelessWidget {
       ),
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.4.h),
-          child: CustomText(
-            title: label,
-            color: isHeader ? AppColors.kEmerald : AppColors.kTextSecondary,
-            weight: isHeader ? FontWeight.w700 : FontWeight.w500,
-            fontSize: 13.sp,
+          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.md, vertical: AppDimensions.md),
+          child: Text(
+            label,
+            style: AppTypography.caption.copyWith(
+              color: isHeader ? AppColors.kEmerald : AppColors.kTextSecondary,
+              fontWeight: isHeader ? FontWeight.w700 : FontWeight.w500,
+            ),
           ),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.4.h),
-          child: CustomText(
-            title: value,
-            color: valueColor ?? AppColors.kTextPrimary,
-            weight: FontWeight.w600,
-            fontSize: 13.sp,
+          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.md, vertical: AppDimensions.md),
+          child: Text(
+            value,
+            style: AppTypography.body.copyWith(
+              color: valueColor ?? AppColors.kTextPrimary,
+              fontWeight: FontWeight.w600,
+            ),
             maxLines: maxLines,
             overflow: maxLines != null ? TextOverflow.ellipsis : null,
           ),
@@ -352,215 +349,215 @@ class PendingCasesTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (cases.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.hourglass_empty_rounded,
-              size: 80,
-              color: AppColors.kEmerald.withValues(alpha: 0.6),
-            ),
-            SizedBox(height: 2.5.h),
-            CustomText(
-              title: 'No pending cases',
-              color: AppColors.kTextPrimary,
-              fontSize: 20.sp,
-              weight: FontWeight.w700,
-            ),
-            SizedBox(height: 1.2.h),
-            CustomText(
-              title: 'New matters assigned to you will appear here',
-              color: AppColors.kTextSecondary,
-              fontSize: 15.sp,
-              alignText: TextAlign.center,
-              maxLines: 2,
-            ),
-          ],
-        ),
+      return const LexEmptyState(
+        icon: Icons.hourglass_empty_rounded,
+        title: 'No pending cases',
+        subtitle: 'New matters assigned to you will appear here',
       );
     }
 
     return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      padding: const EdgeInsets.only(top: 16, bottom: 24),
       itemCount: cases.length,
       itemBuilder: (ctx, i) {
         final c = cases[i];
+        
+        final isCriminal = c.category.toLowerCase().contains('criminal');
+        final isCorporate = c.category.toLowerCase().contains('corporate');
+        final isFamily = c.category.toLowerCase().contains('family');
 
-        // Year shown on badge from hearing date
-        final yearLabel = _yearOnly(c.hearingDate);
+        Color categoryColor = const Color(0xFF3B82F6); // Blue
+        Color categoryBg = const Color(0xFFEFF6FF);
+        IconData categoryIcon = Icons.gavel_rounded;
 
-        // Short label for the hearing chip
+        if (isCriminal) {
+          categoryColor = const Color(0xFFEF4444); // Red
+          categoryBg = const Color(0xFFFEF2F2);
+          categoryIcon = Icons.local_police_rounded;
+        } else if (isCorporate) {
+          categoryColor = const Color(0xFF8B5CF6); // Purple
+          categoryBg = const Color(0xFFF5F3FF);
+          categoryIcon = Icons.business_center_rounded;
+        } else if (isFamily) {
+          categoryColor = const Color(0xFFF59E0B); // Amber
+          categoryBg = const Color(0xFFFFFBEB);
+          categoryIcon = Icons.family_restroom_rounded;
+        }
+
         final hearingLabel = c.hearingDate != null
-            ? DateFormat('dd MMM yyyy').format(
+            ? DateFormat('dd MMM, yyyy').format(
                 DateTime.tryParse(c.hearingDate!)?.toLocal() ?? DateTime.now(),
               )
             : 'TBD';
 
         return Padding(
-          padding: EdgeInsets.only(bottom: 2.2.h),
+          padding: const EdgeInsets.only(bottom: 20),
           child: Container(
             decoration: BoxDecoration(
-              color: AppColors.kSurface.withValues(alpha: 0.92),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: AppColors.kEmerald.withValues(alpha: 0.18),
-                width: 1.2,
-              ),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: const Color(0xFFE2E8F0), width: 1.5),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.35),
-                  blurRadius: 20,
-                  offset: const Offset(0, 10),
+                  color: const Color(0xFF0F172A).withValues(alpha: 0.04),
+                  blurRadius: 16,
+                  offset: const Offset(0, 8),
                 ),
               ],
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                child: InkWell(
-                  onTap: () => _showCaseDetails(context, c),
-                  borderRadius: BorderRadius.circular(20),
-                  child: Padding(
-                    padding: EdgeInsets.all(4.w),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Year badge
-                        Container(
-                          width: 6.h,
-                          height: 6.h,
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [
-                                AppColors.kEmerald,
-                                AppColors.kEmeraldDark,
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: () => _showCaseDetails(context, c),
+                borderRadius: BorderRadius.circular(24),
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Top Row: Category Tag and Case No
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: categoryBg,
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.kEmerald.withValues(
-                                  alpha: 0.35,
-                                ),
-                                blurRadius: 16,
-                              ),
-                            ],
-                          ),
-                          child: Center(
-                            child: Text(
-                              yearLabel,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 13.sp,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 4.w),
-
-                        // Main content
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomText(
-                                title: c.title,
-                                color: AppColors.kTextPrimary,
-                                fontSize: 17.sp,
-                                weight: FontWeight.w700,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              SizedBox(height: 0.5.h),
-
-                              CustomText(
-                                title: c.court,
-                                color: AppColors.kTextSecondary,
-                                fontSize: 14.sp,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              SizedBox(height: 1.h),
-
-                              // Hearing date chip
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 3.w,
-                                  vertical: 0.7.h,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.kEmerald.withValues(
-                                    alpha: 0.12,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(categoryIcon, size: 14, color: categoryColor),
+                                const SizedBox(width: 6),
+                                Flexible(
+                                  child: Text(
+                                    c.category.toUpperCase(),
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: 0.5,
+                                      color: categoryColor,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  borderRadius: BorderRadius.circular(10),
                                 ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.access_time_rounded,
-                                      size: 2.h,
-                                      color: AppColors.kEmerald,
-                                    ),
-                                    SizedBox(width: 1.5.w),
-                                    Text(
-                                      "Next: $hearingLabel",
-                                      style: TextStyle(
-                                        color: AppColors.kEmerald,
-                                        fontSize: 12.5.sp,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        SizedBox(width: 3.w),
-
-                        // Category badge
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 3.w,
-                            vertical: 1.h,
-                          ),
-                          decoration: BoxDecoration(
-                            color:
-                                (c.category.toLowerCase().contains('criminal')
-                                        ? Colors.redAccent
-                                        : AppColors.kEmerald)
-                                    .withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              color:
-                                  c.category.toLowerCase().contains('criminal')
-                                  ? Colors.redAccent
-                                  : AppColors.kEmerald,
+                              ],
                             ),
                           ),
-                          child: CustomText(
-                            title: c.category,
-                            color: c.category.toLowerCase().contains('criminal')
-                                ? Colors.redAccent
-                                : AppColors.kEmerald,
-                            fontSize: 13.sp,
-                            weight: FontWeight.w700,
+                          Flexible(
+                            child: Text(
+                              c.caseNo.isNotEmpty ? 'ID: ${c.caseNo}' : '',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF94A3B8),
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
                           ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      
+                      // Case Title
+                      Text(
+                        c.title,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF0F172A),
+                          letterSpacing: -0.5,
+                          height: 1.3,
                         ),
-                      ],
-                    ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 8),
+                      
+                      // Court Row
+                      Row(
+                        children: [
+                          const Icon(Icons.account_balance_rounded, size: 16, color: Color(0xFF64748B)),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              c.court,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xFF64748B),
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
+                      
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20),
+                        child: Divider(color: Color(0xFFF1F5F9), height: 1, thickness: 1.5),
+                      ),
+                      
+                      // Bottom Row: Date and Action
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Flexible(
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFF8FAFC),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: const Icon(Icons.event_rounded, size: 20, color: Color(0xFF475569)),
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Text(
+                                        "Next Hearing",
+                                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF94A3B8)),
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        hearingLabel,
+                                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF0F172A),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Text(
+                              "Details",
+                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
-          ),
+          ).animate().fadeIn(duration: 400.ms).slideY(begin: 0.1),
         );
       },
     );

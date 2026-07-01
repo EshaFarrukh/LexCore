@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lawyer_app/core/constants/app_assets.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/features/lawyer/presentation/providers/profile_provider/lawyer_profile_provider.dart';
-import 'package:lawyer_app/shared/widgets/custom_appbar.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
-import 'package:lawyer_app/features/lawyer/presentation/widgets/profile_widget/contact_card.dart';
-import 'package:lawyer_app/features/lawyer/presentation/widgets/profile_widget/profile_stat_card.dart';
+import 'package:lex_core/core/constants/app_assets.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/core/constants/app_typography.dart';
+import 'package:lex_core/features/lawyer/presentation/providers/profile_provider/lawyer_profile_provider.dart';
+import 'package:lex_core/shared/widgets/custom_appbar.dart';
+import 'package:lex_core/shared/widgets/custom_text.dart';
+import 'package:lex_core/features/lawyer/presentation/widgets/profile_widget/contact_card.dart';
+import 'package:lex_core/features/lawyer/presentation/widgets/profile_widget/profile_stat_card.dart';
 import 'package:sizer/sizer.dart';
 
 class LawyerProfileScreen extends ConsumerStatefulWidget {
@@ -30,48 +31,79 @@ class _LawyerProfileScreenState extends ConsumerState<LawyerProfileScreen> {
   Widget build(BuildContext context) {
     final profileState = ref.watch(lawyerProfileProvider);
 
-    return Container(
-      color: AppColors.kBgDark,
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF0F172A),
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        title: Text(
+          "Profile",
+          style: AppTypography.h1.copyWith(
+            fontSize: 28,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.5,
+            color: Colors.white,
+          ),
+        ),
+        actions: [
+          GestureDetector(
+            onTap: () => Scaffold.of(context).openDrawer(),
+            child: Container(
+              width: 44,
+              height: 44,
+              margin: const EdgeInsets.only(right: 16),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+              ),
+              child: const Icon(Icons.menu_rounded, color: Colors.white, size: 24),
+            ),
+          ),
+        ],
+      ),
+      body: profileState.when(
+        initial: () => const SizedBox.shrink(),
+        loading: () => const Center(
+          child: CircularProgressIndicator(color: AppColors.kEmerald),
+        ),
+        failure: (error) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.error_outline_rounded,
+                size: 80,
+                color: Colors.redAccent,
+              ),
+              SizedBox(height: 2.h),
+              CustomText(
+                title: 'Failed to load profile',
+                color: AppColors.kTextPrimary,
+                fontSize: 18.sp,
+              ),
+              SizedBox(height: 1.h),
+              CustomText(
+                title: error,
+                color: Colors.redAccent,
+                fontSize: 14.sp,
+                alignText: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+        success: (data) => Column(
           children: [
-            CustomAppbar(
-              logoImage: AppAssets.logoImage,
-              backgroundColor: Colors.transparent,
+            Container(
+              height: 32,
+              decoration: const BoxDecoration(
+                color: Color(0xFF0F172A),
+                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(32), bottomRight: Radius.circular(32)),
+              ),
             ),
             Expanded(
-              child: profileState.when(
-                initial: () => const SizedBox.shrink(),
-                loading: () => const Center(
-                  child: CircularProgressIndicator(color: AppColors.kEmerald),
-                ),
-                failure: (error) => Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.error_outline_rounded,
-                        size: 80,
-                        color: Colors.redAccent,
-                      ),
-                      SizedBox(height: 2.h),
-                      CustomText(
-                        title: 'Failed to load profile',
-                        color: AppColors.kTextPrimary,
-                        fontSize: 18.sp,
-                      ),
-                      SizedBox(height: 1.h),
-                      CustomText(
-                        title: error,
-                        color: Colors.redAccent,
-                        fontSize: 14.sp,
-                        alignText: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-                success: (data) => SingleChildScrollView(
+              child: SingleChildScrollView(
                   padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.h),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -106,7 +138,7 @@ class _LawyerProfileScreenState extends ConsumerState<LawyerProfileScreen> {
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: AppColors.kEmerald.withOpacity(0.35),
+                                    color: AppColors.kEmerald.withValues(alpha: 0.35),
                                     blurRadius: 20,
                                     spreadRadius: 2,
                                   ),
@@ -115,7 +147,9 @@ class _LawyerProfileScreenState extends ConsumerState<LawyerProfileScreen> {
                               child: CircleAvatar(
                                 radius: 10.h,
                                 backgroundColor: AppColors.kSurface,
-                                backgroundImage: AssetImage(data.profileImage),
+                                backgroundImage: data.profileImage.startsWith('http') 
+                                    ? NetworkImage(data.profileImage) as ImageProvider
+                                    : AssetImage(data.profileImage.isNotEmpty ? data.profileImage : AppAssets.logoImage),
                               ),
                             ),
                             SizedBox(height: 2.5.h),
@@ -297,7 +331,6 @@ class _LawyerProfileScreenState extends ConsumerState<LawyerProfileScreen> {
                     ],
                   ),
                 ),
-              ),
             ),
           ],
         ),

@@ -1,9 +1,8 @@
-﻿import 'package:flutter/material.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/features/student/data/models/certification_model.dart';
-import 'package:lawyer_app/shared/widgets/custom_button.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
-import 'package:sizer/sizer.dart';
+import 'package:flutter/material.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/features/student/data/models/certification_model.dart';
+import 'package:lex_core/shared/widgets/custom_button.dart';
+import 'package:lex_core/shared/widgets/custom_text.dart';
 
 class CertificationItemWidget extends StatelessWidget {
   final CertificationModel certification;
@@ -22,175 +21,130 @@ class CertificationItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final levelColor = _getLevelColor(certification.level);
-
+    
     return Container(
-      margin: EdgeInsets.only(bottom: 2.h),
+      margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppColors.kSurface.withValues(alpha: 0.8),
-            AppColors.kSurfaceElevated.withValues(alpha: 0.6),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isCompleted
-              ? AppColors.kEmerald.withValues(alpha: 0.5)
-              : levelColor.withValues(alpha: 0.3),
-          width: isCompleted ? 2 : 1,
-        ),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF0F172A).withOpacity(0.04),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: onTap,
-          child: Padding(
-            padding: EdgeInsets.all(4.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(2.w),
-                      decoration: BoxDecoration(
-                        color: isCompleted
-                            ? AppColors.kEmerald.withValues(alpha: 0.3)
-                            : levelColor.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(28),
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 64, height: 64,
+                    decoration: BoxDecoration(
+                      color: isCompleted ? const Color(0xFFF0FDF4) : const Color(0xFFEFF6FF),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Center(
                       child: Icon(
-                        isCompleted ? Icons.verified : Icons.school_outlined,
-                        color: isCompleted ? AppColors.kEmerald : levelColor,
-                        size: 10.w,
+                        isCompleted ? Icons.workspace_premium_rounded : Icons.school_rounded,
+                        color: isCompleted ? const Color(0xFF22C55E) : const Color(0xFF3B82F6),
+                        size: 32,
                       ),
                     ),
-                    SizedBox(width: 3.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CustomText(
-                            title: certification.title,
-                            fontSize: 20.sp,
-                            weight: FontWeight.w600,
-                            color: AppColors.kTextPrimary,
-                            maxLines: 2,
-                          ),
-                          if (isCompleted)
-                            Container(
-                              margin: EdgeInsets.only(top: 0.5.h),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 2.w,
-                                vertical: 0.3.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.kEmerald.withValues(
-                                  alpha: 0.2,
-                                ),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: CustomText(
-                                title: "COMPLETED",
-                                fontSize: 10.sp,
-                                color: AppColors.kEmerald,
-                                weight: FontWeight.w600,
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 1.h),
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 2.w,
-                    vertical: 0.5.h,
                   ),
-                  decoration: BoxDecoration(
-                    color: levelColor.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: CustomText(
-                    title: certification.level.toUpperCase(),
-                    fontSize: 14.sp,
-                    color: levelColor,
-                    weight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(height: 1.h),
-                CustomText(
-                  title: certification.description,
-                  fontSize: 16.sp,
-                  color: AppColors.kTextSecondary,
-                  maxLines: 4,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 0.5.h),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Icon(Icons.person, size: 10.w, color: AppColors.kEmerald),
-                    SizedBox(width: 1.w),
-                    CustomText(
-                      title: certification.instructor,
-                      fontSize: 16.sp,
-                      color: AppColors.kTextSecondary,
-                    ),
-                  ],
-                ),
-                    SizedBox(height: 0.5.h),
-                Row(
-                  children: [
-                    Icon(Icons.schedule, size: 10.w, color: AppColors.kEmerald),
-                    SizedBox(width: 1.w),
-                    CustomText(
-                      title: certification.duration,
-                      fontSize: 16.sp,
-                      color: AppColors.kTextSecondary,
-                    ),
-                  ],
-                ),
-                SizedBox(height: 1.5.h),
-                Wrap(
-                  spacing: 1.w,
-                  runSpacing: 0.5.h,
-                  children: certification.skills
-                      .take(3)
-                      .map(
-                        (skill) => Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 1.5.w,
-                            vertical: 0.3.h,
-                          ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          certification.title,
+                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: Color(0xFF0F172A), height: 1.2, letterSpacing: -0.5),
+                          maxLines: 2,
+                        ),
+                        const SizedBox(height: 12),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                           decoration: BoxDecoration(
-                            color: AppColors.kEmerald.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(6),
+                            color: isCompleted ? const Color(0xFF22C55E).withOpacity(0.1) : levelColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          child: CustomText(
-                            title: skill,
-                            fontSize: 16.sp,
-                            color: AppColors.kEmerald,
-                            weight: FontWeight.w500,
+                          child: Text(
+                            isCompleted ? "COMPLETED" : certification.level.toUpperCase(),
+                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: isCompleted ? const Color(0xFF22C55E) : levelColor, letterSpacing: 0.8),
                           ),
                         ),
-                      )
-                      .toList(),
-                ),
-                if (!isCompleted) ...[
-                  SizedBox(height: 2.h),
-                  CustomButton(
-                    text: "Enroll Now",
-                    onPressed: onEnroll,
-                    fontSize: 14.sp,
-                    textColor: Colors.white,
-                    backgroundColor: AppColors.kEmerald,
+                      ],
+                    ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 20),
+              Text(
+                certification.description,
+                style: const TextStyle(fontSize: 14, color: Color(0xFF64748B), height: 1.5),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  const Icon(Icons.person_rounded, size: 18, color: Color(0xFF3B82F6)),
+                  const SizedBox(width: 8),
+                  Text(certification.instructor, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF475569))),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  const Icon(Icons.schedule_rounded, size: 18, color: Color(0xFF3B82F6)),
+                  const SizedBox(width: 8),
+                  Text(certification.duration, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: Color(0xFF64748B))),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: certification.skills
+                    .take(3)
+                    .map((skill) => Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF1F5F9),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(skill, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF475569))),
+                        ))
+                    .toList(),
+              ),
+              if (!isCompleted) ...[
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: onEnroll,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0F172A),
+                      foregroundColor: Colors.white,
+                      elevation: 4,
+                      shadowColor: const Color(0xFF0F172A).withOpacity(0.4),
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    ),
+                    child: const Text('Enroll Now', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: 0.5)),
+                  ),
+                ),
               ],
-            ),
+            ],
           ),
         ),
       ),
@@ -200,14 +154,13 @@ class CertificationItemWidget extends StatelessWidget {
   Color _getLevelColor(String level) {
     switch (level.toLowerCase()) {
       case 'beginner':
-        return Colors.greenAccent;
+        return Colors.greenAccent.shade700;
       case 'intermediate':
-        return Colors.orangeAccent;
+        return Colors.orangeAccent.shade700;
       case 'advanced':
-        return Colors.redAccent;
+        return Colors.redAccent.shade700;
       default:
-        return AppColors.kEmerald;
+        return const Color(0xFF3B82F6);
     }
   }
 }
-

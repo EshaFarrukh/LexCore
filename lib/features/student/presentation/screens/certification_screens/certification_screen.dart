@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lawyer_app/core/constants/app_assets.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/features/student/data/models/certification_model.dart';
-import 'package:lawyer_app/features/student/presentation/providers/certifications_provider/certification_provider.dart';
-import 'package:lawyer_app/shared/widgets/custom_appbar.dart';
-import 'package:lawyer_app/shared/widgets/custom_button.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
-import 'package:lawyer_app/shared/widgets/failed_widget.dart';
-import 'package:lawyer_app/shared/widgets/loading_indicator.dart';
-import 'package:lawyer_app/features/student/presentation/widgets/certification_widgets/certification_item_widget.dart';
+import 'package:lex_core/core/constants/app_assets.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/features/student/data/models/certification_model.dart';
+import 'package:lex_core/features/student/presentation/providers/certifications_provider/certification_provider.dart';
+import 'package:lex_core/shared/widgets/custom_appbar.dart';
+import 'package:lex_core/shared/widgets/custom_button.dart';
+import 'package:lex_core/shared/widgets/custom_text.dart';
+import 'package:lex_core/shared/widgets/failed_widget.dart';
+import 'package:lex_core/shared/widgets/loading_indicator.dart';
+import 'package:lex_core/features/student/presentation/widgets/certification_widgets/certification_item_widget.dart';
 import 'package:sizer/sizer.dart';
+
+import 'package:lex_core/features/student/presentation/widgets/student_portal_header.dart';
 
 class CertificationScreen extends ConsumerStatefulWidget {
   const CertificationScreen({super.key});
@@ -33,53 +35,43 @@ class _CertificationScreenState extends ConsumerState<CertificationScreen> {
   Widget build(BuildContext context) {
     final certificationState = ref.watch(certificationControllerProvider);
 
-    final availableCertifications = certificationState.when(
-      initial: () => <CertificationModel>[],
-      loading: () => <CertificationModel>[],
-      failure: (error) => <CertificationModel>[],
-      success: (data) => data.availableCertifications,
-    );
-
-    return Container(
-      color: AppColors.kBgDark,
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CustomAppbar(
-              logoImage: AppAssets.logoImage,
-              backgroundColor: Colors.transparent,
-            ),
-
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 3.w),
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const StudentPortalHeader(),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 2.h),
-                  CustomText(
-                    title: "Certifications",
-                    color: AppColors.kTextPrimary,
-                    fontSize: 26.sp,
-                    weight: FontWeight.w800,
+                  const Text(
+                    "Certifications",
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w800,
+                      color: Color(0xFF0F172A),
+                      letterSpacing: -1,
+                    ),
                   ),
-                  SizedBox(height: 0.4.h),
-                  CustomText(
-                    title:
-                        "Enhance your skills with professional certifications",
-                    color: AppColors.kTextSecondary,
-                    fontSize: 16.sp,
-                    maxLines: 2,
+                  const SizedBox(height: 8),
+                  const Text(
+                    "Enhance your skills with professional certifications",
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Color(0xFF64748B),
+                      height: 1.4,
+                    ),
                   ),
-                  SizedBox(height: 3.h),
+                  const SizedBox(height: 24),
                 ],
               ),
             ),
-
             Expanded(
               child: certificationState.when(
                 initial: () => const SizedBox(),
-                loading: () => LoadingIndicator(),
+                loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFF3B82F6))),
                 failure: (error) => Center(
                   child: FailedWidget(
                     title: "Failed to load certifications",
@@ -91,17 +83,15 @@ class _CertificationScreenState extends ConsumerState<CertificationScreen> {
                   ),
                 ),
                 success: (data) => ListView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: 2.w),
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                   itemCount: data.availableCertifications.length,
                   itemBuilder: (context, index) {
                     final certification = data.availableCertifications[index];
                     return CertificationItemWidget(
                       certification: certification,
                       isCompleted: false,
-                      onTap: () =>
-                          _showCertificationDetails(context, certification),
-                      onEnroll: () =>
-                          _enrollInCertification(context, certification),
+                      onTap: () => _showCertificationDetails(context, certification),
+                      onEnroll: () => _enrollInCertification(context, certification),
                     );
                   },
                 ),
@@ -109,7 +99,6 @@ class _CertificationScreenState extends ConsumerState<CertificationScreen> {
             ),
           ],
         ),
-      ),
     );
   }
 

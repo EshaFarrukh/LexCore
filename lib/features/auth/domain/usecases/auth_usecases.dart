@@ -1,4 +1,4 @@
-import 'package:lawyer_app/features/auth/domain/repositories/auth_repository.dart';
+import 'package:lex_core/features/auth/domain/repositories/auth_repository.dart';
 
 class LoginUseCase {
   final AuthRepository repository;

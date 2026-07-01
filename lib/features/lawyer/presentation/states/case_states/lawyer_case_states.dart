@@ -1,4 +1,4 @@
-import 'package:lawyer_app/features/lawyer/domain/entities/lawyer_case_entity.dart';
+import 'package:lex_core/features/lawyer/domain/entities/lawyer_case_entity.dart';
 
 sealed class LawyerCaseStates {
   R when<R>({

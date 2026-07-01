@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:lawyer_app/core/network/api_exceptions.dart';
-import 'package:lawyer_app/di/injection_container.dart';
-import 'package:lawyer_app/features/auth/domain/usecases/auth_usecases.dart';
-import 'package:lawyer_app/features/auth/presentation/states/forogot_password_State.dart';
+import 'package:lex_core/core/network/api_exceptions.dart';
+import 'package:lex_core/di/injection_container.dart';
+import 'package:lex_core/features/auth/domain/usecases/auth_usecases.dart';
+import 'package:lex_core/features/auth/presentation/states/forogot_password_State.dart';
 
 class ForgotPasswordController extends StateNotifier<ForgotPasswordState> {
   final ForgotPasswordUseCase _forgotPasswordUseCase;
@@ -22,8 +22,9 @@ class ForgotPasswordController extends StateNotifier<ForgotPasswordState> {
       state = ForgotPasswordFailure(e.message);
       return e.message;
     } catch (e) {
-      state = ForgotPasswordFailure("Network error. Please try again.");
-      return "Network error. Please try again.";
+      final msg = e.toString().replaceAll('Exception: ', '');
+      state = ForgotPasswordFailure(msg);
+      return msg;
     }
   }
 }

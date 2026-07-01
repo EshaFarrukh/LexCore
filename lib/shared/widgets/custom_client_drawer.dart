@@ -1,9 +1,9 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/core/utils/storage/storage_service.dart';
-import 'package:lawyer_app/app/router/route_names.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/core/constants/app_typography.dart';
+import 'package:lex_core/core/utils/storage/storage_service.dart';
+import 'package:lex_core/app/router/route_names.dart';
 import 'package:sizer/sizer.dart';
 
 class CustomClientDrawer extends StatelessWidget {
@@ -21,19 +21,19 @@ class CustomClientDrawer extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              AppColors.kSurface.withOpacity(0.94),
-              AppColors.kSurfaceElevated.withOpacity(0.88),
+              AppColors.kBgSurface.withValues(alpha: 0.94),
+              AppColors.kBgElevated.withValues(alpha: 0.88),
             ],
           ),
           border: Border(
             right: BorderSide(
-              color: AppColors.kEmerald.withOpacity(0.18),
+              color: AppColors.kBrandLight.withValues(alpha: 0.18),
               width: 1.4,
             ),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.45),
+              color: Colors.black.withValues(alpha: 0.45),
               blurRadius: 32,
               offset: const Offset(8, 0),
             ),
@@ -51,28 +51,26 @@ class CustomClientDrawer extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: AppColors.kEmerald.withOpacity(0.2),
+                        color: AppColors.kBrandLight.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Icon(
+                      child: const Icon(
                         Icons.home_rounded,
-                        color: AppColors.kEmerald,
+                        color: AppColors.kBrandLight,
                         size: 28,
                       ),
                     ),
                     SizedBox(width: 4.w),
-                    CustomText(
-                      title: 'Client Panel',
-                      fontSize: 20.sp,
-                      weight: FontWeight.w800,
-                      color: AppColors.whiteColor,
+                    Text(
+                      'Client Panel',
+                      style: AppTypography.h2,
                     ),
                   ],
                 ),
               ),
 
               const Divider(
-                color: AppColors.kEmerald,
+                color: AppColors.kBorder,
                 height: 1,
                 thickness: 1.2,
                 indent: 20,
@@ -100,7 +98,7 @@ class CustomClientDrawer extends StatelessWidget {
                 child: _buildDrawerItem(
                   icon: Icons.logout_rounded,
                   title: 'Logout',
-                  color: Colors.redAccent,
+                  color: AppColors.kError,
                   onTap: () => _confirmAndLogout(context),
                 ),
               ),
@@ -129,17 +127,15 @@ class CustomClientDrawer extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: itemColor.withOpacity(0.12),
+                color: itemColor.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(icon, color: itemColor, size: 26),
             ),
             SizedBox(width: 5.w),
-            CustomText(
-              title: title,
-              fontSize: 16.sp,
-              weight: FontWeight.w600,
-              color: itemColor,
+            Text(
+              title,
+              style: AppTypography.h3.copyWith(color: itemColor),
             ),
           ],
         ),
@@ -155,31 +151,31 @@ class CustomClientDrawer extends StatelessWidget {
       barrierDismissible: true,
       builder: (dialogContext) {
         return AlertDialog(
-          backgroundColor: AppColors.kSurface.withOpacity(0.96),
+          backgroundColor: AppColors.kBgSurface.withValues(alpha: 0.96),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          title: const Text(
+          title: Text(
             'Logout',
-            style: TextStyle(color: AppColors.kTextPrimary, fontWeight: FontWeight.w700),
+            style: AppTypography.h2,
           ),
-          content: const Text(
+          content: Text(
             'Are you sure you want to logout?',
-            style: TextStyle(color: AppColors.kTextSecondary),
+            style: AppTypography.body,
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(false),
-              child: const Text(
+              child: Text(
                 'Cancel',
-                style: TextStyle(color: AppColors.kTextSecondary),
+                style: AppTypography.body.copyWith(color: AppColors.kTextSecondary),
               ),
             ),
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(true),
-              child: const Text(
+              child: Text(
                 'Logout',
-                style: TextStyle(color: Colors.redAccent),
+                style: AppTypography.body.copyWith(color: AppColors.kError),
               ),
             ),
           ],

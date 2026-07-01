@@ -21,7 +21,7 @@ final Map<String, dynamic> mockCasesData = {
         "court": "Supreme Court of India",
         "status": "Evidence Stage",
         "hearingDate": "28 Jan 2026",
-        "client": "Amit Sharma",
+        "client": "James Carter",
         "category": "Civil",
         "lawyerId": "L-102",
         "lawyerName": "Ahmad Khan",

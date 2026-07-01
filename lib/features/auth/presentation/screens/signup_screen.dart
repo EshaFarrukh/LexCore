@@ -1,19 +1,18 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lawyer_app/core/constants/app_assets.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/core/validation/app_validation.dart';
-import 'package:lawyer_app/features/auth/presentation/providers/signup_provider.dart';
-import 'package:lawyer_app/app/router/route_names.dart';
-import 'package:lawyer_app/features/auth/presentation/states/signup_state.dart';
-import 'package:lawyer_app/shared/widgets/custom_button.dart';
-import 'package:lawyer_app/shared/widgets/custom_dialog.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
-import 'package:lawyer_app/shared/widgets/custom_text_field.dart';
-import 'package:lawyer_app/shared/widgets/loading_indicator.dart';
-import 'package:sizer/sizer.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lex_core/app/router/route_names.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/core/constants/app_typography.dart';
+import 'package:lex_core/core/database/hive_service.dart';
+import 'package:lex_core/core/validation/app_validation.dart';
+import 'package:lex_core/features/auth/presentation/providers/signup_provider.dart';
+import 'package:lex_core/features/auth/presentation/states/signup_state.dart';
+import 'package:lex_core/shared/widgets/lex_button.dart';
+import 'package:lex_core/shared/widgets/lex_text_field.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
   const SignupScreen({super.key});
@@ -48,45 +47,49 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       if (next is SignupSuccess) {
         _showSuccessDialog(next.message);
       } else if (next is SignupFailure) {
-        _showErrorDialog("Signup Failed", next.error);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(next.error), backgroundColor: AppColors.kError),
+        );
       }
     });
   }
 
   void _showSuccessDialog(String message) {
-    _nameController.clear();
-    _emailController.clear();
-    _phoneNumberController.clear();
-    _passwordController.clear();
-    _addressController.clear();
-
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (_) => CustomDialog(
-        title: "Account Created",
-        description: message,
-        buttonText: "Continue to Login",
-        icon: Icons.check_circle_outline_rounded,
-        onPressed: () {
-          Navigator.pop(context);
-          context.go(RouteNames.loginScreen);
-        },
-        buttonGradient: const [Color(0xFF10B981), Color(0xFF059669)],
-      ),
-    );
-  }
-
-  void _showErrorDialog(String title, String message) {
-    showDialog(
-      context: context,
-      builder: (_) => CustomDialog(
-        title: title,
-        description: message,
-        buttonText: "Try Again",
-        icon: Icons.error_outline_rounded,
-        buttonGradient: const [Color(0xFFFF6B6B), Color(0xFFC0392B)],
-        onPressed: () => Navigator.pop(context),
+      builder: (_) => AlertDialog(
+        backgroundColor: AppColors.kBgSurface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        contentPadding: const EdgeInsets.all(24),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                gradient: AppColors.kSuccessGradient,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.check_rounded, color: Colors.white, size: 40),
+            ).animate().scaleXY(curve: Curves.elasticOut, duration: 600.ms),
+            const SizedBox(height: 24),
+            Text('Account Created', style: AppTypography.h2),
+            const SizedBox(height: 8),
+            Text(message, textAlign: TextAlign.center, style: AppTypography.body),
+            const SizedBox(height: 24),
+            LexButton(
+              label: 'Continue to Login',
+              style: LexButtonStyle.primary,
+              fullWidth: true,
+              onPressed: () {
+                Navigator.pop(context);
+                context.go(RouteNames.loginScreen);
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -94,30 +97,15 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   Future<void> _signup() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    final fullName = _nameController.text.trim();
-    final email = _emailController.text.trim();
-    final phone = _phoneNumberController.text.trim();
-    final password = _passwordController.text.trim();
-    final address = _addressController.text.trim();
+    final role = HiveService.getUserRole() ?? 'client';
 
-    if (fullName.isEmpty ||
-        email.isEmpty ||
-        phone.isEmpty ||
-        password.isEmpty ||
-        address.isEmpty) {
-      _showErrorDialog("Validation Error", "Please fill all required fields.");
-      return;
-    }
-
-    await ref
-        .read(signupProvider.notifier)
-        .signup(
-          fullName: fullName,
-          email: email,
-          phone: phone,
-          password: password,
-          address: address,
-          userType: "Client",
+    await ref.read(signupProvider.notifier).signup(
+          fullName: _nameController.text.trim(),
+          email: _emailController.text.trim(),
+          phone: _phoneNumberController.text.trim(),
+          password: _passwordController.text.trim(),
+          address: _addressController.text.trim(),
+          userType: role,
         );
   }
 
@@ -126,220 +114,238 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     final isLoading = ref.watch(signupProvider) is SignupLoading;
 
     return Scaffold(
-      backgroundColor: AppColors.kBgDark,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Logo + Welcome Header
-                Row(
-                  children: [
-                    Container(
-                      height: 14.h,
-                      width: 40.w,
-                      decoration: BoxDecoration(
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.kEmerald.withOpacity(0.2),
-                            blurRadius: 20,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: Image.asset(
-                        AppAssets.logoImage,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                    SizedBox(width: 4.w),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomText(
-                          title: "Create Your\nAccount",
-                          color: AppColors.kTextPrimary,
-                          fontSize: 20.sp,
-                          maxLines: 2,
-                          weight: FontWeight.w800,
-                        ),
-                        CustomText(
-                          title: "Join our legal\nplatform in seconds",
-                          color: AppColors.kTextSecondary,
-                          fontSize: 16.sp,
-                          maxLines: 2,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                SizedBox(height: 5.h),
-      
-                // Form Fields (glassmorphic style - assume CustomTextField updated)
-                CustomTextField(
-                  controller: _nameController,
-                  hintText: "Full Name",
-                  validator: AppValidation.validateFullName,
-                  prefixIcon: Icon(
-                    Icons.person_rounded,
-                    color: AppColors.kEmerald,
-                    size: 24,
+      backgroundColor: AppColors.kBgDeep,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 16.0),
+          child: IconButton(
+            icon: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.9),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
                   ),
-                  textColor: AppColors.kTextPrimary,
-                  hintTextColor: AppColors.kTextSecondary,
-                ),
-                SizedBox(height: 2.2.h),
-      
-                CustomTextField(
-                  controller: _phoneNumberController,
-                  hintText: "Phone Number",
-                  validator: AppValidation.validatePhoneNumber,
-                  keyboardType: TextInputType.phone,
-                  prefixIcon: Icon(
-                    Icons.phone_rounded,
-                    color: AppColors.kEmerald,
-                    size: 24,
-                  ),
-                  textColor: AppColors.kTextPrimary,
-                  hintTextColor: AppColors.kTextSecondary,
-                ),
-                SizedBox(height: 2.2.h),
-      
-                CustomTextField(
-                  controller: _emailController,
-                  hintText: "Email Address",
-                  validator: AppValidation.validateEmail,
-                  keyboardType: TextInputType.emailAddress,
-                  prefixIcon: Icon(
-                    Icons.email_rounded,
-                    color: AppColors.kEmerald,
-                    size: 24,
-                  ),
-                  textColor: AppColors.kTextPrimary,
-                  hintTextColor: AppColors.kTextSecondary,
-                ),
-                SizedBox(height: 2.2.h),
-      
-                CustomTextField(
-                  controller: _passwordController,
-                  hintText: "Create Password",
-                  obscureText: _obscurePassword,
-                  validator: AppValidation.checkText,
-                  prefixIcon: Icon(
-                    Icons.lock_rounded,
-                    color: AppColors.kEmerald,
-                    size: 24,
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscurePassword
-                          ? Icons.visibility_off_rounded
-                          : Icons.visibility_rounded,
-                      color: AppColors.kEmerald.withOpacity(0.8),
-                    ),
-                    onPressed: () =>
-                        setState(() => _obscurePassword = !_obscurePassword),
-                  ),
-                  textColor: AppColors.kTextPrimary,
-                  hintTextColor: AppColors.kTextSecondary,
-                ),
-                SizedBox(height: 2.2.h),
-      
-                CustomTextField(
-                  controller: _addressController,
-                  hintText: "Address",
-                  validator: AppValidation.checkText,
-                  prefixIcon: Icon(
-                    Icons.location_on_rounded,
-                    color: AppColors.kEmerald,
-                    size: 24,
-                  ),
-                  textColor: AppColors.kTextPrimary,
-                  hintTextColor: AppColors.kTextSecondary,
-                ),
-      
-                SizedBox(height: 4.5.h),
-      
-                // Signup Button
-                SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: isLoading
-                      ? const Center(
-                          child: LoadingIndicator(color: AppColors.kEmerald),
-                        )
-                      : CustomButton(
-                          text: 'Create Account',
-                          onPressed: _signup,
-                          gradient: LinearGradient(
-                            colors: [
-                              AppColors.kEmerald,
-                              AppColors.kEmeraldDark,
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          textColor: Colors.white,
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w700,
-                          borderRadius: 16,
-                        ),
-                ),
-      
-                SizedBox(height: 3.5.h),
-      
-                // Login Link
-                Center(
-                  child: RichText(
-                    text: TextSpan(
-                      text: "Already have an account? ",
-                      style: TextStyle(
-                        color: AppColors.kTextSecondary,
-                        fontSize: 15.sp,
-                      ),
-                      children: [
-                        TextSpan(
-                          text: 'Sign In',
-                          style: TextStyle(
-                            color: AppColors.kEmerald,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () =>
-                                context.go(RouteNames.loginScreen),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-      
-                SizedBox(height: 4.h),
-      
-                // Back to role selection
-                Center(
-                  child: TextButton(
-                    onPressed: () =>
-                        context.go(RouteNames.incomingUserScreen),
-                    child: Text(
-                      'â† Back to Role Selection',
-                      style: TextStyle(
-                        color: AppColors.kTextSecondary,
-                        fontSize: 14.sp,
-                      ),
-                    ),
-                  ),
-                ),
-      
-                SizedBox(height: 4.h),
-              ],
+                ],
+              ),
+              child: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.kTextPrimary, size: 18),
             ),
+            onPressed: () => context.go(RouteNames.incomingUserScreen),
           ),
         ),
+      ),
+      body: Stack(
+        children: [
+          // Beautiful Premium Header Image
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            height: MediaQuery.of(context).size.height * 0.35,
+            child: Container(
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/images/signup_bg.jpg'),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      AppColors.kBgDeep.withValues(alpha: 0.7),
+                      AppColors.kBgDeep,
+                    ],
+                    stops: const [0.3, 0.8, 1.0], // Fade harder and faster into the background
+                  ),
+                ),
+              ),
+            ),
+          ),
+          
+          // Scrollable Form Content
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.12), // Pushes form down below the bright image part
+                    
+                    // Just the icon, no circle!
+                    const Icon(Icons.shield_rounded, color: AppColors.kBrand, size: 64)
+                        .animate().fadeIn(duration: 400.ms).scale(begin: const Offset(0.8, 0.8)),
+                    const SizedBox(height: 16),
+
+                    Text('Create an account', style: AppTypography.h1)
+                        .animate().fadeIn().slideY(begin: 0.1),
+                    const SizedBox(height: 8),
+                    Text('Quick Sign-up, Instant Access', style: AppTypography.body)
+                        .animate(delay: 100.ms).fadeIn().slideY(begin: 0.1),
+                    const SizedBox(height: 40),
+
+                    // Form Fields (styled with the existing premium LexTextField)
+                    LexTextField(
+                      controller: _nameController,
+                      hintText: 'Full Name',
+                      prefixIcon: Icons.person_outline,
+                      validator: AppValidation.validateFullName,
+                    ).animate(delay: 200.ms).fadeIn().slideY(begin: 0.1),
+                    const SizedBox(height: 20),
+
+                    LexTextField(
+                      controller: _emailController,
+                      hintText: 'Email',
+                      prefixIcon: Icons.email_outlined,
+                      keyboardType: TextInputType.emailAddress,
+                      validator: AppValidation.validateEmail,
+                    ).animate(delay: 300.ms).fadeIn().slideY(begin: 0.1),
+                    const SizedBox(height: 20),
+
+                    LexTextField(
+                      controller: _phoneNumberController,
+                      hintText: 'Phone Number',
+                      prefixIcon: Icons.phone_outlined,
+                      keyboardType: TextInputType.phone,
+                      validator: AppValidation.validatePhoneNumber,
+                    ).animate(delay: 400.ms).fadeIn().slideY(begin: 0.1),
+                    const SizedBox(height: 20),
+
+                    LexTextField(
+                      controller: _passwordController,
+                      hintText: 'Password',
+                      prefixIcon: Icons.lock_outline,
+                      obscureText: _obscurePassword,
+                      validator: AppValidation.checkText,
+                      suffixWidget: IconButton(
+                        icon: Icon(_obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                            color: AppColors.kTextSecondary, size: 20),
+                        onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                      ),
+                    ).animate(delay: 500.ms).fadeIn().slideY(begin: 0.1),
+                    const SizedBox(height: 16),
+                    
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: Checkbox(
+                            value: false, // Placeholder
+                            onChanged: (val) {},
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                            activeColor: AppColors.kBrand,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text('I agree to Terms & Conditions', style: AppTypography.bodySm),
+                      ],
+                    ).animate(delay: 600.ms).fadeIn(),
+                    const SizedBox(height: 32),
+
+                    LexButton(
+                      label: 'Sign Up',
+                      style: LexButtonStyle.primary,
+                      fullWidth: true,
+                      isLoading: isLoading,
+                      onPressed: _signup,
+                    ).animate(delay: 700.ms).fadeIn().slideY(begin: 0.1),
+                    
+                    const SizedBox(height: 32),
+                    
+                    // Divider
+                    Row(
+                      children: [
+                        Expanded(child: Divider(color: AppColors.kBorder, thickness: 1)),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text('Or sign up with', style: AppTypography.caption),
+                        ),
+                        Expanded(child: Divider(color: AppColors.kBorder, thickness: 1)),
+                      ],
+                    ).animate(delay: 800.ms).fadeIn(),
+                    
+                    const SizedBox(height: 32),
+                    
+                    // Social Logins
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            height: 56,
+                            decoration: BoxDecoration(
+                              color: AppColors.kBgSurface,
+                              borderRadius: BorderRadius.circular(999),
+                              border: Border.all(color: AppColors.kBorder),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset('assets/images/google_logo.svg', width: 24, height: 24),
+                                const SizedBox(width: 12),
+                                Text('Google', style: AppTypography.button.copyWith(color: AppColors.kTextPrimary)),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Container(
+                            height: 56,
+                            decoration: BoxDecoration(
+                              color: AppColors.kBgSurface,
+                              borderRadius: BorderRadius.circular(999),
+                              border: Border.all(color: AppColors.kBorder),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(Icons.apple, size: 26, color: Colors.black),
+                                const SizedBox(width: 12),
+                                Text('Apple', style: AppTypography.button.copyWith(color: AppColors.kTextPrimary)),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ).animate(delay: 900.ms).fadeIn().slideY(begin: 0.1),
+
+                    const SizedBox(height: 40),
+                    Center(
+                      child: RichText(
+                        text: TextSpan(
+                          text: "Already have an account? ",
+                          style: AppTypography.bodySm,
+                          children: [
+                            TextSpan(
+                              text: 'Login',
+                              style: AppTypography.button.copyWith(color: AppColors.kBrand),
+                              recognizer: TapGestureRecognizer()..onTap = () => context.go(RouteNames.loginScreen),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ).animate(delay: 1000.ms).fadeIn(),
+                    const SizedBox(height: 40),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
-

@@ -1,4 +1,4 @@
-﻿import 'package:lawyer_app/features/student/data/models/task_model.dart';
+﻿import 'package:lex_core/features/student/data/models/task_model.dart';
 
 sealed class TaskStates {
   R when<R>({

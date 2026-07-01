@@ -1,0 +1,70 @@
+{
+  "lw_1": {
+    "userId": "lw_1",
+    "title": "Family Law Expert",
+    "specializations": ["Family Law"],
+    "experience": "8 Years",
+    "rating": 4.9,
+    "reviews": 124,
+    "fee": 5000,
+    "location": "Gulberg, Lahore",
+    "languages": ["English", "Urdu"],
+    "about": "Ayesha Khan is a seasoned Family Law expert...",
+    "availability": "Mon - Fri (10 AM - 4 PM)",
+    "stats": {
+        "activeCases": 4,
+        "resolvedCases": 12
+    }
+  },
+  "lw_2": {
+    "userId": "lw_2",
+    "title": "Corporate Law Specialist",
+    "specializations": ["Corporate Law"],
+    "experience": "12 Years",
+    "rating": 4.8,
+    "reviews": 89,
+    "fee": 8000,
+    "location": "DHA Lahore",
+    "languages": ["English", "Urdu", "Punjabi"],
+    "about": "Ali specializes in corporate registration...",
+    "availability": "Tue - Thu (2 PM - 7 PM)",
+    "stats": {
+        "activeCases": 6,
+        "resolvedCases": 30
+    }
+  },
+  "lw_3": {
+    "userId": "lw_3",
+    "title": "Property Dispute Expert",
+    "specializations": ["Property Law"],
+    "experience": "15 Years",
+    "rating": 4.7,
+    "reviews": 210,
+    "fee": 6000,
+    "location": "Johar Town, Lahore",
+    "languages": ["English", "Urdu"],
+    "about": "Expert in property disputes...",
+    "availability": "Mon - Sat (9 AM - 5 PM)",
+    "stats": {
+        "activeCases": 18,
+        "resolvedCases": 240
+    }
+  },
+  "lw_4": {
+    "userId": "lw_4",
+    "title": "Criminal Defense Attorney",
+    "specializations": ["Criminal Defense"],
+    "experience": "6 Years",
+    "rating": 4.6,
+    "reviews": 56,
+    "fee": 7000,
+    "location": "District Court Lahore",
+    "languages": ["English", "Urdu"],
+    "about": "Fatima Noor is a passionate criminal defense attorney...",
+    "availability": "On Call 24/7",
+    "stats": {
+        "activeCases": 5,
+        "resolvedCases": 40
+    }
+  }
+}

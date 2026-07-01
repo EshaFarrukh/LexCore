@@ -1,8 +1,8 @@
 ﻿import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/shared/widgets/custom_text.dart';
 import 'package:sizer/sizer.dart';
 
 class MethodStep extends StatelessWidget {

@@ -1,384 +1,425 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lawyer_app/core/constants/app_assets.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/features/lawyer/presentation/providers/lawyer_cases_provider/lawyer_case_provider.dart';
-import 'package:lawyer_app/shared/widgets/custom_appbar.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
-import 'package:lawyer_app/features/client/presentation/widgets/tabs/cases_tab_button.dart';
-import 'package:lawyer_app/features/lawyer/presentation/widgets/dashboard_widgets/disposed_case_tab.dart';
-import 'package:lawyer_app/features/lawyer/presentation/widgets/dashboard_widgets/pending_case_tab.dart';
-import 'package:lawyer_app/features/lawyer/domain/entities/lawyer_case_entity.dart';
-import 'package:lawyer_app/features/lawyer/presentation/states/case_states/lawyer_case_states.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/core/constants/app_typography.dart';
+import 'package:lex_core/core/database/hive_service.dart';
+import 'package:lex_core/features/lawyer/domain/entities/lawyer_case_entity.dart';
+import 'package:lex_core/features/lawyer/presentation/providers/lawyer_cases_provider/lawyer_case_provider.dart';
+import 'package:lex_core/features/lawyer/presentation/states/case_states/lawyer_case_states.dart';
+import 'package:lex_core/features/lawyer/presentation/widgets/dashboard_widgets/disposed_case_tab.dart';
+import 'package:lex_core/features/lawyer/presentation/widgets/dashboard_widgets/pending_case_tab.dart';
 import 'package:intl/intl.dart';
-import 'package:sizer/sizer.dart';
 
 class LawyerDashboardScreen extends ConsumerStatefulWidget {
   const LawyerDashboardScreen({super.key});
 
   @override
-  ConsumerState<LawyerDashboardScreen> createState() =>
-      _LawyerDashboardScreenState();
+  ConsumerState<LawyerDashboardScreen> createState() => _LawyerDashboardScreenState();
 }
 
 class _LawyerDashboardScreenState extends ConsumerState<LawyerDashboardScreen> {
-  int selectedTab = 0;
+  int _selectedTab = 0;
 
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      ref.read(lawyerCaseControllerProvider.notifier).getAllCases();
-    });
-  }
-
-  void _onTabChanged(int index) {
-    setState(() => selectedTab = index);
+    Future.microtask(() => ref.read(lawyerCaseControllerProvider.notifier).getAllCases());
   }
 
   @override
   Widget build(BuildContext context) {
     final caseState = ref.watch(lawyerCaseControllerProvider);
+    
+    // Fix name per user request
+    String name = HiveService.getUserName()?.split(' ').first ?? 'Esha';
+    if (name.toLowerCase() == 'ayesha') name = 'Esha';
 
-    return Container(
-      color: AppColors.kBgDark,
-      child: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // AppBar (assuming CustomAppbar is transparent or fits dark theme)
-            CustomAppbar(
-              logoImage: AppAssets.logoImage,
-              backgroundColor: Colors.transparent,
+    return Scaffold(
+      backgroundColor: const Color(0xFFF1F5F9), // Deep cool grey for premium feel
+      body: Column(
+        children: [
+          // Premium Dark Gradient Header spanning into Next Hearing
+          Container(
+            padding: const EdgeInsets.only(left: 24, right: 24, bottom: 40, top: 60),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF0F172A), Color(0xFF1E293B)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(36), bottomRight: Radius.circular(36)),
             ),
-
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: () async {
-                  await ref
-                      .read(lawyerCaseControllerProvider.notifier)
-                      .getAllCases();
-                },
-                color: AppColors.kEmerald,
-                backgroundColor: AppColors.kBgDark,
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(
-                    parent: BouncingScrollPhysics(),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: 2.h),
-
-                      // Header + Statistics + Tabs
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 6.w),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CustomText(
-                              title: "Cases",
-                              color: AppColors.kTextPrimary,
-                              fontSize: 26.sp,
-                              weight: FontWeight.w800,
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Hello, $name', 
+                            style: const TextStyle(
+                              fontSize: 32,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: -1,
+                              color: Colors.white,
                             ),
-                            SizedBox(height: 0.4.h),
-                            CustomText(
-                              title: "Manage your pending & disposed matters",
-                              color: AppColors.kTextSecondary,
-                              fontSize: 15.sp,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 6),
+                          Text('Here is your legal practice overview', 
+                            style: TextStyle(
+                              color: const Color(0xFF94A3B8),
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
                             ),
-
-                            SizedBox(height: 3.h),
-
-                            // Statistics Visualization
-                            _buildStatistics(),
-
-                            SizedBox(height: 3.h),
-
-                            _buildNextHearingCard(caseState),
-
-                            SizedBox(height: 4.h),
-
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: [
-                                  CasesTabButton(
-                                    title: 'Pending',
-                                    index: 0,
-                                    selectedTab: selectedTab,
-                                    onTap: _onTabChanged,
-                                  ),
-                                  SizedBox(width: 4.w),
-                                  CasesTabButton(
-                                    title: 'Disposed',
-                                    index: 1,
-                                    selectedTab: selectedTab,
-                                    onTap: _onTabChanged,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                       ),
-
-                      SizedBox(height: 3.h),
-
-                      // Content Area
-                      caseState.when(
-                        initial: () => const SizedBox(),
-                        loading: () => Padding(
-                          padding: EdgeInsets.symmetric(vertical: 10.h),
-                          child: const Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.kEmerald,
-                              strokeWidth: 4,
+                    ),
+                    const SizedBox(width: 16),
+                    Row(
+                      children: [
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.08),
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white.withOpacity(0.12)),
+                          ),
+                          child: const Icon(Icons.notifications_outlined, color: Colors.white, size: 24),
+                        ),
+                        const SizedBox(width: 12),
+                        GestureDetector(
+                          onTap: () {
+                            ScaffoldState? scaffold = Scaffold.maybeOf(context);
+                            if (scaffold != null && scaffold.hasDrawer) {
+                              scaffold.openDrawer();
+                            } else {
+                              context.visitAncestorElements((element) {
+                                if (element.widget is Scaffold) {
+                                  final scaffoldWidget = element.widget as Scaffold;
+                                  if (scaffoldWidget.drawer != null) {
+                                    final state = (element as StatefulElement).state as ScaffoldState;
+                                    state.openDrawer();
+                                    return false;
+                                  }
+                                }
+                                return true;
+                              });
+                            }
+                          },
+                          child: Container(
+                            width: 48,
+                            height: 48,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.08),
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white.withOpacity(0.12)),
                             ),
+                            child: const Icon(Icons.menu_rounded, color: Colors.white, size: 24),
                           ),
                         ),
-                        failure: (error) => Padding(
-                          padding: EdgeInsets.symmetric(vertical: 5.h),
-                          child: Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 32),
+                _buildNextHearingCard(caseState),
+              ],
+            ),
+          ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.1),
+          
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: () => ref.read(lawyerCaseControllerProvider.notifier).getAllCases(),
+              color: const Color(0xFF3B82F6),
+              backgroundColor: Colors.white,
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 24, 24, 24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Stats Header
+                          Text('Case Overview', 
+                            style: const TextStyle(
+                              fontSize: 20, 
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFF0F172A),
+                              letterSpacing: -0.5,
+                            )
+                          ).animate(delay: 150.ms).fadeIn(),
+                          const SizedBox(height: 16),
+
+                          // Bento Box Stats
+                          _buildStats(caseState).animate(delay: 200.ms).fadeIn().slideY(begin: 0.1),
+                          const SizedBox(height: 36),
+
+                          // Fluid Segmented Tabs
+                          Container(
+                            height: 52,
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE2E8F0).withOpacity(0.8), 
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Row(
                               children: [
-                                Icon(
-                                  Icons.error_outline_rounded,
-                                  size: 80,
-                                  color: Colors.redAccent,
-                                ),
-                                SizedBox(height: 2.h),
-                                CustomText(
-                                  title: 'Failed to load cases',
-                                  color: AppColors.kTextPrimary,
-                                  fontSize: 18.sp,
-                                  weight: FontWeight.w600,
-                                ),
-                                SizedBox(height: 1.h),
-                                CustomText(
-                                  title: error,
-                                  color: Colors.redAccent,
-                                  fontSize: 14.sp,
-                                  alignText: TextAlign.center,
-                                ),
+                                Expanded(child: _tabBtn('Pending', 0)),
+                                Expanded(child: _tabBtn('Disposed', 1)),
                               ],
                             ),
-                          ),
-                        ),
-                        success: (data) => AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 400),
-                          transitionBuilder: (child, animation) =>
-                              FadeTransition(opacity: animation, child: child),
-                          child: selectedTab == 0
-                              ? PendingLawyerCasesTab(
-                                  key: const ValueKey('pending'),
-                                  cases: data.pendingCases,
-                                )
-                              : DisposedLawyerCasesTab(
-                                  key: const ValueKey('disposed'),
-                                  cases: data.disposedCases,
-                                ),
-                        ),
+                          ).animate(delay: 300.ms).fadeIn(),
+                          const SizedBox(height: 16),
+                        ],
                       ),
-                      SizedBox(height: 8.h),
-                    ],
+                    ),
                   ),
-                ),
+                  
+                  // Case List
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    sliver: _buildCaseList(caseState),
+                  ),
+                  const SliverToBoxAdapter(child: SizedBox(height: 120)), // Space for bottom nav
+                ],
               ),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStatistics() {
-    return Container(
-      padding: EdgeInsets.all(5.w),
-      decoration: BoxDecoration(
-        color: AppColors.kSurface.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.kGold.withOpacity(0.2)),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildStatItem("Total Cases", "24", AppColors.kGold),
-              _buildStatItem("Won", "18", AppColors.kEmerald),
-              _buildStatItem("Lost", "6", Colors.redAccent),
-            ],
-          ),
-          SizedBox(height: 3.h),
-          // Simple Bar Visualization
-          Row(
-            children: [
-              Expanded(
-                flex: 18,
-                child: Container(
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: AppColors.kEmerald,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              SizedBox(width: 2.w),
-              Expanded(
-                flex: 6,
-                child: Container(
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: Colors.redAccent,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 1.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              CustomText(
-                title: "Win Rate: 75%",
-                fontSize: 12.sp,
-                color: AppColors.kTextSecondary,
-              ),
-              CustomText(
-                title: "Loss Rate: 25%",
-                fontSize: 12.sp,
-                color: AppColors.kTextSecondary,
-              ),
-            ],
           ),
         ],
       ),
     );
   }
 
-  String _formatHearingDate(String? rawDate) {
-    if (rawDate == null || rawDate.isEmpty) return "TBD";
-    try {
-      final DateTime dt = DateTime.parse(rawDate);
-      return DateFormat('dd MMM yyyy • hh:mm a').format(dt);
-    } catch (_) {
-      return rawDate;
-    }
+  Widget _tabBtn(String label, int index) {
+    final active = _selectedTab == index;
+    return GestureDetector(
+      onTap: () => setState(() => _selectedTab = index),
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOutCubic,
+        decoration: BoxDecoration(
+          color: active ? Colors.white : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: active ? [
+            BoxShadow(
+              color: const Color(0xFF0F172A).withOpacity(0.06),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            )
+          ] : [],
+        ),
+        child: Center(
+          child: Text(label,
+            style: TextStyle(
+              color: active ? const Color(0xFF0F172A) : const Color(0xFF64748B),
+              fontWeight: active ? FontWeight.w800 : FontWeight.w600,
+              fontSize: 15,
+            )
+          ),
+        ),
+      ),
+    );
   }
 
-  Widget _buildNextHearingCard(LawyerCaseStates caseState) {
-    String title = "Loading...";
-    String subtitle = "Checking upcoming hearings";
+  Widget _buildNextHearingCard(LawyerCaseStates state) {
+    String title = "No Upcoming Hearings";
+    String subtitle = "Your schedule is completely clear.";
     bool hasHearing = false;
 
-    if (caseState is LawyerCaseSuccessState) {
-      final pendingCases = caseState.data.pendingCases;
-      LawyerCaseEntity? nextHearingCase;
-      for (final c in pendingCases) {
+    if (state is LawyerCaseSuccessState) {
+      LawyerCaseEntity? nextCase;
+      for (final c in state.data.pendingCases) {
         if (c.hearingDate != null && c.hearingDate!.isNotEmpty) {
-          nextHearingCase = c;
+          nextCase = c;
           break;
         }
       }
-
-      if (nextHearingCase != null) {
-        title = nextHearingCase.title;
-        subtitle = "${_formatHearingDate(nextHearingCase.hearingDate)} • ${nextHearingCase.court}";
+      if (nextCase != null) {
+        title = nextCase.title;
+        final rawDate = nextCase.hearingDate!;
+        String fDate = rawDate;
+        try {
+          fDate = DateFormat('dd MMM yyyy • hh:mm a').format(DateTime.parse(rawDate));
+        } catch (_) {}
+        subtitle = "$fDate • ${nextCase.court}";
         hasHearing = true;
-      } else {
-        title = "No cases for hearing";
-        subtitle = "You have no upcoming hearings scheduled";
       }
-    } else if (caseState is LawyerCaseFailureState) {
-      title = "Failed to fetch caseses";
-      subtitle = "Pull down to refresh and try again";
     }
 
     return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(4.w),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            hasHearing
-                ? AppColors.kGold.withOpacity(0.15)
-                : AppColors.kSurface.withOpacity(0.2),
-            Colors.transparent
-          ],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-        ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: hasHearing
-              ? AppColors.kGold.withOpacity(0.3)
-              : AppColors.kBorderSubtle.withOpacity(0.2),
-        ),
+        color: Colors.white.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
+        boxShadow: hasHearing ? [
+          BoxShadow(
+            color: const Color(0xFF000000).withOpacity(0.2),
+            blurRadius: 30,
+            offset: const Offset(0, 15),
+          ),
+        ] : [],
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
-            padding: EdgeInsets.all(3.w),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: hasHearing ? AppColors.kGold : AppColors.kTextSecondary.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(14),
+              color: hasHearing ? const Color(0xFF3B82F6).withOpacity(0.2) : Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: hasHearing ? const Color(0xFF3B82F6).withOpacity(0.5) : Colors.transparent),
             ),
             child: Icon(
-              Icons.event_note_rounded,
-              color: hasHearing ? Colors.black : AppColors.kTextSecondary,
+              hasHearing ? Icons.gavel_rounded : Icons.event_available_rounded, 
+              color: hasHearing ? const Color(0xFF60A5FA) : Colors.white70, 
+              size: 28,
             ),
           ),
-          SizedBox(width: 4.w),
+          const SizedBox(width: 20),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomText(
-                  title: "Next Hearing",
-                  fontSize: 13.sp,
-                  color: hasHearing ? AppColors.kGold : AppColors.kTextSecondary,
-                  weight: FontWeight.bold,
-                ),
-                CustomText(
-                  title: title,
-                  fontSize: 16.sp,
-                  weight: FontWeight.w700,
-                  color: AppColors.kTextPrimary,
-                ),
-                CustomText(
-                  title: subtitle,
-                  fontSize: 12.sp,
-                  color: AppColors.kTextSecondary,
-                ),
+                Text(hasHearing ? "Next Hearing" : "Schedule Clear",
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w700, 
+                        color: Color(0xFF94A3B8), 
+                        letterSpacing: 1,
+                        fontSize: 12,
+                    )),
+                const SizedBox(height: 6),
+                Text(title,
+                    maxLines: 1, overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                    )),
+                const SizedBox(height: 4),
+                Text(subtitle,
+                    maxLines: 1, overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Color(0xFFCBD5E1),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    )),
               ],
             ),
           ),
-          if (hasHearing)
-            const Icon(Icons.chevron_right_rounded, color: AppColors.kGold),
         ],
       ),
     );
   }
 
-  Widget _buildStatItem(String label, String value, Color color) {
-    return Column(
+  Widget _buildStats(LawyerCaseStates state) {
+    int total = 0;
+    int pending = 0;
+    int disposed = 0;
+
+    if (state is LawyerCaseSuccessState) {
+      pending = state.data.pendingCases.length;
+      disposed = state.data.disposedCases.length;
+      total = pending + disposed;
+    }
+
+    return Row(
       children: [
-        CustomText(
-          title: value,
-          fontSize: 22.sp,
-          weight: FontWeight.bold,
-          color: color,
-        ),
-        CustomText(
-          title: label,
-          fontSize: 12.sp,
-          color: AppColors.kTextSecondary,
-        ),
+        _statCard('Total', total.toString(), Icons.folder_open_rounded, const Color(0xFF3B82F6), const Color(0xFFEFF6FF)),
+        const SizedBox(width: 12),
+        _statCard('Pending', pending.toString(), Icons.pending_actions_rounded, const Color(0xFFF59E0B), const Color(0xFFFFF7ED)),
+        const SizedBox(width: 12),
+        _statCard('Disposed', disposed.toString(), Icons.task_alt_rounded, const Color(0xFF10B981), const Color(0xFFF0FDF4)),
       ],
+    );
+  }
+
+  Widget _statCard(String label, String value, IconData icon, Color accentColor, Color bgColor) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(color: const Color(0xFF0F172A).withOpacity(0.04), blurRadius: 20, offset: const Offset(0, 8)),
+          ],
+        ),
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: bgColor,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(icon, color: accentColor, size: 24),
+            ),
+            const SizedBox(height: 16),
+            Text(value, style: const TextStyle(color: Color(0xFF0F172A), fontSize: 28, fontWeight: FontWeight.w900, height: 1.1)),
+            const SizedBox(height: 6),
+            Text(
+              label, 
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Color(0xFF64748B), 
+                fontWeight: FontWeight.w700, 
+                fontSize: 13,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCaseList(LawyerCaseStates state) {
+    return state.when(
+      initial: () => const SliverToBoxAdapter(child: SizedBox()),
+      loading: () => const SliverToBoxAdapter(
+        child: Padding(
+          padding: EdgeInsets.all(40),
+          child: Center(child: CircularProgressIndicator(color: Color(0xFF3B82F6))),
+        ),
+      ),
+      failure: (err) => SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.all(40),
+          child: Center(
+            child: Column(
+              children: [
+                const Icon(Icons.error_outline_rounded, color: Colors.redAccent, size: 48),
+                const SizedBox(height: 16),
+                const Text('Failed to load cases', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+                const SizedBox(height: 8),
+                Text(err, style: const TextStyle(color: Color(0xFF64748B)), textAlign: TextAlign.center),
+              ],
+            ),
+          ),
+        ),
+      ),
+      success: (data) => SliverToBoxAdapter(
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: _selectedTab == 0
+              ? PendingLawyerCasesTab(key: const ValueKey('pending'), cases: data.pendingCases)
+              : DisposedLawyerCasesTab(key: const ValueKey('disposed'), cases: data.disposedCases),
+        ),
+      ),
     );
   }
 }

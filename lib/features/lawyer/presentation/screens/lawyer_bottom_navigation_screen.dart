@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/features/chat/presentation/screens/video_list_screen.dart';
-import 'package:lawyer_app/features/lawyer/presentation/providers/lawyer_bottom_navigation_provider/lawyer_bottom_navigation_provider.dart';
-import 'package:lawyer_app/features/lawyer/presentation/screens/lawyer_dashboard_screen.dart';
-import 'package:lawyer_app/features/lawyer/presentation/screens/lawyer_profile_screen.dart';
-import 'package:lawyer_app/features/chat/presentation/screens/chat_list_screen.dart';
-import 'package:lawyer_app/features/lawyer/presentation/screens/settings/lawyer_settings_screen.dart';
-import 'package:lawyer_app/shared/widgets/custom_bottom_navbar.dart';
-import 'package:lawyer_app/shared/widgets/custom_lawyer_drawer.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/features/chat/presentation/screens/video_list_screen.dart';
+import 'package:lex_core/features/lawyer/presentation/providers/lawyer_bottom_navigation_provider/lawyer_bottom_navigation_provider.dart';
+import 'package:lex_core/features/lawyer/presentation/screens/lawyer_dashboard_screen.dart';
+import 'package:lex_core/features/lawyer/presentation/screens/lawyer_profile_screen.dart';
+import 'package:lex_core/features/chat/presentation/screens/chat_list_screen.dart';
+import 'package:lex_core/features/lawyer/presentation/screens/settings/lawyer_settings_screen.dart';
+import 'package:lex_core/shared/widgets/custom_bottom_navbar.dart';
+import 'package:lex_core/shared/widgets/custom_lawyer_drawer.dart';
 
 class LawyerBottomNavigationScreen extends ConsumerStatefulWidget {
   const LawyerBottomNavigationScreen({super.key});
@@ -34,7 +34,7 @@ class _LawyerBottomNavigationScreenState
 
     return Scaffold(
       drawer: const CustomLawyerDrawer(),
-      backgroundColor: AppColors.kBgDark, // deep dark consistent background
+      backgroundColor: Colors.white, // unified white background
       extendBody: true, // important for glass effect to show behind
       body: IndexedStack(
         index: currentIndex,

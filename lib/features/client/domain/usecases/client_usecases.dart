@@ -1,5 +1,5 @@
-import 'package:lawyer_app/features/client/domain/entities/case_entity.dart';
-import 'package:lawyer_app/features/client/domain/repositories/client_repository.dart';
+import 'package:lex_core/features/client/domain/entities/case_entity.dart';
+import 'package:lex_core/features/client/domain/repositories/client_repository.dart';
 
 class CreateCaseUseCase {
   final ClientRepository repository;
@@ -16,7 +16,7 @@ class GetCasesByUserIdUseCase {
 
   GetCasesByUserIdUseCase(this.repository);
 
-  Future<List<CaseEntity>> execute(int userId) async {
+  Future<List<CaseEntity>> execute(String userId) async {
     return await repository.getCasesByUserId(userId);
   }
 }

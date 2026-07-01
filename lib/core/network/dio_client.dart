@@ -1,8 +1,8 @@
 import 'dart:developer';
 import 'package:dio/dio.dart';
-import 'package:lawyer_app/core/constants/api_url.dart';
-import 'package:lawyer_app/core/constants/app_keys.dart';
-import 'package:lawyer_app/core/utils/storage/storage_service.dart';
+import 'package:lex_core/core/constants/api_url.dart';
+import 'package:lex_core/core/constants/app_keys.dart';
+import 'package:lex_core/core/utils/storage/storage_service.dart';
 
 class DioClient {
   late final Dio dio;

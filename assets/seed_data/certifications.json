@@ -1,0 +1,46 @@
+{
+  "cert_1": {
+    "title": "Web Development Fundamentals",
+    "description": "Learn the basics of HTML, CSS, and JavaScript",
+    "startDate": "2024-01-15",
+    "endDate": "2024-03-15",
+    "certificateImage": "",
+    "duration": "2 months",
+    "instructor": "John Smith",
+    "level": "Beginner",
+    "skills": ["HTML", "CSS", "JavaScript"]
+  },
+  "cert_2": {
+    "title": "React.js Essentials",
+    "description": "Master React fundamentals and build modern web applications",
+    "startDate": "2024-02-01",
+    "endDate": "2024-04-01",
+    "certificateImage": "",
+    "duration": "2 months",
+    "instructor": "Sarah Johnson",
+    "level": "Intermediate",
+    "skills": ["React", "Hooks", "State Management"]
+  },
+  "cert_3": {
+    "title": "Python for Data Science",
+    "description": "Learn Python programming for data analysis and machine learning",
+    "startDate": "2024-03-01",
+    "endDate": "2024-05-01",
+    "certificateImage": "",
+    "duration": "2 months",
+    "instructor": "Dr. Michael Chen",
+    "level": "Intermediate",
+    "skills": ["Python", "Pandas", "NumPy", "Matplotlib"]
+  },
+  "cert_4": {
+    "title": "Mobile App Development with Flutter",
+    "description": "Build cross-platform mobile applications using Flutter",
+    "startDate": "2024-03-15",
+    "endDate": "2024-05-15",
+    "certificateImage": "",
+    "duration": "2 months",
+    "instructor": "Emily Davis",
+    "level": "Beginner",
+    "skills": ["Flutter", "Dart", "Mobile UI", "State Management"]
+  }
+}

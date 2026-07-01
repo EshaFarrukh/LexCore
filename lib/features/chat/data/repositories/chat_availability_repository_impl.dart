@@ -1,4 +1,4 @@
-import 'package:lawyer_app/features/chat/domain/repositories/chat_availability_repository.dart';
+import 'package:lex_core/features/chat/domain/repositories/chat_availability_repository.dart';
 
 class ChatAvailabilityRepositoryImpl implements ChatAvailabilityRepository {
   @override

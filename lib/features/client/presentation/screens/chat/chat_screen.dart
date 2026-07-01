@@ -3,16 +3,16 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/features/client/presentation/providers/home_screen_provider/search_provider.dart';
-import 'package:lawyer_app/features/lawyer/presentation/providers/lawyer_provider.dart';
-import 'package:lawyer_app/features/client/presentation/controllers/chat_controller.dart';
-import 'package:lawyer_app/app/router/route_names.dart';
-import 'package:lawyer_app/features/lawyer/presentation/states/lawyer_state.dart';
-import 'package:lawyer_app/shared/widgets/custom_appbar.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
-import 'package:lawyer_app/features/client/presentation/widgets/search_widget.dart';
-import 'package:lawyer_app/features/client/presentation/widgets/lawyer_card.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/core/constants/app_typography.dart';
+import 'package:lex_core/features/client/presentation/providers/home_screen_provider/search_provider.dart';
+import 'package:lex_core/features/lawyer/presentation/providers/lawyer_provider.dart';
+import 'package:lex_core/features/client/presentation/controllers/chat_controller.dart';
+import 'package:lex_core/app/router/route_names.dart';
+import 'package:lex_core/features/lawyer/presentation/states/lawyer_state.dart';
+import 'package:lex_core/shared/widgets/custom_appbar.dart';
+import 'package:lex_core/features/client/presentation/widgets/search_widget.dart';
+import 'package:lex_core/features/client/presentation/widgets/lawyer_card.dart';
 import 'package:sizer/sizer.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
@@ -41,13 +41,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         backgroundColor: Colors.transparent,
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFF140F0A), Color(0xFF050505)],
-          ),
-        ),
+        color: AppColors.kBgDeep,
         child: SafeArea(
           child: Column(
             children: [
@@ -90,15 +84,14 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(
-              color: AppColors.kEmerald,
+            const CircularProgressIndicator(
+              color: AppColors.kBrandLight,
               strokeWidth: 4,
             ),
             SizedBox(height: 2.h),
-            CustomText(
-              title: "Loading lawyers...",
-              fontSize: 16.sp,
-              color: AppColors.kTextSecondary,
+            Text(
+              "Loading lawyers...",
+              style: AppTypography.body,
             ),
           ],
         ),
@@ -110,24 +103,21 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.error_outline_rounded,
               size: 80,
-              color: Colors.redAccent,
+              color: AppColors.kError,
             ),
             SizedBox(height: 2.5.h),
-            CustomText(
-              title: "Failed to load lawyers",
-              fontSize: 18.sp,
-              weight: FontWeight.w600,
-              color: AppColors.kTextPrimary,
+            Text(
+              "Failed to load lawyers",
+              style: AppTypography.h2,
             ),
             SizedBox(height: 1.h),
-            CustomText(
-              title: state.message,
-              fontSize: 15.sp,
-              color: Colors.redAccent,
-              alignText: TextAlign.center,
+            Text(
+              state.message,
+              style: AppTypography.body.copyWith(color: AppColors.kError),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -148,21 +138,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               Icon(
                 Icons.search_off_rounded,
                 size: 90,
-                color: AppColors.kTextSecondary.withOpacity(0.6),
+                color: AppColors.kTextSecondary.withValues(alpha: 0.6),
               ),
               SizedBox(height: 3.h),
-              CustomText(
-                title: "No lawyers found",
-                fontSize: 20.sp,
-                weight: FontWeight.w700,
-                color: AppColors.kTextPrimary,
+              Text(
+                "No lawyers found",
+                style: AppTypography.h2,
               ),
               SizedBox(height: 1.2.h),
-              CustomText(
-                title: "Try adjusting your search or check back later",
-                fontSize: 15.sp,
-                color: AppColors.kTextSecondary,
-                alignText: TextAlign.center,
+              Text(
+                "Try adjusting your search or check back later",
+                style: AppTypography.body,
+                textAlign: TextAlign.center,
               ),
             ],
           ),
@@ -193,10 +180,9 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
     // Initial / unknown state
     return Center(
-      child: CustomText(
-        title: "Tap search to find lawyers",
-        fontSize: 18.sp,
-        color: AppColors.kTextSecondary,
+      child: Text(
+        "Tap search to find lawyers",
+        style: AppTypography.body,
       ),
     );
   }

@@ -1,4 +1,4 @@
-﻿import 'package:lawyer_app/features/student/data/models/internship_model/internship_model.dart';
+﻿import 'package:lex_core/features/student/data/models/internship_model/internship_model.dart';
 
 final List<InternshipModel> internships = [
     InternshipModel(

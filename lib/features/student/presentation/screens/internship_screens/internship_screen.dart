@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lawyer_app/core/constants/app_assets.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/core/mock_data/student_internship_data.dart';
-import 'package:lawyer_app/shared/widgets/custom_appbar.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
-import 'package:lawyer_app/features/student/presentation/widgets/internship_widgets/internship_card.dart';
+import 'package:lex_core/core/constants/app_assets.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/core/mock_data/student_internship_data.dart';
+import 'package:lex_core/shared/widgets/custom_appbar.dart';
+import 'package:lex_core/shared/widgets/custom_text.dart';
+import 'package:lex_core/features/student/presentation/widgets/internship_widgets/internship_card.dart';
 import 'package:sizer/sizer.dart';
 
 class InternshipScreen extends ConsumerStatefulWidget {

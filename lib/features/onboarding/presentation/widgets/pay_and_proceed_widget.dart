@@ -1,7 +1,7 @@
-﻿import 'package:flutter/material.dart';
-import 'package:lawyer_app/core/constants/app_assets.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
+import 'dart:ui';
+import 'package:flutter/material.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/core/constants/app_typography.dart';
 import 'package:sizer/sizer.dart';
 
 class PayAndProceedWidget extends StatelessWidget {
@@ -10,47 +10,78 @@ class PayAndProceedWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
-      fit: StackFit.expand,
       children: [
-        Image.asset(AppAssets.onboardingImage3, fit: BoxFit.cover),
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Colors.transparent,
-                AppColors.kBg.withOpacity(0.6),
-                AppColors.kBg,
-                AppColors.kBg,
+        // Background Image with blur and soft white overlay
+        Positioned.fill(
+          child: ImageFiltered(
+            imageFilter: ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Image.asset(
+                  'assets/images/expert_legal_bg.jpg',
+                  fit: BoxFit.cover,
+                ),
+                Container(color: Colors.white.withValues(alpha: 0.15)), // Let more of the image show through
               ],
-              stops: const [0.0, 0.4, 0.65, 1.0],
             ),
           ),
         ),
-        Positioned(
-          bottom: 25.h,
-          left: 6.w,
-          right: 6.w,
+        
+        // Gradient overlay from mid-height to blend into bottom
+        Positioned.fill(
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Colors.transparent,
+                  Colors.white.withValues(alpha: 0.8),
+                  Colors.white,
+                ],
+                stops: const [0.0, 0.45, 0.65, 1.0], // Starts fading much lower
+              ),
+            ),
+          ),
+        ),
+        
+        // Content
+        Positioned.fill(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CustomText(
-                title: 'Secure & Transparent',
-                color: AppColors.kGoldLight,
-                fontSize: 24.sp,
-                weight: FontWeight.w800,
-                alignText: TextAlign.center,
+              const Spacer(flex: 6), // Pushes the content into the bottom half
+              
+              // Simple blue gavel icon
+              const Icon(
+                Icons.gavel_rounded,
+                size: 72,
+                color: AppColors.kBrand,
               ),
-              SizedBox(height: 1.5.h),
-              CustomText(
-                title: 'Proceed with peace of mind. All interactions and payments are encrypted, fast, and fully secure.',
-                color: AppColors.kTextSecondary,
-                fontSize: 15.sp,
-                maxLines: 3,
-                alignText: TextAlign.center,
-                textHeight: 1.4,
+              
+              SizedBox(height: 2.5.h),
+              
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.w),
+                child: Column(
+                  children: [
+                    Text(
+                      'Expert Legal Help',
+                      style: AppTypography.h1,
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 2.h),
+                    Text(
+                      'Your trusted digital legal platform. Consult experts, track your cases, and review documents securely in one place.',
+                      style: AppTypography.body,
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               ),
+              
+              const Spacer(flex: 3), // Leaves room for the indicators and next button
             ],
           ),
         ),

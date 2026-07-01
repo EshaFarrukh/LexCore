@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lawyer_app/app/router/app_router.dart';
-import 'package:lawyer_app/core/theme/app_theme.dart';
+import 'package:lex_core/app/router/app_router.dart';
+import 'package:lex_core/core/theme/app_theme.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -8,9 +8,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: 'Justice Simplified',
+      title: 'LexCore — Legal Command Center',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.darkTheme,
+      theme: AppTheme.dark,
       routerConfig: AppRouter.router,
       builder: (context, child) {
         return GestureDetector(
@@ -22,4 +22,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

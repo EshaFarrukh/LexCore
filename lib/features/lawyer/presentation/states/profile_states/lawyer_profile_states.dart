@@ -1,4 +1,4 @@
-﻿import 'package:lawyer_app/features/lawyer/data/models/profile_model/lawyer_self_profile_model.dart';
+﻿import 'package:lex_core/features/lawyer/data/models/profile_model/lawyer_self_profile_model.dart';
 
 sealed class LawyerProfileState {
   R when<R>({

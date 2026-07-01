@@ -1,0 +1,44 @@
+{
+  "std_123": {
+    "uid": "std_123",
+    "email": "esha.student@example.com",
+    "role": "student",
+    "fullName": "Esha Farrukh",
+    "profileImage": "https://i.pravatar.cc/150?u=esha"
+  },
+  "lw_1": {
+    "uid": "lw_1",
+    "email": "ayesha.khan@legalsuite.com",
+    "role": "lawyer",
+    "fullName": "Ayesha Khan",
+    "profileImage": "https://randomuser.me/api/portraits/women/44.jpg"
+  },
+  "lw_2": {
+    "uid": "lw_2",
+    "email": "ali.raza@legalsuite.com",
+    "role": "lawyer",
+    "fullName": "Ali Raza",
+    "profileImage": "https://randomuser.me/api/portraits/men/50.jpg"
+  },
+  "lw_3": {
+    "uid": "lw_3",
+    "email": "hamza.malik@legalsuite.com",
+    "role": "lawyer",
+    "fullName": "Hamza Malik",
+    "profileImage": "https://randomuser.me/api/portraits/men/32.jpg"
+  },
+  "lw_4": {
+    "uid": "lw_4",
+    "email": "fatima.noor@legalsuite.com",
+    "role": "lawyer",
+    "fullName": "Fatima Noor",
+    "profileImage": "https://randomuser.me/api/portraits/women/68.jpg"
+  },
+  "client_1": {
+    "uid": "client_1",
+    "email": "amit.sharma@gmail.com",
+    "role": "client",
+    "fullName": "Amit Sharma",
+    "profileImage": "https://randomuser.me/api/portraits/men/55.jpg"
+  }
+}

@@ -2,9 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/features/client/presentation/controllers/chat_controller.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/core/constants/app_typography.dart';
+import 'package:lex_core/features/client/presentation/controllers/chat_controller.dart';
 import 'package:sizer/sizer.dart';
 
 class ChatDetailScreen extends ConsumerWidget {
@@ -23,12 +23,12 @@ class ChatDetailScreen extends ConsumerWidget {
           icon: Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              color: AppColors.kEmerald.withOpacity(0.15),
+              color: AppColors.kBrandLight.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
             child: const Icon(
               Icons.arrow_back_ios_new_rounded,
-              color: AppColors.kEmerald,
+              color: AppColors.kBrandLight,
             ),
           ),
           onPressed: () => context.pop(),
@@ -38,10 +38,10 @@ class ChatDetailScreen extends ConsumerWidget {
             Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                border: Border.all(color: AppColors.kEmerald, width: 2.5),
+                border: Border.all(color: AppColors.kBrandLight, width: 2.5),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.kEmerald.withOpacity(0.25),
+                    color: AppColors.kBrandLight.withValues(alpha: 0.25),
                     blurRadius: 12,
                     spreadRadius: 2,
                   ),
@@ -55,16 +55,16 @@ class ChatDetailScreen extends ConsumerWidget {
                     imageUrl: lawyer?.profilePhoto ?? '',
                     fit: BoxFit.cover,
                     placeholder: (context, url) => Container(
-                      color: AppColors.kSurface,
+                      color: AppColors.kBgSurface,
                       child: Center(
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: AppColors.kEmerald.withOpacity(0.6),
+                          color: AppColors.kBrandLight.withValues(alpha: 0.6),
                         ),
                       ),
                     ),
                     errorWidget: (context, url, error) => Container(
-                      color: AppColors.kSurface,
+                      color: AppColors.kBgSurface,
                       child: Icon(
                         Icons.person_rounded,
                         color: AppColors.kTextSecondary,
@@ -80,13 +80,9 @@ class ChatDetailScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CustomText(
-                    title:
-                        '${lawyer?.firstName ?? ''} ${lawyer?.lastName ?? ''}'
-                            .trim(),
-                    fontSize: 16.sp,
-                    weight: FontWeight.w700,
-                    color: AppColors.kTextPrimary,
+                  Text(
+                    '${lawyer?.firstName ?? ''} ${lawyer?.lastName ?? ''}'.trim(),
+                    style: AppTypography.h3,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -101,7 +97,7 @@ class ChatDetailScreen extends ConsumerWidget {
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.greenAccent.withOpacity(0.5),
+                              color: Colors.greenAccent.withValues(alpha: 0.5),
                               blurRadius: 8,
                               spreadRadius: 1,
                             ),
@@ -109,10 +105,9 @@ class ChatDetailScreen extends ConsumerWidget {
                         ),
                       ),
                       SizedBox(width: 2.w),
-                      CustomText(
-                        title: 'Online',
-                        fontSize: 14.sp,
-                        color: Colors.greenAccent,
+                      Text(
+                        'Online',
+                        style: AppTypography.caption.copyWith(color: Colors.greenAccent),
                       ),
                     ],
                   ),
@@ -126,10 +121,10 @@ class ChatDetailScreen extends ConsumerWidget {
             icon: Container(
               padding: EdgeInsets.all(1.h),
               decoration: BoxDecoration(
-                color: AppColors.kEmerald.withOpacity(0.15),
+                color: AppColors.kBrandLight.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(Icons.call_rounded, color: AppColors.kEmerald),
+              child: const Icon(Icons.call_rounded, color: AppColors.kBrandLight),
             ),
             onPressed: () {},
           ),
@@ -137,12 +132,12 @@ class ChatDetailScreen extends ConsumerWidget {
             icon: Container(
               padding: EdgeInsets.all(1.h),
               decoration: BoxDecoration(
-                color: AppColors.kEmerald.withOpacity(0.15),
+                color: AppColors.kBrandLight.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(
                 Icons.more_vert_rounded,
-                color: AppColors.kEmerald,
+                color: AppColors.kBrandLight,
               ),
             ),
             onPressed: () {},
@@ -151,7 +146,7 @@ class ChatDetailScreen extends ConsumerWidget {
       ),
 
       body: Container(
-        color: AppColors.kBgDark,
+        color: AppColors.kBgDeep,
         child: SafeArea(
           child: Column(
             children: [
@@ -159,8 +154,7 @@ class ChatDetailScreen extends ConsumerWidget {
                 child: ListView(
                   padding: EdgeInsets.fromLTRB(
                     5.w,
-                    kToolbarHeight +
-                        16, // â† Important fix: reserve space for AppBar
+                    kToolbarHeight + 16,
                     5.w,
                     2.h,
                   ),
@@ -176,11 +170,11 @@ class ChatDetailScreen extends ConsumerWidget {
                       '10:32 AM',
                     ),
                     _buildReceivedMessage(
-                      'Yes, itâ€™s about child custody after divorce.',
+                      'Yes, it’s about child custody after divorce.',
                       '10:33 AM',
                     ),
                     _buildSentMessage(
-                      'Got it. I specialize in family law. Letâ€™s schedule a call.',
+                      'Got it. I specialize in family law. Let’s schedule a call.',
                       '10:35 AM',
                     ),
                   ],
@@ -203,20 +197,19 @@ class ChatDetailScreen extends ConsumerWidget {
         margin: EdgeInsets.symmetric(vertical: 2.5.h),
         padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
         decoration: BoxDecoration(
-          color: AppColors.kSurface.withOpacity(0.88),
+          color: AppColors.kBgSurface.withValues(alpha: 0.88),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.kEmerald.withOpacity(0.15)),
+          border: Border.all(color: AppColors.kBrandLight.withValues(alpha: 0.15)),
         ),
-        child: CustomText(
-          title: date,
-          fontSize: 13.sp,
-          color: AppColors.kTextSecondary,
+        child: Text(
+          date,
+          style: AppTypography.caption,
         ),
       ),
     );
   }
 
-  // Received message (lawyer â†’ left side, dark bubble)
+  // Received message (lawyer → left side, dark bubble)
   Widget _buildReceivedMessage(String text, String time) {
     return Align(
       alignment: Alignment.centerLeft,
@@ -224,27 +217,25 @@ class ChatDetailScreen extends ConsumerWidget {
         margin: EdgeInsets.only(bottom: 2.h, right: 20.w),
         padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.5.h),
         decoration: BoxDecoration(
-          color: AppColors.kSurface.withOpacity(0.94),
+          color: AppColors.kBgSurface.withValues(alpha: 0.94),
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),
             bottomRight: Radius.circular(20),
           ),
-          border: Border.all(color: AppColors.kEmerald.withOpacity(0.12)),
+          border: Border.all(color: AppColors.kBrandLight.withValues(alpha: 0.12)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CustomText(
-              title: text,
-              fontSize: 15.5.sp,
-              color: AppColors.kTextPrimary,
+            Text(
+              text,
+              style: AppTypography.body,
             ),
             SizedBox(height: 0.6.h),
-            CustomText(
-              title: time,
-              fontSize: 11.sp,
-              color: AppColors.kTextSecondary,
+            Text(
+              time,
+              style: AppTypography.caption,
             ),
           ],
         ),
@@ -252,7 +243,7 @@ class ChatDetailScreen extends ConsumerWidget {
     );
   }
 
-  // Sent message (client â†’ right side, emerald gradient)
+  // Sent message (client → right side, emerald gradient)
   Widget _buildSentMessage(String text, String time) {
     return Align(
       alignment: Alignment.centerRight,
@@ -260,11 +251,7 @@ class ChatDetailScreen extends ConsumerWidget {
         margin: EdgeInsets.only(bottom: 2.h, left: 20.w),
         padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 2.5.h),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [AppColors.kEmerald, AppColors.kEmeraldDark],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          gradient: AppColors.kBrandGradient,
           borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),
@@ -272,7 +259,7 @@ class ChatDetailScreen extends ConsumerWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: AppColors.kEmerald.withOpacity(0.35),
+              color: AppColors.kBrandLight.withValues(alpha: 0.35),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -281,12 +268,11 @@ class ChatDetailScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            CustomText(title: text, fontSize: 15.5.sp, color: Colors.white),
+            Text(text, style: AppTypography.body.copyWith(color: Colors.white)),
             SizedBox(height: 0.6.h),
-            CustomText(
-              title: time,
-              fontSize: 11.sp,
-              color: Colors.white.withOpacity(0.75),
+            Text(
+              time,
+              style: AppTypography.caption.copyWith(color: Colors.white.withValues(alpha: 0.75)),
             ),
           ],
         ),
@@ -301,16 +287,16 @@ class ChatDetailScreen extends ConsumerWidget {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 2.5.w, vertical: 1.h),
       decoration: BoxDecoration(
-        color: AppColors.kSurface.withOpacity(0.94),
+        color: AppColors.kBgSurface.withValues(alpha: 0.94),
         border: Border(
           top: BorderSide(
-            color: AppColors.kEmerald.withOpacity(0.15),
+            color: AppColors.kBrandLight.withValues(alpha: 0.15),
             width: 1,
           ),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.25),
+            color: Colors.black.withValues(alpha: 0.25),
             blurRadius: 16,
             offset: const Offset(0, -6),
           ),
@@ -323,12 +309,12 @@ class ChatDetailScreen extends ConsumerWidget {
           Container(
             padding: EdgeInsets.all(1.w),
             decoration: BoxDecoration(
-              color: AppColors.kEmerald.withOpacity(0.15),
+              color: AppColors.kBrandLight.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
             child: IconButton(
-              icon: Icon(Icons.attach_file_rounded),
-              color: AppColors.kEmerald,
+              icon: const Icon(Icons.attach_file_rounded),
+              color: AppColors.kBrandLight,
               iconSize: 2.h,
               onPressed: () {},
             ),
@@ -341,22 +327,16 @@ class ChatDetailScreen extends ConsumerWidget {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: AppColors.kEmerald.withOpacity(0.18)),
+                border: Border.all(color: AppColors.kBrandLight.withValues(alpha: 0.18)),
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(24),
                 child: TextField(
                   controller: controller,
-                  style: TextStyle(
-                    color: AppColors.kTextPrimary,
-                    fontSize: 16.sp,
-                  ),
+                  style: AppTypography.body,
                   decoration: InputDecoration(
                     hintText: 'Type a message...',
-                    hintStyle: TextStyle(
-                      color: AppColors.kTextSecondary,
-                      fontSize: 16.sp,
-                    ),
+                    hintStyle: AppTypography.caption,
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: 2.5.w,
@@ -382,12 +362,8 @@ class ChatDetailScreen extends ConsumerWidget {
             },
             child: Container(
               padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [AppColors.kEmerald, AppColors.kEmeraldDark],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+              decoration: const BoxDecoration(
+                gradient: AppColors.kBrandGradient,
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -402,4 +378,3 @@ class ChatDetailScreen extends ConsumerWidget {
     );
   }
 }
-

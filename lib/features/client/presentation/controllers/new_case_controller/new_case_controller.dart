@@ -2,11 +2,13 @@ import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:lawyer_app/di/injection_container.dart';
-import 'package:lawyer_app/features/client/domain/repositories/client_repository.dart';
-import 'package:lawyer_app/features/client/domain/usecases/client_usecases.dart';
-import 'package:lawyer_app/features/client/presentation/states/new_case_state/new_case_state.dart';
-import 'package:lawyer_app/services/notification_services/notification_service.dart';
+import 'package:lex_core/di/injection_container.dart';
+import 'package:lex_core/core/constants/app_keys.dart';
+import 'package:lex_core/core/utils/storage/storage_service.dart';
+import 'package:lex_core/features/client/domain/repositories/client_repository.dart';
+import 'package:lex_core/features/client/domain/usecases/client_usecases.dart';
+import 'package:lex_core/features/client/presentation/states/new_case_state/new_case_state.dart';
+import 'package:lex_core/services/notification_services/notification_service.dart';
 
 class NewCaseController extends StateNotifier<NewCaseState> {
   final CreateCaseUseCase _createCaseUseCase;
@@ -67,12 +69,15 @@ class NewCaseController extends StateNotifier<NewCaseState> {
       log("AppointmentDate: ${appointmentDate.toIso8601String()}");
       log("======================================");
 
+      final String? userId = await StorageService.instance.read(AppKeys.userIdKey);
+      
       final params = CreateCaseParams(
         caseType: caseType,
         appointmentType: appointmentTypeVal,
         appointmentDate: appointmentDate.toIso8601String(),
         submissionMethod: submissionMethod,
         filePath: uploadFile.path,
+        userId: userId,
       );
 
       await _createCaseUseCase.execute(params);

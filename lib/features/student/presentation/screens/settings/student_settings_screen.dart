@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/core/constants/app_typography.dart';
+import 'package:go_router/go_router.dart';
+import 'package:lex_core/app/router/route_names.dart';
+import 'package:lex_core/core/database/hive_service.dart';
+import 'package:lex_core/core/utils/storage/storage_service.dart';
 import 'package:sizer/sizer.dart';
 
 class StudentSettingsScreen extends StatelessWidget {
@@ -9,15 +13,13 @@ class StudentSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.kBgDark,
+      backgroundColor: AppColors.kBgDeep,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: CustomText(
-          title: "Settings",
-          fontSize: 22.sp,
-          weight: FontWeight.w800,
-          color: AppColors.kTextPrimary,
+        title: Text(
+          "Settings",
+          style: AppTypography.h2,
         ),
       ),
       body: SingleChildScrollView(
@@ -53,15 +55,15 @@ class StudentSettingsScreen extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(4.w),
       decoration: BoxDecoration(
-        color: AppColors.kSurface,
+        color: AppColors.kBgSurface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.kGold.withOpacity(0.1)),
+        border: Border.all(color: AppColors.kGold.withValues(alpha: 0.1)),
       ),
       child: Row(
         children: [
           CircleAvatar(
             radius: 4.h,
-            backgroundColor: AppColors.kGold.withOpacity(0.2),
+            backgroundColor: AppColors.kGold.withValues(alpha: 0.2),
             child: Icon(Icons.school_rounded, size: 4.h, color: AppColors.kGold),
           ),
           SizedBox(width: 4.w),
@@ -69,16 +71,13 @@ class StudentSettingsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomText(
-                  title: "Student Name",
-                  fontSize: 18.sp,
-                  weight: FontWeight.w700,
-                  color: AppColors.kTextPrimary,
+                Text(
+                  "Esha Farrukh",
+                  style: AppTypography.h3,
                 ),
-                CustomText(
-                  title: "student@example.com",
-                  fontSize: 14.sp,
-                  color: AppColors.kTextSecondary,
+                Text(
+                  "esha.farrukh@example.com",
+                  style: AppTypography.caption,
                 ),
               ],
             ),
@@ -95,11 +94,9 @@ class StudentSettingsScreen extends StatelessWidget {
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: EdgeInsets.only(left: 2.w, bottom: 1.5.h),
-      child: CustomText(
-        title: title,
-        fontSize: 15.sp,
-        weight: FontWeight.w600,
-        color: AppColors.kGold,
+      child: Text(
+        title,
+        style: AppTypography.h3.copyWith(color: AppColors.kGold),
       ),
     );
   }
@@ -108,21 +105,18 @@ class StudentSettingsScreen extends StatelessWidget {
     return Container(
       margin: EdgeInsets.only(bottom: 1.5.h),
       decoration: BoxDecoration(
-        color: AppColors.kSurface.withOpacity(0.5),
+        color: AppColors.kBgSurface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(16),
       ),
       child: ListTile(
         leading: Icon(icon, color: AppColors.kTextPrimary),
-        title: CustomText(
-          title: title,
-          fontSize: 16.sp,
-          weight: FontWeight.w500,
-          color: AppColors.kTextPrimary,
+        title: Text(
+          title,
+          style: AppTypography.body,
         ),
-        subtitle: CustomText(
-          title: subtitle,
-          fontSize: 12.sp,
-          color: AppColors.kTextSecondary,
+        subtitle: Text(
+          subtitle,
+          style: AppTypography.caption,
         ),
         trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.kTextSecondary),
         onTap: () {},
@@ -132,25 +126,51 @@ class StudentSettingsScreen extends StatelessWidget {
 
   Widget _buildLogoutButton(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () async {
+        final bool? confirm = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            backgroundColor: AppColors.kBgSurface.withValues(alpha: 0.96),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            title: Text('Logout', style: AppTypography.h2),
+            content: Text('Are you sure you want to logout?', style: AppTypography.body),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: Text('Cancel', style: AppTypography.body.copyWith(color: AppColors.kTextSecondary)),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: Text('Logout', style: AppTypography.body.copyWith(color: AppColors.kError)),
+              ),
+            ],
+          ),
+        );
+
+        if (confirm == true) {
+          await StorageService.instance.clearAllAuthData();
+          await HiveService.clearAuth();
+          if (context.mounted) {
+            context.go(RouteNames.incomingUserScreen);
+          }
+        }
+      },
       child: Container(
         width: double.infinity,
         padding: EdgeInsets.symmetric(vertical: 2.h),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.redAccent.withOpacity(0.5)),
+          border: Border.all(color: AppColors.kError.withValues(alpha: 0.5)),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.logout_rounded, color: Colors.redAccent),
+              const Icon(Icons.logout_rounded, color: AppColors.kError),
               SizedBox(width: 2.w),
-              CustomText(
-                title: "Log Out",
-                fontSize: 16.sp,
-                weight: FontWeight.w700,
-                color: Colors.redAccent,
+              Text(
+                "Log Out",
+                style: AppTypography.h3.copyWith(color: AppColors.kError),
               ),
             ],
           ),

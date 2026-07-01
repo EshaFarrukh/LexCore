@@ -1,6 +1,6 @@
 // models/case_model.dart
 
-import 'package:lawyer_app/features/client/domain/entities/case_entity.dart';
+import 'package:lex_core/features/client/domain/entities/case_entity.dart';
 
 class CaseNoteModel extends CaseNoteEntity {
   CaseNoteModel({
@@ -16,7 +16,7 @@ class CaseNoteModel extends CaseNoteEntity {
 
   factory CaseNoteModel.fromJson(Map<String, dynamic> json) {
     return CaseNoteModel(
-      id: json['id'] as int? ?? 0,
+      id: json['id']?.toString() ?? '',
       caseId: json['caseId']?.toString() ?? '',
       date: DateTime.tryParse(json['date'] as String? ?? '') ?? DateTime.now(),
       notes:
@@ -57,16 +57,17 @@ class CaseModel extends CaseEntity {
   factory CaseModel.fromJson(
     Map<String, dynamic> json, {
     List<CaseNoteEntity> notes = const [],
+    String? documentId,
   }) {
     return CaseModel(
-      id: json['id'] as int? ?? 0,
+      id: documentId ?? json['id']?.toString() ?? json['caseId']?.toString() ?? '',
       caseNo:
           json['caseId'] as String? ??
           json['caseNo'] as String? ??
           json['caseNumber'] as String? ??
           '',
       title:
-          json['title'] as String? ?? "${json['caseType'] ?? 'General'} Case",
+          json['title'] as String? ?? "${json['category'] ?? json['caseType'] ?? 'General'} Case",
       court: json['court'] as String? ?? 'TBD',
       status: json['status'] as String? ?? 'Pending',
       hearingDate:

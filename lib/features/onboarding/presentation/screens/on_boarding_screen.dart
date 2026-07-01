@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/app/router/route_names.dart';
-import 'package:lawyer_app/shared/widgets/custom_button.dart';
-import 'package:lawyer_app/features/onboarding/presentation/widgets/book_appointment_widget.dart';
-import 'package:lawyer_app/features/onboarding/presentation/widgets/pay_and_proceed_widget.dart';
-import 'package:lawyer_app/features/onboarding/presentation/widgets/search_lawyer_widget.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/app/router/route_names.dart';
+import 'package:lex_core/shared/widgets/lex_button.dart';
+import 'package:lex_core/features/onboarding/presentation/widgets/book_appointment_widget.dart';
+import 'package:lex_core/features/onboarding/presentation/widgets/pay_and_proceed_widget.dart';
+import 'package:lex_core/features/onboarding/presentation/widgets/search_lawyer_widget.dart';
 import 'package:sizer/sizer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -55,7 +55,7 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.kBg,
+      backgroundColor: AppColors.kBgDeep,
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -82,8 +82,8 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen> {
                         count: _onboardingScreens.length,
                         effect: ExpandingDotsEffect(
                           expansionFactor: 3,
-                          activeDotColor: AppColors.kGold,
-                          dotColor: Colors.white.withOpacity(0.3),
+                          activeDotColor: AppColors.kBrandLight,
+                          dotColor: Colors.grey.shade400,
                           dotHeight: 1.h,
                           dotWidth: 1.h,
                           spacing: 2.w,
@@ -100,8 +100,8 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen> {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: index == 0
-                                  ? AppColors.kGold
-                                  : Colors.white.withOpacity(0.3),
+                                  ? AppColors.kBrandLight
+                                  : Colors.grey.shade400,
                             ),
                           ),
                         ),
@@ -111,8 +111,8 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 6.w),
                   child: Column(
                     children: [
-                      CustomButton(
-                        text: _currentPage == _onboardingScreens.length - 1
+                      LexButton(
+                        label: _currentPage == _onboardingScreens.length - 1
                             ? "Get Started"
                             : "Next",
                         onPressed: _currentPage == _onboardingScreens.length - 1
@@ -120,9 +120,8 @@ class _OnBoardingScreenState extends ConsumerState<OnBoardingScreen> {
                                 context.go(RouteNames.roleOverviewScreen);
                               }
                             : _onNextPressed,
-                        gradient: AppColors.goldGradient,
-                        textColor: Colors.black,
-                        borderRadius: 16,
+                        style: LexButtonStyle.primary,
+                        fullWidth: true,
                       ),
                       SizedBox(height: 1.5.h),
                       if (_currentPage != _onboardingScreens.length - 1)

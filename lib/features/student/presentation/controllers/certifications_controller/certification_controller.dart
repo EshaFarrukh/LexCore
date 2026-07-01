@@ -1,33 +1,25 @@
-﻿import 'dart:developer';
+import 'dart:developer';
 
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:lawyer_app/core/mock_data/student_certifications_data.dart';
-import 'package:lawyer_app/features/student/data/models/certification_model.dart';
-import 'package:lawyer_app/features/student/presentation/states/certification_states.dart';
+import 'package:lex_core/di/injection_container.dart';
+import 'package:lex_core/features/student/data/models/certification_model.dart';
+import 'package:lex_core/features/student/domain/usecases/student_usecases.dart';
+import 'package:lex_core/features/student/presentation/states/certification_states.dart';
 
 class CertificationController extends StateNotifier<CertificationStates> {
-  CertificationController() : super(CertificationInitialState());
+  final GetCertificationsUseCase _getCertificationsUseCase;
+
+  CertificationController({GetCertificationsUseCase? getCertificationsUseCase})
+      : _getCertificationsUseCase = getCertificationsUseCase ?? sl<GetCertificationsUseCase>(),
+        super(CertificationInitialState());
 
   Future<void> getAllCertifications() async {
     state = CertificationLoadingState();
     try {
-      await Future.delayed(const Duration(seconds: 1));
+      final certifications = await _getCertificationsUseCase.execute();
 
-      final response = mockStudentCertificationsData;
-      if (response['status'] != 200) {
-        state = CertificationFailureState(error: 'Failed to load certifications');
-        return;
-      }
-
-      final data = response['data'] as Map<String, dynamic>;
-
-      final completedList = (data['completed_certifications'] as List)
-          .map((e) => CertificationModel.fromJson(e as Map<String, dynamic>))
-          .toList();
-
-      final availableList = (data['available_certifications'] as List)
-          .map((e) => CertificationModel.fromJson(e as Map<String, dynamic>))
-          .toList();
+      final completedList = certifications.where((c) => c.isCompleted).toList();
+      final availableList = certifications.where((c) => !c.isCompleted).toList();
 
       final allCertifications = AllCertificationsResponse(
         completedCertifications: completedList,
@@ -36,7 +28,7 @@ class CertificationController extends StateNotifier<CertificationStates> {
 
       state = CertificationSuccessState(data: allCertifications);
     } catch (e, stack) {
-      log('Get All Certifications â†’ Error: $e\n$stack');
+      log('Get All Certifications -> Error: $e\n$stack');
       state = CertificationFailureState(error: 'Unable to load certifications data');
     }
   }

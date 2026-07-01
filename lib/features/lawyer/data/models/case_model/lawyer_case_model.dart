@@ -1,5 +1,5 @@
-import 'package:lawyer_app/features/client/domain/entities/case_entity.dart';
-import 'package:lawyer_app/features/lawyer/domain/entities/lawyer_case_entity.dart';
+import 'package:lex_core/features/client/domain/entities/case_entity.dart';
+import 'package:lex_core/features/lawyer/domain/entities/lawyer_case_entity.dart';
 
 class LawyerCaseModel extends LawyerCaseEntity {
   LawyerCaseModel({
@@ -21,8 +21,8 @@ class LawyerCaseModel extends LawyerCaseEntity {
 
   factory LawyerCaseModel.fromJson(Map<String, dynamic> json, {List<CaseNoteEntity> notes = const []}) {
     return LawyerCaseModel(
-      id: json['id'] as int? ?? 0,
-      caseNo: json['caseId'] as String? ?? json['caseNo'] as String? ?? json['caseNumber'] as String? ?? 'N/A',
+      id: json['id']?.toString() ?? json['caseId']?.toString() ?? '',
+      caseNo: json['caseId']?.toString() ?? json['caseNo']?.toString() ?? json['caseNumber']?.toString() ?? 'N/A',
       title: json['title'] as String? ?? "${json['caseType'] ?? 'General'} Case",
       court: json['court'] as String? ?? 'Delhi High Court',
       status: json['status'] as String? ?? 'Pending',

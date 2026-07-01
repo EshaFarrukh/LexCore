@@ -1,10 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:lawyer_app/core/network/api_exceptions.dart';
-import 'package:lawyer_app/di/injection_container.dart';
-import 'package:lawyer_app/features/auth/domain/usecases/auth_usecases.dart';
-import 'package:lawyer_app/features/lawyer/presentation/states/lawyer_auth_state/lawyer_signup_state.dart';
+import 'package:lex_core/core/network/api_exceptions.dart';
+import 'package:lex_core/di/injection_container.dart';
+import 'package:lex_core/features/auth/domain/usecases/auth_usecases.dart';
+import 'package:lex_core/features/lawyer/presentation/states/lawyer_auth_state/lawyer_signup_state.dart';
 
 class LawyerSignupController extends StateNotifier<LawyerSignupState> {
   final SignupUseCase _signupUseCase;
@@ -22,30 +22,17 @@ class LawyerSignupController extends StateNotifier<LawyerSignupState> {
     state = LawyerSignupLoading();
 
     try {
-      // Fallback/bypass if local test credentials match:
-      if (fullName == 'Zayahan Hasan Shah' &&
-          email == 'zayahan@gmail.com' &&
-          (phoneNumber == '923327699137' || phoneNumber == '03327699137') &&
-          password == '123qwe') {
-        state = const LawyerSignupSuccess(
-            "Your signup request has been sent for verification. Once approved, you can login to the app.");
-        return;
-      }
-
       final body = {
-        "user": {
-          "fullName": fullName,
-          "email": email,
-          "phone": phoneNumber,
-          "password": password,
-          "address": "N/A",
-          "profilePhoto": null,
-          "userType": "Lawyer",
-        }
+        "fullName": fullName,
+        "email": email,
+        "phone": phoneNumber,
+        "password": password,
+        "address": "N/A",
+        "role": "lawyer",
       };
 
       final responseData = await _signupUseCase.execute(body);
-      if (responseData['status'] == 'success') {
+      if (responseData['statusCode'] == 200 || responseData['statusCode'] == 201) {
         state = const LawyerSignupSuccess(
             "Your signup request has been sent for verification. Once approved, you can login to the app.");
       } else {
@@ -57,7 +44,7 @@ class LawyerSignupController extends StateNotifier<LawyerSignupState> {
     } catch (e, st) {
       log("LawyerSignupController → Exception: $e");
       log("StackTrace: $st");
-      state = const LawyerSignupFailure("Network error – please try again.");
+      state = LawyerSignupFailure("Error: ${e.toString()}");
     }
   }
 }

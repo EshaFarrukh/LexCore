@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lawyer_app/features/client/presentation/providers/bottom_navigation_provider/bottom_navigation_provider.dart';
-import 'package:lawyer_app/features/chat/presentation/screens/chat_list_screen.dart';
-import 'package:lawyer_app/features/client/presentation/screens/home/home_screen.dart';
-import 'package:lawyer_app/features/client/presentation/screens/search/search_screen.dart';
-import 'package:lawyer_app/features/client/presentation/screens/video/video_screen.dart';
-import 'package:lawyer_app/shared/widgets/custom_bottom_navbar.dart';
-import 'package:lawyer_app/features/client/presentation/screens/notifications/notification_screen.dart';
-import 'package:lawyer_app/shared/widgets/custom_client_drawer.dart';
+import 'package:lex_core/features/client/presentation/providers/bottom_navigation_provider/bottom_navigation_provider.dart';
+import 'package:lex_core/features/chat/presentation/screens/chat_list_screen.dart';
+import 'package:lex_core/features/client/presentation/screens/home/home_screen.dart';
+import 'package:lex_core/features/client/presentation/screens/search/search_screen.dart';
+import 'package:lex_core/features/client/presentation/screens/video/video_screen.dart';
+import 'package:lex_core/shared/widgets/custom_bottom_navbar.dart';
+import 'package:lex_core/features/client/presentation/screens/settings/client_settings_screen.dart';
+import 'package:lex_core/shared/widgets/custom_client_drawer.dart';
 import 'package:sizer/sizer.dart';
 
 class BottomNavigationScreen extends ConsumerStatefulWidget {
@@ -26,7 +26,7 @@ class _BottomNavigationScreenState
     ChatListScreen(),
     VideoScreen(),
     SearchScreen(),
-    NotificationScreen(),
+    const ClientSettingsScreen(),
   ];
 
   @override
@@ -34,6 +34,7 @@ class _BottomNavigationScreenState
     final currentIndex = ref.watch(bottomNavigationProvider);
     return Scaffold(
       drawer: const CustomClientDrawer(),
+      backgroundColor: Colors.white,
       extendBody: true, // to make FAB overlap cleanly
       body: IndexedStack(
         index: currentIndex,
@@ -41,40 +42,35 @@ class _BottomNavigationScreenState
       ),
       bottomNavigationBar: SafeArea(
         top: false,
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            CustomBottomNavbar(
-              currentIndex: currentIndex,
-              onTap: (index) =>
-                  ref.read(bottomNavigationProvider.notifier).setIndex(index),
-              items: [
-                BottomNavigationBarItem(
-                  activeIcon: Icon(Icons.home, size: 3.h),
-                  icon: Icon(Icons.home_outlined, size: 3.h),
-                  label: '',
-                ),
-                BottomNavigationBarItem(
-                  activeIcon: Icon(Icons.chat, size: 3.h),
-                  icon: Icon(Icons.chat_outlined, size: 3.h),
-                  label: '',
-                ),
-                BottomNavigationBarItem(
-                  activeIcon: Icon(Icons.video_call, size: 3.h),
-                  icon: Icon(Icons.video_call_outlined, size: 3.h),
-                  label: '',
-                ),
-                BottomNavigationBarItem(
-                  activeIcon: Icon(Icons.search, size: 3.h),
-                  icon: Icon(Icons.search_outlined, size: 3.h),
-                  label: '',
-                ),
-                BottomNavigationBarItem(
-                  activeIcon: Icon(Icons.notifications, size: 3.h),
-                  icon: Icon(Icons.notifications_outlined, size: 3.h),
-                  label: '',
-                ),
-              ],
+        child: CustomBottomNavbar(
+          currentIndex: currentIndex,
+          onTap: (index) =>
+              ref.read(bottomNavigationProvider.notifier).setIndex(index),
+          items: [
+            BottomNavigationBarItem(
+              activeIcon: Icon(Icons.dashboard_rounded),
+              icon: Icon(Icons.dashboard_outlined),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              activeIcon: Icon(Icons.chat_rounded),
+              icon: Icon(Icons.chat_outlined),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              activeIcon: Icon(Icons.videocam_rounded),
+              icon: Icon(Icons.videocam_outlined),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              activeIcon: Icon(Icons.search_rounded),
+              icon: Icon(Icons.search_outlined),
+              label: '',
+            ),
+            BottomNavigationBarItem(
+              activeIcon: Icon(Icons.settings_rounded),
+              icon: Icon(Icons.settings_outlined),
+              label: '',
             ),
           ],
         ),

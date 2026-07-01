@@ -1,5 +1,5 @@
 ﻿import 'package:flutter/material.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
 import 'package:sizer/sizer.dart';
 
 class CustomDialog extends StatelessWidget {

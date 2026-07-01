@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:lawyer_app/features/lawyer/domain/entities/lawyer_entity.dart';
+import 'package:lex_core/features/lawyer/domain/entities/lawyer_entity.dart';
 
 class LawyerModel extends LawyerEntity {
   LawyerModel({
@@ -18,7 +18,7 @@ class LawyerModel extends LawyerEntity {
 
   factory LawyerModel.fromJson(Map<String, dynamic> json) {
     return LawyerModel(
-      id: json['id'] as int? ?? 0,
+      id: json['id']?.toString() ?? json['Id']?.toString() ?? '',
       firstName: json['firstName'] as String? ?? '',
       lastName: json['lastName'] as String? ?? '',
       category: json['category'] as String? ?? json['expertise'] as String? ?? "Criminal",

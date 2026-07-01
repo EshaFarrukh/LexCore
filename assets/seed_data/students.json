@@ -1,0 +1,16 @@
+{
+  "std_123": {
+    "userId": "std_123",
+    "university": "Lahore Garrison University",
+    "location": "Lahore, Pakistan",
+    "studyYear": "Final Year",
+    "currentProgram": "LL.B (Hons)",
+    "interests": [
+      "Corporate Law",
+      "Constitutional Law",
+      "Legal Research",
+      "Moot Court"
+    ],
+    "progress": 0.85
+  }
+}

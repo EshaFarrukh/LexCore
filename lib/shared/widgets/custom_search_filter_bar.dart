@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/shared/widgets/custom_text.dart';
 import 'package:sizer/sizer.dart';
 
 class CustomSearchFilterBar extends StatefulWidget {
@@ -68,9 +68,9 @@ class _CustomSearchFilterBarState extends State<CustomSearchFilterBar> {
                 child: Container(
                   height: 6.h,
                   decoration: BoxDecoration(
-                    color: AppColors.kSurface,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.kGold.withOpacity(0.2)),
+                    color: const Color(0xFFF8FAFC),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0xFFE2E8F0)),
                   ),
                   child: TextField(
                     controller: _controller,
@@ -82,18 +82,25 @@ class _CustomSearchFilterBarState extends State<CustomSearchFilterBar> {
                         FocusScope.of(context).unfocus();
                       }
                     },
-                    style: const TextStyle(color: Colors.white),
+                    style: const TextStyle(
+                      color: Color(0xFF0F172A),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
                     decoration: InputDecoration(
                       hintText: widget.hintText,
                       hintStyle: TextStyle(
-                        color: Colors.white54,
-                        fontSize: 13.sp,
+                        color: const Color(0xFF94A3B8),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
                       ),
                       prefixIcon: const Icon(
                         Icons.search_rounded,
-                        color: AppColors.kGold,
+                        color: Color(0xFF64748B),
+                        size: 22,
                       ),
                       border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                     ),
                   ),
                 ),
@@ -135,11 +142,11 @@ class _CustomSearchFilterBarState extends State<CustomSearchFilterBar> {
         height: 6.h,
         width: 6.h,
         decoration: BoxDecoration(
-          color: AppColors.kSurface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.kGold.withOpacity(0.2)),
+          color: const Color(0xFFF8FAFC),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: const Color(0xFFE2E8F0)),
         ),
-        child: Icon(icon, color: AppColors.kGold),
+        child: Icon(icon, color: const Color(0xFF475569), size: 22),
       ),
     );
   }
@@ -149,26 +156,28 @@ class _CustomSearchFilterBarState extends State<CustomSearchFilterBar> {
       margin: EdgeInsets.only(right: 2.w),
       padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 0.5.h),
       decoration: BoxDecoration(
-        color: AppColors.kGold.withOpacity(0.1),
+        color: const Color(0xFFEFF6FF),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.kGold.withOpacity(0.3)),
+        border: Border.all(color: const Color(0xFFBFDBFE)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          CustomText(
-            title: label,
-            fontSize: 11.sp,
-            color: AppColors.kGold,
-            weight: FontWeight.w600,
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 13,
+              color: Color(0xFF3B82F6),
+              fontWeight: FontWeight.w600,
+            ),
           ),
           SizedBox(width: 1.w),
           GestureDetector(
             onTap: onDelete,
             child: const Icon(
               Icons.close_rounded,
-              size: 14,
-              color: AppColors.kGold,
+              size: 16,
+              color: Color(0xFF3B82F6),
             ),
           ),
         ],

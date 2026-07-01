@@ -1,9 +1,9 @@
 ﻿import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/core/utils/storage/storage_service.dart';
-import 'package:lawyer_app/app/router/route_names.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/core/utils/storage/storage_service.dart';
+import 'package:lex_core/app/router/route_names.dart';
+import 'package:lex_core/shared/widgets/custom_text.dart';
 import 'package:sizer/sizer.dart';
 
 class CustomLawyerDrawer extends StatelessWidget {

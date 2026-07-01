@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/features/chat/domain/models/chat_models.dart';
-import 'package:lawyer_app/features/chat/presentation/providers/chat_availability_provider.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
-import 'package:sizer/sizer.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/core/constants/app_typography.dart';
+import 'package:lex_core/features/chat/domain/models/chat_models.dart';
+import 'package:lex_core/features/chat/presentation/providers/chat_availability_provider.dart';
 import 'package:intl/intl.dart';
 
 class ChatListScreen extends ConsumerWidget {
@@ -50,70 +49,94 @@ class ChatListScreen extends ConsumerWidget {
     final availabilityAsync = ref.watch(chatAvailabilityProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.kBgDark,
+      backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0xFF0F172A),
         elevation: 0,
-        title: CustomText(
-          title: "Messages",
-          fontSize: 22.sp,
-          weight: FontWeight.w800,
-          color: AppColors.kTextPrimary,
+        surfaceTintColor: Colors.transparent,
+        title: Text(
+          "Messages",
+          style: AppTypography.h1.copyWith(
+            fontSize: 28,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.5,
+            color: Colors.white,
+          ),
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.search_rounded, color: AppColors.kTextPrimary),
+            icon: const Icon(Icons.search_rounded, color: Colors.white, size: 28),
             onPressed: () {},
           ),
           IconButton(
-            icon: Icon(Icons.more_vert_rounded, color: AppColors.kTextPrimary),
+            icon: const Icon(Icons.edit_square, color: Colors.white, size: 26),
             onPressed: () {},
+          ),
+          GestureDetector(
+            onTap: () => Scaffold.of(context).openDrawer(),
+            child: Container(
+              width: 40,
+              height: 40,
+              margin: const EdgeInsets.only(left: 8, right: 16),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+              ),
+              child: const Icon(Icons.menu_rounded, color: Colors.white, size: 20),
+            ),
           ),
         ],
       ),
       body: availabilityAsync.when(
         data: (hasCases) {
           if (!hasCases) {
-            return _buildEmptyState(context);
+            return Column(
+              children: [
+                Container(
+                  height: 32,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFF0F172A),
+                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(32), bottomRight: Radius.circular(32)),
+                  ),
+                ),
+                Expanded(child: _buildEmptyState(context)),
+              ],
+            );
           }
           return Column(
             children: [
-              // Online users/Stories (optional premium vibe)
-              _buildOnlineUsers(conversations),
-              
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.only(left: 0, right: 0, bottom: 32, top: 16),
+                decoration: const BoxDecoration(
+                  color: Color(0xFF0F172A),
+                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(32), bottomRight: Radius.circular(32)),
+                ),
+                child: _buildOnlineUsers(conversations),
+              ),
               Expanded(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.kSurface.withOpacity(0.3),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
+                child: CustomScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  slivers: [
+                    SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final conv = conversations[index];
+                          return _buildConversationTile(context, conv);
+                        },
+                        childCount: conversations.length,
+                      ),
                     ),
-                  ),
-                  child: ListView.builder(
-                    padding: EdgeInsets.symmetric(vertical: 2.h),
-                    itemCount: conversations.length,
-                    itemBuilder: (context, index) {
-                      final conv = conversations[index];
-                      return _buildConversationTile(context, conv);
-                    },
-                  ),
+                    const SliverToBoxAdapter(child: SizedBox(height: 120)), // Space for bottom nav
+                  ],
                 ),
               ),
             ],
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.kGold)),
-        error: (err, stack) => Center(child: CustomText(title: "Error loading chat availability", color: Colors.redAccent)),
-      ),
-      floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: 10.h),
-        child: FloatingActionButton(
-          onPressed: () {},
-          backgroundColor: AppColors.kGold,
-          elevation: 8,
-          child: const Icon(Icons.chat_bubble_rounded, color: Colors.black),
-        ),
+        loading: () => const Center(child: CircularProgressIndicator(color: AppColors.kBrand)),
+        error: (err, stack) => const Center(child: Text("Error loading chats", style: TextStyle(color: Colors.red))),
       ),
     );
   }
@@ -121,25 +144,37 @@ class ChatListScreen extends ConsumerWidget {
   Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(10.w),
+        padding: const EdgeInsets.all(40),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.chat_bubble_outline_rounded, size: 80, color: AppColors.kGold.withOpacity(0.4)),
-            SizedBox(height: 3.h),
-            CustomText(
-              title: "No Active Conversations",
-              fontSize: 20.sp,
-              weight: FontWeight.bold,
-              color: AppColors.kTextPrimary,
-              alignText: TextAlign.center,
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF1F5F9),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.chat_bubble_outline_rounded, size: 64, color: Color(0xFF94A3B8)),
             ),
-            SizedBox(height: 1.5.h),
-            CustomText(
-              title: "Chat will appear here once a case is assigned or an appointment is confirmed.",
-              fontSize: 14.sp,
-              color: AppColors.kTextSecondary,
-              alignText: TextAlign.center,
+            const SizedBox(height: 24),
+            Text(
+              "No Messages Yet",
+              style: AppTypography.h3.copyWith(
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
+                color: const Color(0xFF0F172A),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              "Conversations will appear here once you connect with someone.",
+              style: AppTypography.body.copyWith(
+                fontSize: 16,
+                color: const Color(0xFF64748B),
+                height: 1.5,
+              ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -148,51 +183,62 @@ class ChatListScreen extends ConsumerWidget {
   }
 
   Widget _buildOnlineUsers(List<Conversation> conversations) {
-    return Container(
-      height: 12.h,
-      padding: EdgeInsets.symmetric(vertical: 1.h),
+    return SizedBox(
+      height: 100,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(horizontal: 4.w),
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         itemCount: conversations.length,
         itemBuilder: (context, index) {
           final conv = conversations[index];
-          return Container(
-            margin: EdgeInsets.only(right: 4.w),
+          return Padding(
+            padding: const EdgeInsets.only(right: 24),
             child: Column(
               children: [
                 Stack(
+                  clipBehavior: Clip.none,
                   children: [
-                    CircleAvatar(
-                      radius: 3.5.h,
-                      backgroundImage: NetworkImage(conv.otherUserAvatar),
+                    Container(
+                      padding: const EdgeInsets.all(3),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: conv.isOnline ? const Color(0xFF3B82F6) : Colors.transparent,
+                          width: 2,
+                        ),
+                      ),
+                      child: CircleAvatar(
+                        radius: 30,
+                        backgroundColor: const Color(0xFFE2E8F0),
+                        backgroundImage: NetworkImage(conv.otherUserAvatar),
+                      ),
                     ),
                     if (conv.isOnline)
                       Positioned(
-                        right: 0,
-                        bottom: 0,
+                        right: 4,
+                        bottom: 2,
                         child: Container(
-                          width: 3.w,
-                          height: 3.w,
+                          width: 14,
+                          height: 14,
                           decoration: BoxDecoration(
-                            color: Colors.greenAccent,
+                            color: const Color(0xFF22C55E),
                             shape: BoxShape.circle,
-                            border: Border.all(color: AppColors.kBgDark, width: 2),
+                            border: Border.all(color: Colors.white, width: 2.5),
                           ),
                         ),
                       ),
                   ],
                 ),
-                SizedBox(height: 0.5.h),
-                SizedBox(
-                  width: 15.w,
-                  child: CustomText(
-                    title: conv.otherUserName.split(' ')[0],
-                    fontSize: 12.sp,
-                    color: AppColors.kTextSecondary,
-                    alignText: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
+                const SizedBox(height: 8),
+                Text(
+                  conv.otherUserName.split(' ')[0],
+                  style: AppTypography.caption.copyWith(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF475569),
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -203,20 +249,24 @@ class ChatListScreen extends ConsumerWidget {
   }
 
   Widget _buildConversationTile(BuildContext context, Conversation conv) {
+    final bool hasUnread = conv.unreadCount > 0;
+    
     return InkWell(
       onTap: () {
-        // Navigate to detail
-        context.push('/chat-detail/${conv.id}');
+        context.push('/client/chat/${conv.id}');
       },
+      highlightColor: const Color(0xFFF8FAFC),
+      splashColor: const Color(0xFFF1F5F9),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.5.h),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         child: Row(
           children: [
             CircleAvatar(
-              radius: 4.h,
+              radius: 28,
+              backgroundColor: const Color(0xFFE2E8F0),
               backgroundImage: NetworkImage(conv.otherUserAvatar),
             ),
-            SizedBox(width: 4.w),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -224,48 +274,57 @@ class ChatListScreen extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      CustomText(
-                        title: conv.otherUserName,
-                        fontSize: 16.sp,
-                        weight: FontWeight.w700,
-                        color: AppColors.kTextPrimary,
+                      Text(
+                        conv.otherUserName,
+                        style: AppTypography.h3.copyWith(
+                          fontSize: 17,
+                          fontWeight: hasUnread ? FontWeight.w800 : FontWeight.w700,
+                          color: const Color(0xFF0F172A),
+                        ),
                       ),
-                      CustomText(
-                        title: DateFormat('hh:mm a').format(conv.lastMessageTimestamp),
-                        fontSize: 12.sp,
-                        color: AppColors.kTextSecondary,
+                      Text(
+                        DateFormat('hh:mm a').format(conv.lastMessageTimestamp),
+                        style: AppTypography.caption.copyWith(
+                          fontSize: 13,
+                          fontWeight: hasUnread ? FontWeight.w600 : FontWeight.w500,
+                          color: hasUnread ? const Color(0xFF3B82F6) : const Color(0xFF94A3B8),
+                        ),
                       ),
                     ],
                   ),
-                  SizedBox(height: 0.5.h),
+                  const SizedBox(height: 6),
                   Row(
                     children: [
                       Expanded(
-                        child: CustomText(
-                          title: conv.lastMessage,
-                          fontSize: 14.sp,
-                          color: conv.unreadCount > 0 
-                              ? AppColors.kTextPrimary 
-                              : AppColors.kTextSecondary,
+                        child: Text(
+                          conv.lastMessage,
+                          style: AppTypography.bodySm.copyWith(
+                            fontSize: 15,
+                            color: hasUnread ? const Color(0xFF334155) : const Color(0xFF64748B),
+                            fontWeight: hasUnread ? FontWeight.w600 : FontWeight.w400,
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          weight: conv.unreadCount > 0 ? FontWeight.w600 : FontWeight.normal,
                         ),
                       ),
-                      if (conv.unreadCount > 0)
+                      if (hasUnread) ...[
+                        const SizedBox(width: 12),
                         Container(
-                          padding: const EdgeInsets.all(6),
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: const BoxDecoration(
-                            color: AppColors.kEmerald,
+                            color: Color(0xFF3B82F6),
                             shape: BoxShape.circle,
                           ),
-                          child: CustomText(
-                            title: conv.unreadCount.toString(),
-                            fontSize: 10.sp,
-                            color: Colors.white,
-                            weight: FontWeight.bold,
+                          child: Text(
+                            conv.unreadCount.toString(),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
+                      ]
                     ],
                   ),
                 ],

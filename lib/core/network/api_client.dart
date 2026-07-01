@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:lawyer_app/core/network/api_exceptions.dart';
-import 'package:lawyer_app/core/network/dio_client.dart';
+import 'package:lex_core/core/network/api_exceptions.dart';
+import 'package:lex_core/core/network/dio_client.dart';
 
 class ApiClient {
   final DioClient _dioClient;

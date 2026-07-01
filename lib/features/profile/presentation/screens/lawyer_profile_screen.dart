@@ -2,11 +2,11 @@ import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:lawyer_app/core/constants/app_colors.dart';
-import 'package:lawyer_app/features/lawyer/domain/entities/lawyer_entity.dart';
-import 'package:lawyer_app/shared/widgets/custom_appbar.dart';
-import 'package:lawyer_app/shared/widgets/custom_button.dart';
-import 'package:lawyer_app/shared/widgets/custom_text.dart';
+import 'package:lex_core/core/constants/app_colors.dart';
+import 'package:lex_core/core/constants/app_typography.dart';
+import 'package:lex_core/features/lawyer/domain/entities/lawyer_entity.dart';
+import 'package:lex_core/shared/widgets/custom_appbar.dart';
+import 'package:lex_core/shared/widgets/lex_button.dart';
 import 'package:sizer/sizer.dart';
 
 class LawyerProfileScreen extends StatelessWidget {
@@ -24,60 +24,10 @@ class LawyerProfileScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
       ),
       body: Container(
-        color: AppColors.kBgDark,
+        color: AppColors.kBgDeep,
         child: SafeArea(
           child: CustomScrollView(
             slivers: [
-              // Sliver App Bar with blurred background image
-              // SliverAppBar(
-              //   // expandedHeight: 40.h,
-              //   floating: false,
-              //   pinned: true,
-              //   backgroundColor: Colors.transparent,
-              //   elevation: 0,
-              //   flexibleSpace: FlexibleSpaceBar(
-              //     background: Stack(
-              //       fit: StackFit.expand,
-              //       children: [
-              //         CachedNetworkImage(
-              //           imageUrl: lawyer.profilePhoto,
-              //           fit: BoxFit.cover,
-              //           placeholder: (context, url) => Container(
-              //             color: AppColors.kSurface,
-              //             child: Center(
-              //               child: CircularProgressIndicator(
-              //                 color: AppColors.kEmerald,
-              //                 strokeWidth: 3,
-              //               ),
-              //             ),
-              //           ),
-              //           errorWidget: (context, url, error) => Container(
-              //             color: AppColors.kSurface,
-              //             child: Icon(Icons.person_rounded, size: 80, color: AppColors.kTextSecondary),
-              //           ),
-              //         ),
-              //         BackdropFilter(
-              //           filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-              //           child: Container(
-              //             decoration: BoxDecoration(
-              //               gradient: LinearGradient(
-              //                 begin: Alignment.topCenter,
-              //                 end: Alignment.bottomCenter,
-              //                 colors: [
-              //                   Colors.transparent,
-              //                   AppColors.kBgDark.withOpacity(0.7),
-              //                   AppColors.kBgDark.withOpacity(0.95),
-              //                 ],
-              //               ),
-              //             ),
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
-
-              // Overlapping avatar + info
               SliverToBoxAdapter(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 3.h),
@@ -88,7 +38,7 @@ class LawyerProfileScreen extends StatelessWidget {
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: AppColors.kEmerald,
+                            color: AppColors.kBrandLight,
                             width: 4,
                           ),
                         ),
@@ -100,16 +50,16 @@ class LawyerProfileScreen extends StatelessWidget {
                               imageUrl: lawyer.profilePhoto,
                               fit: BoxFit.cover,
                               placeholder: (context, url) => Container(
-                                color: AppColors.kSurface,
-                                child: Center(
+                                color: AppColors.kBgSurface,
+                                child: const Center(
                                   child: CircularProgressIndicator(
-                                    color: AppColors.kEmerald,
+                                    color: AppColors.kBrandLight,
                                   ),
                                 ),
                               ),
                               errorWidget: (context, url, error) => Container(
-                                color: AppColors.kSurface,
-                                child: Icon(
+                                color: AppColors.kBgSurface,
+                                child: const Icon(
                                   Icons.person_rounded,
                                   size: 80,
                                   color: AppColors.kTextSecondary,
@@ -123,58 +73,49 @@ class LawyerProfileScreen extends StatelessWidget {
                       SizedBox(height: 2.h),
 
                       // Name & rating
-                      CustomText(
-                        title: '${lawyer.firstName} ${lawyer.lastName}',
-                        fontSize: 26.sp,
-                        weight: FontWeight.w800,
-                        color: AppColors.kTextPrimary,
-                        alignText: TextAlign.center,
+                      Text(
+                        '${lawyer.firstName} ${lawyer.lastName}',
+                        style: AppTypography.h1,
+                        textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 0.5.h),
-                      CustomText(
-                        title: lawyer.email,
-                        fontSize: 16.sp,
-                        color: AppColors.kTextPrimary,
-                        alignText: TextAlign.center,
+                      Text(
+                        lawyer.email,
+                        style: AppTypography.body,
+                        textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 0.5.h),
-                      CustomText(
-                        title: lawyer.phone,
-                        fontSize: 16.sp,
-                        color: AppColors.kTextPrimary,
-                        alignText: TextAlign.center,
+                      Text(
+                        lawyer.phone,
+                        style: AppTypography.body,
+                        textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 0.5.h),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.star_rounded,
-                            color: AppColors.kEmerald,
+                            color: AppColors.kGold,
                             size: 22,
                           ),
                           SizedBox(width: 1.5.w),
-                          CustomText(
-                            title: '${lawyer.rating.toStringAsFixed(1)}',
-                            fontSize: 18.sp,
-                            weight: FontWeight.w700,
-                            color: AppColors.kEmerald,
+                          Text(
+                            lawyer.rating.toStringAsFixed(1),
+                            style: AppTypography.h3.copyWith(color: AppColors.kGold),
                           ),
                           SizedBox(width: 1.w),
-                          CustomText(
-                            title: '(${lawyer.reviews} reviews)',
-                            fontSize: 14.sp,
-                            color: AppColors.kTextSecondary,
+                          Text(
+                            '(${lawyer.reviews} reviews)',
+                            style: AppTypography.caption,
                           ),
                         ],
                       ),
 
                       SizedBox(height: 1.h),
-                      CustomText(
-                        title: lawyer.category,
-                        fontSize: 16.sp,
-                        color: AppColors.kEmerald,
-                        weight: FontWeight.w600,
+                      Text(
+                        lawyer.category,
+                        style: AppTypography.h3.copyWith(color: AppColors.kBrandLight),
                       ),
 
                       SizedBox(height: 4.h),
@@ -187,27 +128,13 @@ class LawyerProfileScreen extends StatelessWidget {
                       SizedBox(height: 5.h),
 
                       // Book Now Button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 58,
-                        child: CustomButton(
-                          text: 'Book Consultation',
-                          onPressed: () {
-                            // TODO: Navigate to booking flow
-                          },
-                          gradient: LinearGradient(
-                            colors: [
-                              AppColors.kEmerald,
-                              AppColors.kEmeraldDark,
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          textColor: Colors.white,
-                          fontSize: 17.sp,
-                          fontWeight: FontWeight.w700,
-                          borderRadius: 16,
-                        ),
+                      LexButton(
+                        label: 'Book Consultation',
+                        style: LexButtonStyle.primary,
+                        fullWidth: true,
+                        onPressed: () {
+                          // TODO: Navigate to booking flow
+                        },
                       ),
 
                       SizedBox(height: 6.h),
@@ -226,25 +153,19 @@ class LawyerProfileScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomText(
-          title: title,
-          fontSize: 19.sp,
-          weight: FontWeight.w700,
-          color: AppColors.kTextPrimary,
-        ),
+        Text(title, style: AppTypography.h2),
         SizedBox(height: 1.2.h),
         Container(
+          width: double.infinity,
           padding: EdgeInsets.all(4.w),
           decoration: BoxDecoration(
-            color: AppColors.kSurface.withOpacity(0.88),
+            color: AppColors.kBgSurface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.kEmerald.withOpacity(0.15)),
+            border: Border.all(color: AppColors.kBorder),
           ),
-          child: CustomText(
-            title: content,
-            fontSize: 15.sp,
-            color: AppColors.kTextSecondary,
-            textHeight: 1.5,
+          child: Text(
+            content,
+            style: AppTypography.body,
           ),
         ),
       ],

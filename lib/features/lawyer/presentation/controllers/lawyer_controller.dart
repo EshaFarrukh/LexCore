@@ -1,10 +1,10 @@
 import 'dart:developer';
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:lawyer_app/features/lawyer/domain/entities/lawyer_entity.dart';
-import 'package:lawyer_app/features/lawyer/domain/usecases/get_lawyers_usecase.dart';
-import 'package:lawyer_app/features/lawyer/presentation/states/lawyer_state.dart';
-import 'package:lawyer_app/di/injection_container.dart';
-import 'package:lawyer_app/core/network/api_exceptions.dart';
+import 'package:lex_core/features/lawyer/domain/entities/lawyer_entity.dart';
+import 'package:lex_core/features/lawyer/domain/usecases/get_lawyers_usecase.dart';
+import 'package:lex_core/features/lawyer/presentation/states/lawyer_state.dart';
+import 'package:lex_core/di/injection_container.dart';
+import 'package:lex_core/core/network/api_exceptions.dart';
 
 class LawyerController extends StateNotifier<LawyerState> {
   final GetLawyersUseCase _getLawyersUseCase;

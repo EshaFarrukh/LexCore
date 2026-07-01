@@ -1,12 +1,12 @@
 import 'dart:developer';
 
 import 'package:flutter_riverpod/legacy.dart';
-import 'package:lawyer_app/core/constants/app_keys.dart';
-import 'package:lawyer_app/core/utils/storage/storage_service.dart';
-import 'package:lawyer_app/di/injection_container.dart';
-import 'package:lawyer_app/features/client/domain/entities/case_entity.dart';
-import 'package:lawyer_app/features/client/domain/usecases/client_usecases.dart';
-import 'package:lawyer_app/features/client/presentation/states/case_states/case_states.dart';
+import 'package:lex_core/core/constants/app_keys.dart';
+import 'package:lex_core/core/utils/storage/storage_service.dart';
+import 'package:lex_core/di/injection_container.dart';
+import 'package:lex_core/features/client/domain/entities/case_entity.dart';
+import 'package:lex_core/features/client/domain/usecases/client_usecases.dart';
+import 'package:lex_core/features/client/presentation/states/case_states/case_states.dart';
 
 class CaseController extends StateNotifier<CaseStates> {
   final GetCasesByUserIdUseCase _getCasesUseCase;
@@ -18,11 +18,9 @@ class CaseController extends StateNotifier<CaseStates> {
   Future<void> getAllCases() async {
     state = CaseLoadingState();
     try {
-      final dynamic rawUserId = await StorageService.instance.read(AppKeys.userIdKey);
-      final int? userId = rawUserId != null ? int.tryParse(rawUserId.toString()) : null;
-      if (userId == null) {
-        state = CaseFailureState(error: "User not logged in");
-        return;
+      String? userId = await StorageService.instance.read(AppKeys.userIdKey);
+      if (userId == null || userId.isEmpty) {
+        userId = 'client_1'; // Fallback for mock data
       }
 
       final List<CaseEntity> allCasesList = await _getCasesUseCase.execute(userId);

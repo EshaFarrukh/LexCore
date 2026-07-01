@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lawyer_app/features/student/presentation/providers/bottom_navigation_provider/student_bottom_navigation_provider.dart';
-import 'package:lawyer_app/features/student/presentation/screens/student_dashboard_screen.dart';
-import 'package:lawyer_app/features/student/presentation/screens/certification_screens/certification_screen.dart';
-import 'package:lawyer_app/features/student/presentation/screens/tasks_screen.dart';
-import 'package:lawyer_app/features/student/presentation/screens/research_screen.dart';
-import 'package:lawyer_app/features/student/presentation/screens/student_profile_screen.dart';
-import 'package:lawyer_app/shared/widgets/custom_bottom_navbar.dart';
-import 'package:lawyer_app/shared/widgets/custom_student_drawer.dart';
+import 'package:lex_core/features/student/presentation/providers/bottom_navigation_provider/student_bottom_navigation_provider.dart';
+import 'package:lex_core/features/student/presentation/screens/student_dashboard_screen.dart';
+import 'package:lex_core/features/student/presentation/screens/certification_screens/certification_screen.dart';
+import 'package:lex_core/features/student/presentation/screens/tasks_screen.dart';
+import 'package:lex_core/features/student/presentation/screens/research_screen.dart';
+import 'package:lex_core/features/student/presentation/screens/student_profile_screen.dart';
+import 'package:lex_core/shared/widgets/custom_bottom_navbar.dart';
+import 'package:lex_core/shared/widgets/custom_student_drawer.dart';
 import 'package:sizer/sizer.dart';
 
 class StudentBottomNavigationScreen extends ConsumerStatefulWidget {
@@ -34,7 +34,7 @@ class _StudentBottomNavigationScreenState
 
     return Scaffold(
       drawer: const CustomStudentDrawer(),
-      backgroundColor: const Color(0xFF050505), // consistent dark background
+      backgroundColor: Colors.white, // unified white background
       extendBody: true, // important for glass effect to show behind
       body: IndexedStack(index: currentIndex, children: _screens),
       bottomNavigationBar: SafeArea(
@@ -46,28 +46,28 @@ class _StudentBottomNavigationScreenState
               .setIndex(index),
           items: [
             BottomNavigationBarItem(
-              activeIcon: Icon(Icons.dashboard_rounded, size: 3.h),
-              icon: Icon(Icons.dashboard_outlined, size: 3.h),
+              activeIcon: Icon(Icons.dashboard_rounded),
+              icon: Icon(Icons.dashboard_outlined),
               label: '',
             ),
             BottomNavigationBarItem(
-              activeIcon: Icon(Icons.school_rounded, size: 3.h),
-              icon: Icon(Icons.school_outlined, size: 3.h),
+              activeIcon: Icon(Icons.school_rounded),
+              icon: Icon(Icons.school_outlined),
               label: '',
             ),
             BottomNavigationBarItem(
-              activeIcon: Icon(Icons.assignment_rounded, size: 3.h),
-              icon: Icon(Icons.assignment_outlined, size: 3.h),
+              activeIcon: Icon(Icons.assignment_rounded),
+              icon: Icon(Icons.assignment_outlined),
               label: '',
             ),
             BottomNavigationBarItem(
-              activeIcon: Icon(Icons.science_rounded, size: 3.h),
-              icon: Icon(Icons.science_outlined, size: 3.h),
+              activeIcon: Icon(Icons.science_rounded),
+              icon: Icon(Icons.science_outlined),
               label: '',
             ),
             BottomNavigationBarItem(
-              activeIcon: Icon(Icons.person_rounded, size: 3.h),
-              icon: Icon(Icons.person_outline_rounded, size: 3.h),
+              activeIcon: Icon(Icons.person_rounded),
+              icon: Icon(Icons.person_outline_rounded),
               label: '',
             ),
           ],
