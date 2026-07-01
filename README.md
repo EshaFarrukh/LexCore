@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/images/logo.png" width="120" alt="LexCore Logo" />
+  
   <h1>LexCore</h1>
   <p><strong>Your Legal Command Center — A comprehensive, production-grade LegalTech platform.</strong></p>
 
