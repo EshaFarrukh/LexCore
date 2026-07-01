@@ -76,26 +76,26 @@ LexCore features a world-class design system. Here is a glimpse into the applica
 ### Onboarding & Authentication
 | Splash Screen | Onboarding 1 | Onboarding 2 | Onboarding 3 |
 |:---:|:---:|:---:|:---:|
-| <img src="assets/screenshots/Splash Screen.png" width="200"/> | <img src="assets/screenshots/Onboarding Screen 1.png" width="200"/> | <img src="assets/screenshots/Onboarding Screen 2.png" width="200"/> | <img src="assets/screenshots/Onboarding Screen 3.png" width="200"/> |
+| <img src="assets/SCREENSHOTS/Splash%20Screen.png" width="200"/> | <img src="assets/SCREENSHOTS/Onboarding%20Screen%201.png" width="200"/> | <img src="assets/SCREENSHOTS/Onboarding%20Screen%202.png" width="200"/> | <img src="assets/SCREENSHOTS/Onboarding%20Screen%203.png" width="200"/> |
 
 | Role Selection | Choose Role | Login |
 |:---:|:---:|:---:|
-| <img src="assets/screenshots/Role Selection Screen.png" width="200"/> | <img src="assets/screenshots/Choose Role Screen.png" width="200"/> | <img src="assets/screenshots/Login Screen .png" width="200"/> |
+| <img src="assets/SCREENSHOTS/Role%20Selection%20Screen.png" width="200"/> | <img src="assets/SCREENSHOTS/Choose%20Role%20Screen.png" width="200"/> | <img src="assets/SCREENSHOTS/Login%20Screen%20.png" width="200"/> |
 
 ### Portals & Dashboards
 | Lawyer Dashboard | Client Portal | Student Dashboard | Student Portal |
 |:---:|:---:|:---:|:---:|
-| <img src="assets/screenshots/Lawyer portal.png" width="200"/> | <img src="assets/screenshots/Client Portal.png" width="200"/> | <img src="assets/screenshots/Student Dashboard.png" width="200"/> | <img src="assets/screenshots/Student Portal.png" width="200"/> |
+| <img src="assets/SCREENSHOTS/Lawyer%20portal.png" width="200"/> | <img src="assets/SCREENSHOTS/Client%20Portal.png" width="200"/> | <img src="assets/SCREENSHOTS/Student%20Dashboard.png" width="200"/> | <img src="assets/SCREENSHOTS/Student%20Portal.png" width="200"/> |
 
 ### Student Learning & Tools
 | Student Certification | Student Research | Student Profile |
 |:---:|:---:|:---:|
-| <img src="assets/screenshots/Student Certification Screen.png" width="200"/> | <img src="assets/screenshots/Student Research Screen.png" width="200"/> | <img src="assets/screenshots/Student Profile.png" width="200"/> |
+| <img src="assets/SCREENSHOTS/Student%20Certification%20Screen.png" width="200"/> | <img src="assets/SCREENSHOTS/Student%20Research%20Screen.png" width="200"/> | <img src="assets/SCREENSHOTS/Student%20Profile.png" width="200"/> |
 
 ### Core Application Features
 | Search Screen | Chat Screen | Video Consultation | Profile Screen |
 |:---:|:---:|:---:|:---:|
-| <img src="assets/screenshots/Search Screen.png" width="200"/> | <img src="assets/screenshots/Chat Screen.png" width="200"/> | <img src="assets/screenshots/Video Screen.png" width="200"/> | <img src="assets/screenshots/Profile Screen.png" width="200"/> |
+| <img src="assets/SCREENSHOTS/Search%20Screen.png" width="200"/> | <img src="assets/SCREENSHOTS/Chat%20Screen.png" width="200"/> | <img src="assets/SCREENSHOTS/Video%20Screen.png" width="200"/> | <img src="assets/SCREENSHOTS/Profile%20Screen.png" width="200"/> |
 
 ---
 
